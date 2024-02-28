@@ -2,6 +2,7 @@ import React from 'react';
 import { localize } from '@deriv/translations';
 import { ActiveSymbols } from '@deriv/api-types';
 import { TContractType, TContractCategory, TList } from '../Components/Form/ContractType/types';
+import { unsupported_contract_types_list } from '@deriv/shared';
 
 type TContractTypesList = {
     [key: string]: {
@@ -27,6 +28,16 @@ export const contract_category_icon = {
     [localize('Accumulators')]: 'IcCatAccumulator',
 } as const;
 
+export const ordered_trade_categories = [
+    'Accumulators',
+    'Vanillas',
+    'Turbos',
+    'Multipliers',
+    'Ups & Downs',
+    'Highs & Lows',
+    'Digits',
+];
+
 export const getContractTypeCategoryIcons = () =>
     ({
         All: 'IcCatAll',
@@ -47,10 +58,10 @@ export const getContractTypeCategoryIcons = () =>
  * @param {array}  unsupported_list - list of unsupported contract types
  */
 
-export const showLabelForMultipliers = (checked_symbol: string) =>
-    /R_|1HZ/i.test(checked_symbol) && !/1HZ150V|1HZ250V/i.test(checked_symbol);
-
-export const getAvailableContractTypes = (contract_types_list: TContractTypesList, unsupported_list: string[]) => {
+export const getAvailableContractTypes = (
+    contract_types_list: TContractTypesList,
+    unsupported_list: typeof unsupported_contract_types_list
+) => {
     return Object.keys(contract_types_list)
         .map(key => {
             const contract_types = contract_types_list[key].categories;
@@ -58,7 +69,7 @@ export const getAvailableContractTypes = (contract_types_list: TContractTypesLis
             const available_contract_types = contract_types.filter(type =>
                 type.value &&
                 // TODO: remove this check once all contract types are supported
-                !unsupported_list.includes(type.value)
+                !unsupported_list.includes(type.value as typeof unsupported_contract_types_list[number])
                     ? type
                     : undefined
             );
@@ -144,8 +155,12 @@ export const getAvailableContractTypes = (contract_types_list: TContractTypesLis
 //     );
 
 export const findContractCategory = (list: Partial<TList[]>, item: TItem) =>
-    list?.find(list_item => list_item?.contract_types?.some(i => i.value === item.value)) || ({} as TContractCategory);
+    list?.find(list_item => list_item?.contract_types?.some(i => i.value.includes(item.value))) ||
+    ({} as TContractCategory);
 
 export const getContractCategoryKey = (list: TList[], item: TItem) => findContractCategory(list, item)?.key;
 
 export const getContractTypes = (list: TList[], item: TItem) => findContractCategory(list, item)?.contract_types;
+
+export const getCategoriesSortedByKey = (list: TContractCategory[] = []) =>
+    [...list].sort((a, b) => ordered_trade_categories.indexOf(a.key) - ordered_trade_categories.indexOf(b.key));

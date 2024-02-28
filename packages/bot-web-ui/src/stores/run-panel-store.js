@@ -159,7 +159,6 @@ export default class RunPanelStore {
         let timer_counter = 1;
         if (window.sendRequestsStatistic) {
             performance.clearMeasures();
-            performance.mark('bot-start');
             // Log is sent every 10 seconds for 5 minutes
             this.timer = setInterval(() => {
                 window.sendRequestsStatistic(true);
@@ -654,11 +653,12 @@ export default class RunPanelStore {
 
     showErrorMessage(data) {
         const { journal } = this.root_store;
-        const { notifications } = this.core;
+        const { notifications, ui } = this.core;
         journal.onError(data);
         if (journal.journal_filters.some(filter => filter === message_types.ERROR)) {
             this.toggleDrawer(true);
             this.setActiveTabIndex(run_panel.JOURNAL);
+            ui.setPromptHandler(false);
         } else {
             notifications.addNotificationMessage(journalError(this.switchToJournal));
             notifications.removeNotificationMessage({ key: 'bot_error' });
@@ -678,6 +678,7 @@ export default class RunPanelStore {
     unregisterBotListeners = () => {
         observer.unregisterAll('bot.running');
         observer.unregisterAll('bot.stop');
+        observer.unregisterAll('bot.click_stop');
         observer.unregisterAll('bot.trade_again');
         observer.unregisterAll('contract.status');
         observer.unregisterAll('bot.contract');

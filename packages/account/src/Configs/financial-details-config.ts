@@ -1,6 +1,12 @@
 import React from 'react';
 import { GetFinancialAssessment } from '@deriv/api-types';
-import { generateValidationFunction, getDefaultFields, TSchema } from '@deriv/shared';
+import {
+    generateValidationFunction,
+    getDefaultFields,
+    TSchema,
+    EMPLOYMENT_VALUES,
+    TEmploymentStatus,
+} from '@deriv/shared';
 import { localize } from '@deriv/translations';
 
 type TFinancialDetailsConfig = {
@@ -313,5 +319,10 @@ export const getIncomeSourceList = () => [
         value: 'Savings & Inheritance',
     },
 ];
+
+export const getFormattedOccupationList = (employment_status?: TEmploymentStatus) =>
+    employment_status && employment_status === EMPLOYMENT_VALUES.EMPLOYED
+        ? getOccupationList().filter(item => item.value !== EMPLOYMENT_VALUES.UNEMPLOYED)
+        : getOccupationList();
 
 export default financialDetailsConfig;

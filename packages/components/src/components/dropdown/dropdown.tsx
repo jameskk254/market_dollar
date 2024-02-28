@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { CSSTransition } from 'react-transition-group';
 import { mobileOSDetect, getPosition } from '@deriv/shared';
 import { TList, findNextFocusableNode, findPreviousFocusableNode, TListItem } from './utility';
-import { Localize } from '@deriv/translations';
 import Items from './items';
 import DisplayText from './display-text';
 import Text from '../text/text';
@@ -26,6 +25,7 @@ type TDropdown = {
     };
     has_symbol?: boolean;
     hint?: string;
+    id?: string;
     initial_offset?: number;
     initial_height_offset?: number;
     is_align_text_left?: boolean;
@@ -44,7 +44,9 @@ type TDropdown = {
     onClick?: () => void;
     placeholder?: string;
     suffix_icon?: string;
-    should_show_new_label?: boolean;
+    should_open_on_hover?: boolean;
+    should_scroll_to_selected?: boolean;
+    should_autohide?: boolean;
     test_id?: string;
     value?: string | number;
     classNameIcon?: string;
@@ -68,6 +70,8 @@ type TDropdownList = {
     parent_ref: React.RefObject<HTMLElement>;
     portal_id?: string;
     suffix_icon?: string;
+    should_scroll_to_selected?: boolean;
+    should_autohide?: boolean;
     value?: string | number;
 };
 
@@ -90,11 +94,15 @@ const DropdownList = React.forwardRef<HTMLDivElement, TDropdownList>((props, lis
         parent_ref,
         portal_id,
         suffix_icon,
+        should_scroll_to_selected,
+        should_autohide,
         value,
     } = props;
 
     const [list_dimensions, setListDimensions] = React.useState([initial_offset, 0]);
     const [style, setStyle] = React.useState({});
+    const [scroll_height, setScrollHeight] = React.useState<number>();
+
     const is_portal = !!portal_id;
 
     React.useEffect(() => {
@@ -189,7 +197,12 @@ const DropdownList = React.forwardRef<HTMLDivElement, TDropdownList>((props, lis
                     role='list'
                     ref={list_ref}
                 >
-                    <ThemedScrollbars height={list_dimensions[1] || '200px'}>
+                    <ThemedScrollbars
+                        height={list_dimensions[1] && list_dimensions[1] > 200 ? list_dimensions[1] : '200px'}
+                        scroll_height={scroll_height}
+                        should_scroll_to_selected={should_scroll_to_selected}
+                        autohide={should_autohide}
+                    >
                         {Array.isArray(list) ? (
                             <Items
                                 onKeyPressed={onKeyPressed}
@@ -200,6 +213,7 @@ const DropdownList = React.forwardRef<HTMLDivElement, TDropdownList>((props, lis
                                 is_align_text_left={is_align_text_left}
                                 value={value}
                                 nodes={nodes.current}
+                                setScrollHeight={setScrollHeight}
                             />
                         ) : (
                             Object.keys(list).map((key, idx) => (
@@ -262,7 +276,9 @@ const Dropdown = ({
     onClick,
     placeholder,
     suffix_icon,
-    should_show_new_label = false,
+    should_open_on_hover = false,
+    should_scroll_to_selected,
+    should_autohide,
     test_id,
     value,
     classNameIcon,
@@ -327,7 +343,14 @@ const Dropdown = ({
         handleVisibility();
     };
 
-    const handleVisibility = () => {
+    const handleVisibility = (e?: React.MouseEvent<HTMLDivElement>) => {
+        if (e && ['mouseover', 'mouseleave'].includes(e.type)) {
+            if (!should_open_on_hover) return;
+            if (e.type === 'mouseover') setIsListVisible(true);
+            else setIsListVisible(false);
+            return;
+        }
+
         if (typeof onClick === 'function') {
             onClick();
 
@@ -433,7 +456,13 @@ const Dropdown = ({
                 data-testid={test_id}
                 value={value || 0}
             />
-            <div ref={wrapper_ref} className={containerClassName()}>
+            <div
+                ref={wrapper_ref}
+                className={containerClassName()}
+                onMouseOver={handleVisibility}
+                onFocus={() => null}
+                onMouseLeave={handleVisibility}
+            >
                 <div
                     className={classNames('dc-dropdown__container', {
                         'dc-dropdown__container--suffix-icon': suffix_icon,
@@ -451,7 +480,7 @@ const Dropdown = ({
                     )}
                     <div
                         className={dropdownDisplayClassName()}
-                        data-testid='dti_dropdown_display'
+                        data-testid='dt_dropdown_display'
                         tabIndex={isSingleOption() ? -1 : 0}
                         onClick={handleVisibility}
                         onKeyDown={onKeyPressed as unknown as React.KeyboardEventHandler}
@@ -505,13 +534,10 @@ const Dropdown = ({
                         portal_id={list_portal_id}
                         ref={list_ref}
                         suffix_icon={suffix_icon}
+                        should_scroll_to_selected={should_scroll_to_selected}
+                        should_autohide={should_autohide}
                         value={value}
                     />
-                    {should_show_new_label && (
-                        <Text className='dc-dropdown__label--new' weight='bold' size='xxxs' line_height='s'>
-                            <Localize i18n_default_text='NEW!' />
-                        </Text>
-                    )}
                 </div>
                 {!error && hint && (
                     <Text

@@ -300,18 +300,21 @@ export const config = {
     },
     default_file_name: localize('Untitled Bot'),
     DISABLED_SYMBOLS: ['frxGBPNOK', 'frxUSDNOK', 'frxUSDNEK', 'frxUSDSEK'],
-    DISABLED_SUBMARKETS: ['energy', 'step_index'],
+    DISABLED_SUBMARKETS: ['energy'],
     QUICK_STRATEGY: {
         DISABLED: {
             SYMBOLS: ['1HZ150V', '1HZ250V'],
-            SUBMARKETS: ['crash_index', 'non_stable_coin'],
+            SUBMARKETS: ['crash_index', 'non_stable_coin', 'step_index'],
+            BARRIER_TRADE_TYPES: ['higherlower', 'touchnotouch', 'endsinout', 'staysinout', 'callputspread'],
+            PREDICTION_TRADE_TYPES: ['highlowticks'],
         },
         DEFAULT: {
             symbol: '1HZ100V',
             tradetype: 'callput',
             durationtype: 't',
-            size: 2,
+            size: 1,
             unit: 1,
+            prediction: 0,
         },
     },
 };

@@ -23,7 +23,7 @@ const shouldRestartOnError = (bot, errorName = '') =>
     !unrecoverable_errors.includes(errorName) && botInitialized(bot) && bot.tradeEngine.options.shouldRestartOnError;
 
 const shouldStopOnError = (bot, errorName = '') => {
-    const stopErrors = ['SellNotAvailableCustom', 'ContractCreationFailure'];
+    const stopErrors = ['SellNotAvailableCustom', 'ContractCreationFailure', 'InvalidtoBuy'];
     if (stopErrors.includes(errorName) && botInitialized(bot)) {
         return true;
     }
@@ -167,10 +167,14 @@ const Interpreter = () => {
                 );
 
                 if (!bot.tradeEngine.contractId && is_timeouts_cancellable) {
+                    api_base.is_stopping = true;
                     // When user is rate limited, allow them to stop the bot immediately
                     // granted there is no active contract.
                     global_timeouts.forEach(timeout => clearTimeout(global_timeouts[timeout]));
-                    terminateSession().then(() => resolve());
+                    terminateSession().then(() => {
+                        api_base.is_stopping = false;
+                        resolve();
+                    });
                 } else if (
                     bot.tradeEngine.isSold === false &&
                     !$scope.is_error_triggered &&
@@ -182,7 +186,11 @@ const Interpreter = () => {
                         }
                     });
                 } else {
-                    terminateSession().then(() => resolve());
+                    api_base.is_stopping = true;
+                    terminateSession().then(() => {
+                        api_base.is_stopping = false;
+                        resolve();
+                    });
                 }
             } catch (e) {
                 reject(e);

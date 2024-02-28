@@ -1,21 +1,25 @@
 import React from 'react';
 import { Text } from '@deriv/components';
-import { VANILLALONG, TURBOS } from '@deriv/shared';
+import { TRADE_TYPES } from '@deriv/shared';
 import { Localize } from '@deriv/translations';
 
 const ContractTypeGlossary = ({
     category,
+    is_vanilla_fx = false,
     is_major_pairs = false,
     is_multiplier_fx = false,
 }: {
     category: string;
+    is_vanilla_fx?: boolean;
     is_major_pairs?: boolean;
     is_multiplier_fx?: boolean;
 }) => {
     let content;
+    let trade_category = category;
+    if (trade_category === TRADE_TYPES.VANILLA.CALL && is_vanilla_fx) trade_category = TRADE_TYPES.VANILLA.FX;
     if (category) {
-        switch (category) {
-            case 'accumulator':
+        switch (trade_category) {
+            case TRADE_TYPES.ACCUMULATOR:
                 content = [
                     { type: 'heading', text: <Localize i18n_default_text='Growth rate' /> },
                     {
@@ -50,8 +54,8 @@ const ContractTypeGlossary = ({
                     },
                 ];
                 break;
-            case TURBOS.LONG:
-            case TURBOS.SHORT:
+            case TRADE_TYPES.TURBOS.LONG:
+            case TRADE_TYPES.TURBOS.SHORT:
                 content = [
                     { type: 'heading', text: <Localize i18n_default_text='Payout' /> },
                     {
@@ -107,8 +111,8 @@ const ContractTypeGlossary = ({
                     },
                 ];
                 break;
-            case VANILLALONG.CALL:
-            case VANILLALONG.PUT:
+            case TRADE_TYPES.VANILLA.CALL:
+            case TRADE_TYPES.VANILLA.PUT:
                 content = [
                     { type: 'heading', text: <Localize i18n_default_text='Payout' /> },
                     {
@@ -188,7 +192,7 @@ const ContractTypeGlossary = ({
                     },
                 ];
                 break;
-            case 'multiplier':
+            case TRADE_TYPES.MULTIPLIER:
                 content = [
                     { type: 'heading', text: <Localize i18n_default_text='Stop out' /> },
                     {
@@ -246,6 +250,89 @@ const ContractTypeGlossary = ({
                     },
                 ];
                 break;
+            case TRADE_TYPES.VANILLA.FX:
+                content = [
+                    { type: 'heading', text: <Localize i18n_default_text='Strike price' /> },
+                    {
+                        type: 'paragraph',
+                        text: (
+                            <Localize i18n_default_text='You must select the strike price before entering the contract.' />
+                        ),
+                    },
+                    {
+                        type: 'list',
+                        text: [
+                            <Localize
+                                i18n_default_text='If you select "Call", you’ll earn a payout if the final price is above the strike price at expiry. Otherwise, you won’t receive a payout.'
+                                key='0'
+                            />,
+                            <Localize
+                                i18n_default_text='If you select "Put", you’ll earn a payout if the final price is below the strike price at expiry. Otherwise, you won’t receive a payout.'
+                                key='1'
+                            />,
+                        ],
+                    },
+                    { type: 'heading', text: <Localize i18n_default_text='Payout' /> },
+                    {
+                        type: 'paragraph',
+                        text: (
+                            <Localize
+                                i18n_default_text='Your payout is equal to the payout per pip multiplied by the difference, <0>in pips</0>, between the final price and the strike price.'
+                                components={[<strong key={0} />]}
+                            />
+                        ),
+                    },
+                    { type: 'heading', text: <Localize i18n_default_text='Payout per pip' /> },
+                    {
+                        type: 'paragraph',
+                        text: (
+                            <Localize i18n_default_text='We calculate this based on the strike price and duration you’ve selected.' />
+                        ),
+                    },
+                    { type: 'heading', text: <Localize i18n_default_text='Final price' /> },
+                    {
+                        type: 'paragraph',
+                        text: <Localize i18n_default_text='Spot price of the last tick upon reaching expiry.' />,
+                    },
+                    { type: 'heading', text: <Localize i18n_default_text='Expiry' /> },
+                    {
+                        type: 'paragraph',
+                        text: (
+                            <Localize i18n_default_text='This is when your contract will expire based on the Duration or End time you’ve selected.' />
+                        ),
+                    },
+                    {
+                        type: 'list',
+                        text: [
+                            <Localize
+                                i18n_default_text='If the duration is more than 24 hours, the Cut-off time and Expiry date will apply instead.'
+                                key='0'
+                            />,
+                        ],
+                    },
+                    { type: 'heading', text: <Localize i18n_default_text='Cut-off time' /> },
+                    {
+                        type: 'paragraph',
+                        text: (
+                            <Localize i18n_default_text='Contracts will expire at exactly 14:00:00 GMT on your selected expiry date.' />
+                        ),
+                    },
+                    { type: 'heading', text: <Localize i18n_default_text='Expiry date' /> },
+                    {
+                        type: 'paragraph',
+                        text: (
+                            <Localize i18n_default_text='Your contract will expire on this date (in GMT), based on the End time you’ve selected.' />
+                        ),
+                    },
+                    { type: 'heading', text: <Localize i18n_default_text='Contract value' /> },
+                    {
+                        type: 'paragraph',
+                        text: (
+                            <Localize i18n_default_text='We’ll offer to buy your contract at this price should you choose to sell it before its expiry. This is based on several factors, such as the current spot price, duration, etc. However, we won’t offer a contract value if the remaining duration is below 24 hours.' />
+                        ),
+                    },
+                ];
+                break;
             default:
                 content = [];
                 break;
@@ -282,7 +369,6 @@ const ContractTypeGlossary = ({
                         </ul>
                     );
                 }
-                return null;
             })}
         </React.Fragment>
     );

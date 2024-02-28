@@ -16,7 +16,8 @@ export const getJurisdictionVanuatuContents = (): TJurisdictionCardItems => ({
             {
                 clickableDescription: [
                     {
-                        text: 'Dynamic Leverage', // onClick: toggleDynamicLeverage,
+                        tag: 'dynamicLeverage',
+                        text: 'Dynamic Leverage',
                         type: 'link',
                     },
                 ],
@@ -29,7 +30,7 @@ export const getJurisdictionVanuatuContents = (): TJurisdictionCardItems => ({
                 },
             },
             {
-                key: 'spreadsFrom',
+                key: 'spreads-from',
                 title: 'Spreads from',
                 titleIndicators: {
                     displayText: '0.5 pips',

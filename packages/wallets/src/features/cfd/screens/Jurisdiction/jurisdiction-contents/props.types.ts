@@ -2,6 +2,7 @@ import { THooks } from '../../../../../types';
 
 export type TClickableDescription = {
     onClick?: React.MouseEventHandler<HTMLSpanElement>;
+    tag?: string;
     text: string;
     type: 'link' | 'text';
 };
@@ -49,7 +50,6 @@ export type TJurisdictionVerificationSection = {
 export type TJurisdictionVerificationItems = {
     documentNumber?: TJurisdictionVerificationSection;
     identityDocument?: TJurisdictionVerificationSection;
-    identityNumber?: TJurisdictionVerificationSection;
     nameAndAddress?: TJurisdictionVerificationSection;
     notApplicable?: TJurisdictionVerificationSection;
     selfie?: TJurisdictionVerificationSection;

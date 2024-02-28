@@ -1,7 +1,7 @@
 import { action, observable, makeObservable, override } from 'mobx';
 import { routes, isEmptyObject, isForwardStarting, WS, contractCancelled, contractSold } from '@deriv/shared';
 import { Money } from '@deriv/components';
-import { RudderStack, getRudderstackConfig } from '@deriv/analytics';
+import { Analytics } from '@deriv-com/analytics';
 import { localize } from '@deriv/translations';
 import ContractStore from './contract-store';
 import BaseStore from './base-store';
@@ -23,13 +23,11 @@ export default class ContractReplayStore extends BaseStore {
 
     // ---- Replay Contract Config ----
     contract_id;
-    indicative_status;
     contract_info = observable.object({});
     is_static_chart = false;
 
     // ---- Normal properties ---
     is_ongoing_contract = false;
-    prev_indicative = 0;
 
     contract_update = observable.object({});
     // TODO: you view a contract and then share that link with another person,
@@ -80,7 +78,6 @@ export default class ContractReplayStore extends BaseStore {
             is_forward_starting: observable,
             margin: observable,
             contract_id: observable,
-            indicative_status: observable,
             contract_info: observable.ref,
             is_static_chart: observable,
             contract_update: observable.ref,
@@ -118,8 +115,6 @@ export default class ContractReplayStore extends BaseStore {
         this.is_static_chart = false;
         this.is_chart_loading = true;
         this.contract_info = {};
-        this.indicative_status = null;
-        this.prev_indicative = 0;
         this.chart_state = '';
         this.root_store.ui.toggleHistoryTab(false);
         WS.removeOnReconnect();
@@ -149,18 +144,6 @@ export default class ContractReplayStore extends BaseStore {
 
         this.contract_info = response.proposal_open_contract;
         this.contract_update = response.proposal_open_contract.limit_order;
-
-        // Add indicative status for contract
-        const prev_indicative = this.prev_indicative;
-        const new_indicative = +this.contract_info.bid_price;
-        if (new_indicative > prev_indicative) {
-            this.indicative_status = 'profit';
-        } else if (new_indicative < prev_indicative) {
-            this.indicative_status = 'loss';
-        } else {
-            this.indicative_status = null;
-        }
-        this.prev_indicative = new_indicative;
 
         const is_forward_starting =
             !!this.contract_info.is_forward_starting ||
@@ -255,15 +238,13 @@ export default class ContractReplayStore extends BaseStore {
 
     onClickSell(contract_id) {
         const { bid_price } = this.contract_info;
-        if (contract_id && bid_price) {
+        if (contract_id && (bid_price || bid_price === 0)) {
             this.is_sell_requested = true;
             WS.sell(contract_id, bid_price).then(this.handleSell);
         }
     }
 
     handleSell(response) {
-        const { action_names, event_names, form_names, subform_names } = getRudderstackConfig();
-
         if (response.error) {
             // If unable to sell due to error, give error via pop up if not in contract mode
             this.is_sell_requested = false;
@@ -282,10 +263,10 @@ export default class ContractReplayStore extends BaseStore {
                 contractSold(this.root_store.client.currency, response.sell.sold_for, Money)
             );
 
-            RudderStack.track(event_names.reports, {
-                action: action_names.close_contract,
-                form_name: form_names.default,
-                subform_name: subform_names.contract_details,
+            Analytics.trackEvent('ce_reports_form', {
+                action: 'close_contract',
+                form_name: 'default',
+                subform_name: 'contract_details_form',
             });
         }
     }

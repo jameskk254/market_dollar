@@ -4,13 +4,14 @@ import { Loading, ThemedScrollbars, VerticalTab } from '@deriv/components';
 import { localize } from '@deriv/translations';
 import SearchInput from './search-input';
 import NoResultsMessage from './no-results-message';
-import { Header } from '../ContractTypeInfo/index.js';
+import { Header } from '../ContractTypeInfo/index';
 import { getContractCategoryKey } from '../../../../Helpers/contract-type';
 import { TList } from '../types';
 import ContractType from '../contract-type';
 
 type TDialog = {
     categories: TList[];
+    info_banner?: React.ReactNode;
     item: React.ComponentProps<typeof ContractType.Info>['item'];
     selected?: string;
     children?: React.ReactNode;
@@ -20,12 +21,17 @@ type TDialog = {
     onCategoryClick?: (e: React.ComponentProps<typeof VerticalTab.Headers>['selected']) => void;
     onChangeInput?: (e: string) => void;
     onSearchBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement | null>;
+    onClose?: () => void;
     show_loading?: boolean;
+    learn_more_banner?: React.ReactNode;
+    hide_back_button?: boolean;
+    title?: string;
 };
 
 const Dialog = ({
     categories,
     children,
+    info_banner,
     is_info_dialog_open,
     is_open,
     item,
@@ -33,8 +39,12 @@ const Dialog = ({
     onCategoryClick,
     onChangeInput,
     onSearchBlur,
+    onClose,
     selected,
     show_loading,
+    learn_more_banner,
+    hide_back_button,
+    title,
 }: React.PropsWithChildren<TDialog>) => {
     const input_ref = React.useRef<(HTMLInputElement & HTMLTextAreaElement) | null>(null);
     const [input_value, setInputValue] = React.useState('');
@@ -106,11 +116,12 @@ const Dialog = ({
                                         onChange={onChange}
                                         selectedKey='key'
                                     />
-
                                     <div className='dc-vertical-tab__content'>
                                         <div className='dc-vertical-tab__action-bar'>{action_bar_item}</div>
                                         <div className='dc-vertical-tab__content-container'>
                                             {selected_category_contract && <NoResultsMessage text={input_value} />}
+                                            {info_banner}
+                                            {learn_more_banner}
                                             {renderChildren()}
                                         </div>
                                     </div>
@@ -118,7 +129,13 @@ const Dialog = ({
                             ) : (
                                 <React.Fragment>
                                     <div className='dc-vertical-tab__action-bar dc-vertical-tab__action-bar--contract-type-info-header'>
-                                        <Header title={item.text || ''} onClickGoBack={onBackButtonClick} />
+                                        <Header
+                                            title={title || item.text || ''}
+                                            onClickBack={onBackButtonClick}
+                                            onClose={onClose}
+                                            should_render_arrow={!hide_back_button}
+                                            should_render_close={hide_back_button}
+                                        />
                                     </div>
                                     {renderChildren()}
                                 </React.Fragment>

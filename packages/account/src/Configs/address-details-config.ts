@@ -112,7 +112,7 @@ const address_details_config: ({
                 ],
                 [
                     'regular',
-                    localize('Letters, numbers, spaces, hyphens only'),
+                    localize('Only letters, numbers, space and hyphen are allowed.'),
                     {
                         regex: regex_checks.address_details.address_postcode,
                     },
@@ -166,7 +166,6 @@ const addressDetailsConfig = (
     const is_svg = upgrade_info?.can_upgrade_to === 'svg';
     const config = address_details_config({ account_settings, is_svg });
     const disabled_items = account_settings.immutable_fields;
-    const is_gb_residence = residence === 'gb';
 
     return {
         header: {
@@ -181,7 +180,6 @@ const addressDetailsConfig = (
                 transformConfig(transformForResidence(config, residence), real_account_signup_target)
             ),
             disabled_items,
-            is_gb_residence,
         },
         passthrough: ['residence_list', 'is_fully_authenticated', 'has_real_account'],
         icon: 'IcDashboardAddress',

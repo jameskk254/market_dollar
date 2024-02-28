@@ -1,52 +1,134 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import { useAuthorize } from '@deriv/api';
-import { WalletButton } from '../../../../../components/Base';
+import { useAuthorize, useJurisdictionStatus } from '@deriv/api-v2';
+import { InlineMessage, WalletButton, WalletText } from '../../../../../components/Base';
+import { useModal } from '../../../../../components/ModalProvider';
 import { TradingAccountCard } from '../../../../../components/TradingAccountCard';
-import { MarketTypeToIconMapper, MarketTypeToTitleMapper } from '../../../constants';
+import { getStaticUrl } from '../../../../../helpers/urls';
 import { THooks } from '../../../../../types';
+import { MarketTypeDetails, PlatformDetails } from '../../../constants';
+import { MT5TradeModal, VerificationFailedModal } from '../../../modals';
 import './AddedMT5AccountsList.scss';
 
 type TProps = {
     account: THooks.MT5AccountsList;
 };
 
+const MT5AccountIcon: React.FC<TProps> = ({ account }) => {
+    const IconToLink = () => {
+        switch (account.market_type) {
+            case 'financial':
+            case 'synthetic':
+            case 'all':
+                return window.open(getStaticUrl('/dmt5'));
+            default:
+                return window.open(getStaticUrl('/dmt5'));
+        }
+    };
+    return (
+        <div className='wallets-added-mt5__icon' onClick={() => IconToLink()}>
+            {MarketTypeDetails[account.market_type || 'all'].icon}
+        </div>
+    );
+};
+
 const AddedMT5AccountsList: React.FC<TProps> = ({ account }) => {
     const { data: activeWallet } = useAuthorize();
     const history = useHistory();
+    const { getVerificationStatus } = useJurisdictionStatus();
+    const jurisdictionStatus = useMemo(
+        () => getVerificationStatus(account.landing_company_short || 'svg', account.status),
+        [account.landing_company_short, account.status, getVerificationStatus]
+    );
+    const { title } = MarketTypeDetails[account.market_type ?? 'all'];
+    const { show } = useModal();
+    const { t } = useTranslation();
+
     return (
         <TradingAccountCard
-            leading={() => (
-                <div className='wallets-added-mt5__icon'>{MarketTypeToIconMapper[account.market_type || 'all']}</div>
-            )}
-            trailing={() => (
+            leading={<MT5AccountIcon account={account} />}
+            trailing={
                 <div className='wallets-added-mt5__actions'>
                     <WalletButton
+                        disabled={jurisdictionStatus.is_failed || jurisdictionStatus.is_pending}
                         onClick={() => {
-                            history.push('/wallets/cashier/transfer');
+                            history.push(`/wallets/cashier/transfer`, { toAccountLoginId: account.loginid });
                         }}
-                        text='Transfer'
                         variant='outlined'
-                    />
-                    <WalletButton text='Open' />
+                    >
+                        {t('Transfer')}
+                    </WalletButton>
+                    <WalletButton
+                        disabled={jurisdictionStatus.is_failed || jurisdictionStatus.is_pending}
+                        onClick={() =>
+                            show(
+                                <MT5TradeModal
+                                    marketType={account.market_type ?? 'all'}
+                                    mt5Account={account}
+                                    platform={PlatformDetails.mt5.platform}
+                                />
+                            )
+                        }
+                    >
+                        {t('Open')}
+                    </WalletButton>
                 </div>
-            )}
+            }
         >
             <div className='wallets-added-mt5__details'>
                 <div className='wallets-added-mt5__details-title'>
-                    <p className='wallets-added-mt5__details-title-text'>
-                        {MarketTypeToTitleMapper[account.market_type || 'all']}
-                    </p>
+                    <WalletText size='sm'>{title}</WalletText>
                     {!activeWallet?.is_virtual && (
                         <div className='wallets-added-mt5__details-title-landing-company'>
-                            <p className='wallets-added-mt5__details-title-landing-company-text'>
-                                {account.landing_company_short}
-                            </p>
+                            <WalletText size='2xs' weight='bold'>
+                                {account.landing_company_short?.toUpperCase()}
+                            </WalletText>
                         </div>
                     )}
                 </div>
-                <p className='wallets-added-mt5__details-balance'>{account.display_balance}</p>
-                <p className='wallets-added-mt5__details-loginid'>{account.display_login}</p>
+                {!(jurisdictionStatus.is_failed || jurisdictionStatus.is_pending) && (
+                    <WalletText size='sm' weight='bold'>
+                        {account.display_balance}
+                    </WalletText>
+                )}
+
+                <WalletText as='p' color='primary' size='xs' weight='bold'>
+                    {account.display_login}
+                </WalletText>
+                {jurisdictionStatus.is_pending && (
+                    <div className='wallets-added-mt5__details-badge'>
+                        <InlineMessage size='xs' type='warning' variant='outlined'>
+                            <WalletText color='warning' size='2xs' weight='bold'>
+                                {t('Pending verification')}
+                            </WalletText>
+                        </InlineMessage>
+                    </div>
+                )}
+
+                {jurisdictionStatus.is_failed && (
+                    <div className='wallets-added-mt5__details-badge'>
+                        <InlineMessage size='xs' type='error' variant='outlined'>
+                            <WalletText color='error' size='2xs' weight='bold'>
+                                {t('Verification failed.')}{' '}
+                                <a
+                                    onClick={() =>
+                                        show(
+                                            <VerificationFailedModal
+                                                selectedJurisdiction={account.landing_company_short}
+                                            />,
+                                            {
+                                                defaultRootId: 'wallets_modal_root',
+                                            }
+                                        )
+                                    }
+                                >
+                                    {t('Why?')}
+                                </a>
+                            </WalletText>
+                        </InlineMessage>
+                    </div>
+                )}
             </div>
         </TradingAccountCard>
     );

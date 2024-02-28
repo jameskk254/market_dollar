@@ -106,7 +106,7 @@ MarkerSpotLabel.defaultProps = {
 };
 
 MarkerSpotLabel.propTypes = {
-    align_label: PropTypes.oneOf(['top', 'bottom']),
+    align_label: PropTypes.oneOf(['top', 'middle', 'bottom']),
     has_hover_toggle: PropTypes.bool,
     is_value_hidden: PropTypes.bool,
     spot_className: PropTypes.string,
@@ -114,6 +114,6 @@ MarkerSpotLabel.propTypes = {
     spot_epoch: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     spot_value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     spot_profit: PropTypes.string,
-    status: PropTypes.oneOf(['won', 'lost']),
+    status: PropTypes.oneOf(['won', 'lost', '']),
 };
 export default observer(MarkerSpotLabel);

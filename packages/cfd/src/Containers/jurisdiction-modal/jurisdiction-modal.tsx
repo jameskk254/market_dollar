@@ -8,6 +8,7 @@ import { DynamicLeverageContext } from '../dynamic-leverage/dynamic-leverage-con
 import DynamicLeverageModalContent from '../dynamic-leverage/dynamic-leverage-modal-content';
 import JurisdictionModalContentWrapper from './jurisdiction-modal-content-wrapper';
 import JurisdictionModalTitle from './jurisdiction-modal-title';
+import { MARKET_TYPE } from '../../Helpers/cfd-config';
 
 const JurisdictionModal = observer(({ openPasswordModal }: TJurisdictionModalProps) => {
     const { traders_hub, ui, common } = useStore();
@@ -33,12 +34,12 @@ const JurisdictionModal = observer(({ openPasswordModal }: TJurisdictionModalPro
     const modal_content = (
         <div
             data-testid='modal_content'
-            className={classNames('jurisdiction-modal__wrapper', {
+            className={classNames(`jurisdiction-modal__wrapper--${account_type.type}`, {
                 'jurisdiction-modal__flipped': is_dynamic_leverage_visible,
             })}
         >
             <JurisdictionModalContentWrapper openPasswordModal={openPasswordModal} />
-            <DynamicLeverageModalContent />
+            {is_dynamic_leverage_visible && <DynamicLeverageModalContent />}
         </div>
     );
 
@@ -55,7 +56,7 @@ const JurisdictionModal = observer(({ openPasswordModal }: TJurisdictionModalPro
                             is_open={is_jurisdiction_modal_visible}
                             toggleModal={onJurisdictionModalToggle}
                             type='button'
-                            width={account_type.type === 'financial' ? '1200px' : '1040px'}
+                            width={account_type.type === MARKET_TYPE.FINANCIAL ? '1200px' : '1040px'}
                             has_close_icon={!is_dynamic_leverage_visible}
                             title={
                                 <JurisdictionModalTitle
@@ -74,6 +75,7 @@ const JurisdictionModal = observer(({ openPasswordModal }: TJurisdictionModalPro
                             visible={is_jurisdiction_modal_visible}
                             onClose={onJurisdictionModalToggle}
                             has_close_icon={!is_dynamic_leverage_visible}
+                            header_classname='jurisdiction-modal__header'
                             title={
                                 <JurisdictionModalTitle
                                     show_eu_related_content={show_eu_related_content}

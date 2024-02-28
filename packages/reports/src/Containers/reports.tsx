@@ -13,7 +13,7 @@ import {
 import { getSelectedRoute } from '@deriv/shared';
 import { localize } from '@deriv/translations';
 import { observer, useStore } from '@deriv/stores';
-import { RudderStack, getRudderstackConfig } from '@deriv/analytics';
+import { Analytics } from '@deriv-com/analytics';
 import { TRoute } from 'Types';
 import 'Sass/app/modules/reports.scss';
 
@@ -34,25 +34,23 @@ type TReports = {
 const Reports = observer(({ history, location, routes }: TReports) => {
     const { client, common, ui } = useStore();
 
-    const { is_logged_in, is_logging_in, setVisibilityRealityCheck } = client;
+    const { is_logged_in, is_logging_in } = client;
     const { is_from_derivgo, routeBackInApp } = common;
     const { is_reports_visible, setReportsTabIndex, reports_route_tab_index, toggleReports } = ui;
-    const { action_names, event_names, form_names, form_sources } = getRudderstackConfig();
 
     React.useEffect(() => {
-        RudderStack.track(event_names.reports, {
-            action: action_names.open,
-            form_name: form_names.default,
+        Analytics.trackEvent('ce_reports_form', {
+            action: 'open',
+            form_name: 'default',
             subform_name: history.location.pathname.split('/')[2],
-            form_source: form_sources.deriv_trader,
+            form_source: 'deriv_trader',
         });
         toggleReports(true);
         return () => {
-            setVisibilityRealityCheck(1);
             toggleReports(false);
-            RudderStack.track(event_names.reports, {
-                action: action_names.close,
-                form_name: form_names.default,
+            Analytics.trackEvent('ce_reports_form', {
+                action: 'close',
+                form_name: 'default',
                 subform_name: location.pathname.split('/')[2],
             });
         };
@@ -84,6 +82,20 @@ const Reports = observer(({ history, location, routes }: TReports) => {
     if (!is_logged_in && is_logging_in) {
         return <Loading is_fullscreen />;
     }
+    // TODO: Uncomment and update this when DTrader 2.0 development starts:
+    // if (useFeatureFlags().is_dtrader_v2_enabled)
+    //     return (
+    //         <React.Fragment>
+    //             <Text as='p' size='xl'>
+    //                 Hello! I am Reports page for DTrader 2.0.
+    //             </Text>
+    //             <div>
+    //                 {selected_route?.component && (
+    //                     <selected_route.component icon_component={selected_route.icon_component} />
+    //                 )}
+    //             </div>
+    //         </React.Fragment>
+    //     );
     return (
         <FadeWrapper is_visible={is_reports_visible} className='reports-page-wrapper' keyname='reports-page-wrapper'>
             <div className='reports'>

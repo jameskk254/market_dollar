@@ -1,17 +1,17 @@
 import React from 'react';
 import { MobileFullPageModal, Modal, Tabs } from '@deriv/components';
-import { isMobile } from '@deriv/shared';
-import { observer } from '@deriv/stores';
+import { observer, useStore } from '@deriv/stores';
 import { localize } from '@deriv/translations';
 import { tabs_title } from 'Constants/load-modal';
 import { useDBotStore } from 'Stores/useDBotStore';
-import GoogleDrive from '../dashboard/dashboard-component/load-bot-preview/google-drive';
+import GoogleDrive from '../../pages/dashboard/load-bot-preview/google-drive';
 import Local from './local';
 import LocalFooter from './local-footer';
 import Recent from './recent';
 import RecentFooter from './recent-footer';
 
 const LoadModal = observer(() => {
+    const { ui } = useStore();
     const { load_modal, dashboard } = useDBotStore();
     const {
         active_index,
@@ -24,14 +24,15 @@ const LoadModal = observer(() => {
         tab_name,
     } = load_modal;
     const { setPreviewOnPopup } = dashboard;
+    const { is_mobile } = ui;
     const header_text = localize('Load strategy');
 
-    if (isMobile()) {
+    if (is_mobile) {
         return (
             <MobileFullPageModal
                 is_modal_open={is_load_modal_open}
                 className='load-strategy__wrapper'
-                header={localize('Load strategy')}
+                header={header_text}
                 onClickClose={() => {
                     setPreviewOnPopup(false);
                     toggleLoadModal();
@@ -51,7 +52,7 @@ const LoadModal = observer(() => {
         );
     }
 
-    const has_loaded_file = loaded_local_file && tab_name === tabs_title.TAB_LOCAL;
+    const is_file_loaded = !!loaded_local_file && tab_name === tabs_title.TAB_LOCAL;
     const has_recent_strategies = recent_strategies.length > 0 && tab_name === tabs_title.TAB_RECENT;
 
     return (
@@ -83,7 +84,7 @@ const LoadModal = observer(() => {
                     <RecentFooter />
                 </Modal.Footer>
             )}
-            {has_loaded_file && (
+            {is_file_loaded && (
                 <Modal.Footer has_separator>
                     <LocalFooter />
                 </Modal.Footer>

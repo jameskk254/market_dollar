@@ -1,6 +1,7 @@
 import {
     WS,
     getPropertyValue,
+    getSortedTradeTypes,
     cloneObject,
     isTimeValid,
     minDate,
@@ -11,12 +12,13 @@ import {
     hasIntradayDurationUnit,
     buildForwardStartingConfig,
     unsupported_contract_types_list,
+    getCleanedUpCategories,
     getContractCategoriesConfig,
     getContractTypesConfig,
     getContractSubtype,
     getLocalizedBasis,
-    LocalStore,
-    TRADE_FEATURE_FLAGS,
+    TTradeTypesCategories,
+    TRADE_TYPES,
 } from '@deriv/shared';
 import ServerTime from '_common/base/server_time';
 import { localize } from '@deriv/translations';
@@ -24,12 +26,6 @@ import { isSessionAvailable } from './start-date';
 import { ContractsFor, ContractsForSymbolResponse, TradingTimes, TradingTimesResponse } from '@deriv/api-types';
 import { TTradeStore } from '../../../../Types/common-prop.type';
 
-type TAvailableCategories = {
-    [key: string]: {
-        name: string;
-        categories: Array<string | TTextValueStrings>;
-    };
-};
 type TBarriers = Record<
     keyof TTradeStore['duration_min_max'],
     {
@@ -51,6 +47,7 @@ type TConfig = ReturnType<typeof getContractTypesConfig>[string]['config'] & {
     cancellation_range?: string[];
     barrier_choices?: string[];
 };
+type TNonAvailableContractsList = Record<'contract_category' | 'contract_display_name' | 'contract_type', string>[];
 type TTextValueStrings = {
     text: string;
     value: string;
@@ -83,14 +80,15 @@ export const ContractType = (() => {
         ReturnType<typeof getEqualProps>;
 
     let available_contract_types: ReturnType<typeof getContractTypesConfig> = {};
-    let available_categories: TAvailableCategories = {};
+    let available_categories: TTradeTypesCategories = {};
     let contract_types: ReturnType<typeof getContractTypesConfig>;
+    let non_available_categories: TTradeTypesCategories = {};
     const trading_events: { [key: string]: Record<string, TEvents | undefined> } = {};
     const trading_times: { [key: string]: Record<string, TTimes> } = {};
     let has_only_forward_starting_contracts = false;
 
     const buildContractTypesConfig = (symbol: string): Promise<void> =>
-        WS.storage.contractsFor(symbol).then((r: Required<ContractsForSymbolResponse>) => {
+        WS.contractsFor(symbol).then((r: Required<ContractsForSymbolResponse>) => {
             const has_contracts = getPropertyValue(r, ['contracts_for']);
             has_only_forward_starting_contracts =
                 has_contracts && !r.contracts_for.available.find(contract => contract.start_type !== 'forward');
@@ -140,22 +138,34 @@ export const ContractType = (() => {
 
                 available_contract_types[type].config = config;
             });
-            const hidden_trade_types = Object.entries(LocalStore.getObject('FeatureFlagsStore')?.data ?? {})
-                .filter(([key, value]) => TRADE_FEATURE_FLAGS.includes(key) && !value)
-                .map(([key]) => key);
-            // cleanup categories
-            Object.keys(available_categories).forEach(key => {
-                available_categories[key].categories = available_categories[key].categories?.filter(item => {
-                    return (
-                        typeof item === 'object' &&
-                        // hide trade types with disabled feature flag:
-                        hidden_trade_types?.every(hidden_type => !item.value.startsWith(hidden_type))
+            available_categories = getCleanedUpCategories(available_categories);
+
+            non_available_categories = {};
+            const mutable_contracts_config = cloneObject(contract_categories);
+            const getCategories = (key = ''): string[] => mutable_contracts_config[key]?.categories ?? [];
+            const non_available_contracts = r.contracts_for.non_available as TNonAvailableContractsList;
+
+            if (non_available_contracts) {
+                non_available_contracts.forEach(({ contract_type }) => {
+                    const type =
+                        Object.keys(contract_types).find(key =>
+                            contract_types[key].trade_types.includes(contract_type)
+                        ) ?? '';
+                    const key = Object.keys(mutable_contracts_config).find(key => getCategories(key).includes(type));
+                    const categories: Array<string | TTextValueStrings> = getCategories(key);
+                    const title = contract_types[type]?.title;
+                    const is_available = !!available_categories[key as keyof TTradeTypesCategories]?.categories?.find(
+                        el => (el as TTextValueStrings).text === title
                     );
+                    if (categories.includes(type) && !is_available) {
+                        categories[categories.indexOf(type)] = { value: type, text: title };
+                    }
+                    if (key) {
+                        non_available_categories[key] = mutable_contracts_config[key];
+                    }
                 });
-                if (available_categories[key].categories?.length === 0) {
-                    delete available_categories[key];
-                }
-            });
+            }
+            non_available_categories = getCleanedUpCategories(non_available_categories);
         });
 
     const buildTradeTypesConfig = (
@@ -238,14 +248,17 @@ export const ContractType = (() => {
         };
     };
 
-    const getContractType = (list: TAvailableCategories, contract_type: string) => {
-        const arr_list: string[] = Object.keys(list || {})
+    const getContractType = (list: TTradeTypesCategories, contractType: string) => {
+        const filteredList = Object.keys(list || {})
             .reduce<string[]>((k, l) => [...k, ...(list[l].categories as TTextValueStrings[]).map(ct => ct.value)], [])
-            .filter(type => unsupported_contract_types_list.indexOf(type) === -1)
-            .sort((a, b) => (a === 'multiplier' || b === 'multiplier' ? -1 : 0));
+            .filter(
+                type =>
+                    !unsupported_contract_types_list.includes(type as typeof unsupported_contract_types_list[number])
+            );
+        const sortedList = getSortedTradeTypes(filteredList);
 
         return {
-            contract_type: getArrayDefaultValue(arr_list, contract_type),
+            contract_type: getArrayDefaultValue(sortedList, contractType),
         };
     };
 
@@ -548,10 +561,12 @@ export const ContractType = (() => {
             }
 
             // For contracts with a duration of more that 24 hours must set the expiry_time to the market's close time on the expiry date.
-            if (!start_date && ServerTime.get().isBefore(buildMoment(expiry_date), 'day')) {
+            if (!start_date && ServerTime.get()?.isBefore(buildMoment(expiry_date), 'day')) {
                 end_time = market_close_time;
             } else {
-                const start_moment = start_date ? buildMoment(start_date, start_time) : ServerTime.get();
+                const start_moment = start_date
+                    ? buildMoment(start_date, start_time)
+                    : (ServerTime.get() as moment.Moment);
                 const end_moment = buildMoment(expiry_date, expiry_time);
 
                 end_time = end_moment.format('HH:mm');
@@ -646,7 +661,7 @@ export const ContractType = (() => {
         const arr_cancellation_range: string[] =
             getPropertyValue(available_contract_types, [contract_type, 'config', 'cancellation_range']) || [];
         const cached_multipliers_cancellation: string[] =
-            getPropertyValue(available_contract_types, ['multiplier', 'config', 'cancellation_range']) || [];
+            getPropertyValue(available_contract_types, [TRADE_TYPES.MULTIPLIER, 'config', 'cancellation_range']) || [];
         const regex = /(^(?:\d){1,})|((?:[a-zA-Z]){1,}$)/g;
         const getText = (str: string) => {
             const [duration, unit] = str.match(regex) ?? [];
@@ -699,6 +714,7 @@ export const ContractType = (() => {
         getContractCategories: () => ({
             contract_types_list: available_categories,
             has_only_forward_starting_contracts,
+            non_available_contract_types_list: non_available_categories,
         }),
     };
 })();

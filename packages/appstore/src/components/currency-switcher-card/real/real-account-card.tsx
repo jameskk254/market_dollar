@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router';
 import { Button, Text } from '@deriv/components';
-import { formatMoney, getCurrencyName, routes } from '@deriv/shared';
+import { getCurrencyName, routes } from '@deriv/shared';
 import { Localize } from '@deriv/translations';
 import BalanceText from 'Components/elements/text/balance-text';
 import CurrencySwitcherContainer from 'Components/containers/currency-switcher-container';
@@ -26,15 +26,18 @@ const RealAccountCard = observer(() => {
         .map(key => current_list[key])
         .some(account => account.landing_company_short === 'maltainvest');
 
-    const get_currency = (IsIconCurrency(currency?.toUpperCase()) && currency) || 'USD';
+    const uppercase_currency = currency?.toUpperCase();
+    const get_currency = IsIconCurrency(uppercase_currency) ? uppercase_currency : 'Unknown';
 
     return (
         <CurrencySwitcherContainer
             className='demo-account-card'
             title={
-                <Text size='xs' line_height='s'>
-                    {getCurrencyName(currency)}
-                </Text>
+                currency ? (
+                    <BalanceText currency={get_currency} balance={Number(balance)} size='xs' />
+                ) : (
+                    'No currency assigned'
+                )
             }
             icon={get_currency}
             onClick={() => {
@@ -44,20 +47,27 @@ const RealAccountCard = observer(() => {
                 return openModal('currency_selection');
             }}
             actions={
-                <Button
-                    onClick={(e: MouseEvent) => {
-                        e.stopPropagation();
-                        history.push(`${routes.cashier_deposit}#deposit`);
-                    }}
-                    secondary
-                    className='currency-switcher__button'
-                >
-                    <Localize key={`currency-switcher__button-text-${current_language}`} i18n_default_text='Deposit' />
-                </Button>
+                currency && (
+                    <Button
+                        onClick={(e: MouseEvent) => {
+                            e.stopPropagation();
+                            history.push(`${routes.cashier_deposit}#deposit`);
+                        }}
+                        secondary
+                        className='currency-switcher__button'
+                    >
+                        <Localize
+                            key={`currency-switcher__button-text-${current_language}`}
+                            i18n_default_text='Deposit'
+                        />
+                    </Button>
+                )
             }
             has_interaction
         >
-            <BalanceText currency={get_currency} balance={formatMoney(currency, balance, true)} size='xs' />
+            <Text color='primary' size='xs' line_height='s'>
+                {getCurrencyName(currency)}
+            </Text>
         </CurrencySwitcherContainer>
     );
 });

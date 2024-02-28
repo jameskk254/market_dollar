@@ -1,10 +1,16 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
+import { isMobile, isDesktop, TRADE_TYPES } from '@deriv/shared';
 import Display from '../contract-type-display';
 
 jest.mock('@deriv/components', () => ({
     ...jest.requireActual('@deriv/components'),
     Icon: () => <div>MockedIcon</div>,
+}));
+jest.mock('@deriv/shared', () => ({
+    ...jest.requireActual('@deriv/shared'),
+    isMobile: jest.fn(() => false),
+    isDesktop: jest.fn(() => true),
 }));
 
 jest.mock('Assets/Trading/Categories/icon-trade-categories', () => jest.fn(() => 'IconTradeCategories'));
@@ -14,7 +20,7 @@ const list = [
         contract_types: [
             {
                 text: 'Multipliers',
-                value: 'multiplier',
+                value: TRADE_TYPES.MULTIPLIER,
             },
         ],
         icon: 'IcMultiplier',
@@ -25,11 +31,11 @@ const list = [
         contract_types: [
             {
                 text: 'Rise/Fall',
-                value: 'rise_fall',
+                value: TRADE_TYPES.RISE_FALL,
             },
             {
                 text: 'Rise/Fall',
-                value: 'rise_fall_equal',
+                value: TRADE_TYPES.RISE_FALL_EQUAL,
             },
         ],
         icon: 'IcUpsDowns',
@@ -40,11 +46,11 @@ const list = [
         contract_types: [
             {
                 text: 'Higher/Lower',
-                value: 'high_low',
+                value: TRADE_TYPES.HIGH_LOW,
             },
             {
                 text: 'Touch/No Touch',
-                value: 'touch',
+                value: TRADE_TYPES.TOUCH,
             },
         ],
         icon: 'IcHighsLows',
@@ -55,15 +61,15 @@ const list = [
         contract_types: [
             {
                 text: 'Matches/Differs',
-                value: 'match_diff',
+                value: TRADE_TYPES.MATCH_DIFF,
             },
             {
                 text: 'Even/Odd',
-                value: 'even_odd',
+                value: TRADE_TYPES.EVEN_ODD,
             },
             {
                 text: 'Over/Under',
-                value: 'over_under',
+                value: TRADE_TYPES.OVER_UNDER,
             },
         ],
         icon: 'IcDigits',
@@ -74,7 +80,7 @@ const list = [
 
 const mocked_props = {
     onClick: jest.fn(),
-    value: 'rise_fall',
+    value: TRADE_TYPES.RISE_FALL,
     is_open: false,
 };
 
@@ -92,13 +98,18 @@ describe('<Display />', () => {
         expect(screen.getByText('Rise/Fall')).toBeInTheDocument();
     });
     it('should render contract_type that matches text of mocked input value', () => {
-        mocked_props.value = 'over_under';
-        render(<Display name='contract-type-display' list={list} {...mocked_props} />);
+        render(<Display name='contract-type-display' list={list} {...mocked_props} value={TRADE_TYPES.OVER_UNDER} />);
         expect(screen.getByText('Over/Under')).toBeInTheDocument();
     });
     it('should have contract-type-widget__display--clicked class when is_open is true', () => {
-        mocked_props.is_open = true;
-        render(<Display name='contract-type-display' list={list} {...mocked_props} />);
+        render(<Display name='contract-type-display' list={list} {...mocked_props} is_open />);
         expect(screen.getByTestId('dt_contract_dropdown')).toHaveClass('contract-type-widget__display--clicked');
+    });
+    it('should render icon if it is mobile', () => {
+        (isMobile as jest.Mock).mockReturnValue(true);
+        (isDesktop as jest.Mock).mockReturnValue(false);
+        render(<Display name='contract-type-display' list={list} {...mocked_props} is_open />);
+
+        expect(screen.getByText(/mockedicon/i)).toBeInTheDocument();
     });
 });

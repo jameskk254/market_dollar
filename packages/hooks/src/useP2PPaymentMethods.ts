@@ -8,12 +8,16 @@ const type_to_icon_mapper = {
     ewallet: 'IcCashierEwallet',
 };
 
-/** A custom hook that return the list of P2P available payment methods */
+/**
+ * @deprecated This hook is deprecated. Please use the one from the `api` package instead.
+ * A custom hook that return the list of P2P available payment methods */
 const useP2PPaymentMethods = () => {
     const { client } = useStore();
     const { is_authorize } = client;
 
-    const { data, ...rest } = useFetch('p2p_payment_methods', { options: { enabled: is_authorize } });
+    const { data, ...rest } = useFetch('p2p_payment_methods', {
+        options: { enabled: is_authorize, refetchOnWindowFocus: false },
+    });
 
     // Modify the data to add additional information.
     const modified_data = React.useMemo(() => {

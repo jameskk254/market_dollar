@@ -6,6 +6,8 @@ import { reaction } from 'mobx';
 import { observer, useStore } from '@deriv/stores';
 import { Localize } from 'Components/i18next';
 import TableError from 'Components/section-error';
+import { api_error_codes } from 'Constants/api-error-codes';
+import { useP2PRenderedAdverts } from 'Hooks';
 import { useStores } from 'Stores';
 import BuySellRow from './buy-sell-row.jsx';
 import NoAds from 'Pages/buy-sell//no-ads';
@@ -27,14 +29,13 @@ const BuySellRowRendererComponent = row_props => {
 const BuySellRowRenderer = observer(BuySellRowRendererComponent);
 
 const BuySellTable = ({ onScroll }) => {
-    const { buy_sell_store, my_profile_store } = useStores();
+    const { buy_sell_store, general_store } = useStores();
     const {
         client: { currency },
     } = useStore();
 
     React.useEffect(
         () => {
-            my_profile_store.getPaymentMethodsList();
             reaction(
                 () => buy_sell_store.is_buy,
                 () => buy_sell_store.fetchAdvertiserAdverts(),
@@ -45,17 +46,28 @@ const BuySellTable = ({ onScroll }) => {
         []
     );
 
-    if (buy_sell_store.is_loading) {
+    const { error, has_more_items_to_load, isError, isLoading, loadMoreAdverts, rendered_adverts } =
+        useP2PRenderedAdverts();
+
+    React.useEffect(() => {
+        if (error?.code === api_error_codes.PERMISSION_DENIED) {
+            general_store.setIsBlocked(true);
+        }
+    }, [error?.code]);
+
+    if (isLoading) {
         return <Loading is_fullscreen={false} />;
     }
 
-    if (buy_sell_store.api_error_message) {
-        return (
-            <TableError message={buy_sell_store.api_error_message} className='section-error__table--center' size='xs' />
-        );
+    if (isError) {
+        return <TableError message={error.message} className='section-error__table--center' size='xs' />;
     }
 
-    if (buy_sell_store.items.length) {
+    // Need to cater for the extra element added to the list for mobile i.e. the "WATCH_THIS_SPACE".
+    // Otherwise, the "No ads for this currency" message won't be displayed for mobile, when there are no ads for the selected currency.
+    const rendered_adverts_count = isDesktop() ? rendered_adverts.length : rendered_adverts.length - 1;
+
+    if (rendered_adverts_count > 0) {
         return (
             <>
                 <Table className='buy-sell-table'>
@@ -107,11 +119,11 @@ const BuySellTable = ({ onScroll }) => {
                     <Table.Body className='buy-sell-table__body'>
                         <InfiniteDataList
                             data_list_className='buy-sell__data-list'
-                            items={buy_sell_store.rendered_items}
+                            items={rendered_adverts}
                             rowRenderer={props => <BuySellRowRenderer {...props} />}
-                            loadMoreRowsFn={buy_sell_store.loadMoreItems}
+                            loadMoreRowsFn={loadMoreAdverts}
                             has_filler
-                            has_more_items_to_load={buy_sell_store.has_more_items_to_load}
+                            has_more_items_to_load={has_more_items_to_load}
                             keyMapperFn={item => item.id}
                             onScroll={onScroll}
                         />

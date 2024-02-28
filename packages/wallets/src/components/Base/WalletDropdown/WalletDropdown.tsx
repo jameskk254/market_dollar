@@ -2,115 +2,176 @@ import React, { useCallback, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { useCombobox } from 'downshift';
 import ArrowIcon from '../../../public/images/pointed-down-arrow-icon.svg';
-import reactNodeToString from '../../../utils/reactNodeToString';
+import { TGenericSizes } from '../../../types';
+import reactNodeToString from '../../../utils/react-node-to-string';
 import { WalletText } from '../WalletText';
+import WalletTextField, { WalletTextFieldProps } from '../WalletTextField/WalletTextField';
 import './WalletDropdown.scss';
 
 type TProps = {
+    disabled?: boolean;
+    errorMessage?: WalletTextFieldProps['errorMessage'];
     icon?: React.ReactNode;
-    label?: React.ReactNode;
+    inputWidth?: string;
+    isRequired?: boolean;
+    label?: WalletTextFieldProps['label'];
     list: {
-        text: React.ReactNode;
-        value: string;
+        listItem?: React.ReactNode;
+        text?: React.ReactNode;
+        value?: string;
     }[];
-    listHeight?: 'lg' | 'md' | 'sm';
+    listHeader?: React.ReactNode;
+    listHeight?: Extract<TGenericSizes, 'lg' | 'md' | 'sm'>;
+    name: WalletTextFieldProps['name'];
+    onChange?: (inputValue: string) => void;
     onSelect: (value: string) => void;
-    type?: 'comboBox' | 'prompt';
-    value: string | undefined;
+    showListHeader?: boolean;
+    showMessageContainer?: boolean;
+    typeVariant?: 'listcard' | 'normal';
+    value?: WalletTextFieldProps['value'];
+    variant?: 'comboBox' | 'prompt';
 };
 
 const WalletDropdown: React.FC<TProps> = ({
-    icon,
+    disabled,
+    errorMessage,
+    icon = false,
+    inputWidth,
+    isRequired = false,
     label,
     list,
+    listHeader,
     listHeight = 'md',
+    name,
+    onChange,
     onSelect,
-    type = 'prompt',
+    showListHeader = false,
+    showMessageContainer = true,
+    typeVariant = 'normal',
     value,
+    variant = 'prompt',
 }) => {
     const [items, setItems] = useState(list);
+    const [hasSelected, setHasSelected] = useState(false);
     const [shouldFilterList, setShouldFilterList] = useState(false);
     const clearFilter = useCallback(() => {
         setShouldFilterList(false);
         setItems(list);
     }, [list]);
-    const { getInputProps, getItemProps, getLabelProps, getMenuProps, getToggleButtonProps, isOpen } = useCombobox({
-        items,
-        itemToString(item) {
-            return item ? reactNodeToString(item.text) : '';
-        },
-        onInputValueChange({ inputValue }) {
-            if (shouldFilterList) {
-                setItems(
-                    list.filter(item =>
-                        reactNodeToString(item.text)
-                            .toLowerCase()
-                            .includes(inputValue?.toLowerCase() ?? '')
-                    )
-                );
-            }
-        },
-        onIsOpenChange({ isOpen }) {
-            if (!isOpen) {
-                clearFilter();
-            }
-        },
-        onSelectedItemChange({ selectedItem }) {
-            onSelect(selectedItem?.value ?? '');
-        },
-        selectedItem: items.find(item => item.value === value),
-    });
+    const { closeMenu, getInputProps, getItemProps, getMenuProps, getToggleButtonProps, isOpen, openMenu } =
+        useCombobox({
+            defaultSelectedItem: items.find(item => item.value === value) ?? null,
+            items,
+            itemToString(item) {
+                return item ? reactNodeToString(item.text) : '';
+            },
+            onInputValueChange({ inputValue }) {
+                onChange?.(inputValue ?? '');
+                if (shouldFilterList) {
+                    setItems(
+                        list.filter(item =>
+                            reactNodeToString(item.text)
+                                .toLowerCase()
+                                .includes(inputValue?.toLowerCase() ?? '')
+                        )
+                    );
+                }
+            },
+            onIsOpenChange({ isOpen }) {
+                if (!isOpen) {
+                    clearFilter();
+                }
+            },
+            onSelectedItemChange({ selectedItem }) {
+                onSelect(selectedItem?.value ?? '');
+                closeMenu();
+            },
+        });
+
+    const handleInputClick = useCallback(() => {
+        variant === 'comboBox' && setShouldFilterList(true);
+
+        if (isOpen) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    }, [closeMenu, isOpen, openMenu, variant]);
 
     useEffect(() => {
         setItems(list);
     }, [list]);
 
     return (
-        <div className='wallets-dropdown'>
-            <div className='wallets-dropdown__content'>
-                {icon && <div className='wallets-dropdown__icon'>{icon}</div>}
-                <input
-                    className='wallets-dropdown__field'
-                    id='dropdown-text'
+        <div
+            className={classNames('wallets-dropdown', {
+                'wallets-dropdown--disabled': disabled,
+            })}
+            {...getToggleButtonProps()}
+        >
+            <div
+                className={`wallets-dropdown__content ${
+                    typeVariant === 'listcard' ? 'wallets-dropdown__content--listcard' : ''
+                }`}
+            >
+                <WalletTextField
+                    disabled={disabled}
+                    errorMessage={hasSelected && !value && errorMessage}
+                    inputWidth={inputWidth}
+                    isInvalid={hasSelected && !value && isRequired}
+                    label={label}
+                    name={name}
+                    onClickCapture={handleInputClick}
+                    onFocus={() => setHasSelected(true)}
                     onKeyUp={() => setShouldFilterList(true)}
                     placeholder={reactNodeToString(label)}
-                    readOnly={type !== 'comboBox'}
+                    readOnly={variant !== 'comboBox'}
+                    renderLeftIcon={icon ? () => icon : undefined}
+                    renderRightIcon={() => (
+                        <button
+                            className={classNames('wallets-dropdown__button', {
+                                'wallets-dropdown__button--active': isOpen,
+                            })}
+                        >
+                            <ArrowIcon />
+                        </button>
+                    )}
+                    showMessageContainer={showMessageContainer}
                     type='text'
+                    typeVariant={typeVariant}
                     value={value}
                     {...getInputProps()}
                 />
-                <label
-                    className={classNames('wallets-dropdown__label', {
-                        'wallets-dropdown__label--with-icon': !!icon,
-                    })}
-                    htmlFor='dropdown-text'
-                    {...getLabelProps()}
-                >
-                    {label}
-                </label>
-                <button
-                    className={classNames('wallets-dropdown__button', {
-                        'wallets-dropdown__button--active': isOpen,
-                    })}
-                    {...getToggleButtonProps()}
-                >
-                    <ArrowIcon />
-                </button>
             </div>
-            <ul className={`wallets-dropdown__items wallets-dropdown__items--${listHeight}`} {...getMenuProps()}>
+            <ul
+                className={`wallets-dropdown__items wallets-dropdown__items--${listHeight} ${
+                    typeVariant === 'listcard' ? 'wallets-dropdown__items--listcard' : ''
+                }`}
+                {...getMenuProps()}
+            >
+                {isOpen && showListHeader && <div className='wallets-dropdown__list-header'>{listHeader}</div>}
                 {isOpen &&
                     items.map((item, index) => (
                         <li
-                            className={classNames('wallets-dropdown__item', {
-                                'wallets-dropdown__item--active': value === item.value,
-                            })}
+                            className={classNames(
+                                `wallets-dropdown__item ${
+                                    typeVariant === 'listcard' ? 'wallets-dropdown__item--listcard' : ''
+                                }`,
+                                {
+                                    'wallets-dropdown__item--active': value === item.value,
+                                }
+                            )}
                             key={item.value}
                             onClick={() => clearFilter()}
                             {...getItemProps({ index, item })}
                         >
-                            <WalletText size='sm' weight={value === item.value ? 'bold' : 'normal'}>
-                                {item.text}
-                            </WalletText>
+                            {item?.listItem ? (
+                                item?.listItem
+                            ) : (
+                                <WalletText size='sm' weight={value === item.value ? 'bold' : 'normal'}>
+                                    {item.text}
+                                </WalletText>
+                            )}
                         </li>
                     ))}
             </ul>

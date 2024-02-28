@@ -13,7 +13,7 @@ import {
 } from '@deriv/components';
 import { formatMoney, isDesktop, isMobile } from '@deriv/shared';
 import { observer, useStore } from '@deriv/stores';
-import { useExchangeRate } from '@deriv/hooks';
+import { useP2PExchangeRate } from '@deriv/hooks';
 import { reaction } from 'mobx';
 import FloatingRate from 'Components/floating-rate';
 import { Localize, localize } from 'Components/i18next';
@@ -23,7 +23,8 @@ import { useStores } from 'Stores';
 import CreateAdSummary from './create-ad-summary.jsx';
 import CreateAdFormPaymentMethods from './create-ad-form-payment-methods.jsx';
 import { useModalManagerContext } from 'Components/modal-manager/modal-manager-context';
-import { api_error_codes } from '../../constants/api-error-codes.js';
+import { api_error_codes } from 'Constants/api-error-codes';
+import OrderTimeSelection from './order-time-selection';
 import './create-ad-form.scss';
 
 const CreateAdFormWrapper = ({ children }) => {
@@ -43,7 +44,8 @@ const CreateAdForm = () => {
     const should_not_show_auto_archive_message_again = React.useRef(false);
     const [selected_methods, setSelectedMethods] = React.useState([]);
     const { useRegisterModalProps } = useModalManagerContext();
-    const { getRate } = useExchangeRate();
+    const local_currency = local_currency_config.currency;
+    const exchange_rate = useP2PExchangeRate(local_currency);
 
     // eslint-disable-next-line no-shadow
     const handleSelectPaymentMethods = selected_methods => {
@@ -96,7 +98,7 @@ const CreateAdForm = () => {
         const disposeApiErrorReaction = reaction(
             () => my_ads_store.api_error_message,
             () => {
-                if (my_ads_store.api_error_message) general_store.showModal({ key: 'CreateAdErrorModal', props: {} });
+                if (my_ads_store.api_error_message) general_store.showModal({ key: 'AdCreateEditErrorModal' });
             }
         );
         // P2P configuration is not subscribable. Hence need to fetch it on demand
@@ -132,18 +134,15 @@ const CreateAdForm = () => {
                     max_transaction: '',
                     min_transaction: '',
                     offer_amount: '',
+                    order_completion_time: general_store.order_payment_period,
                     payment_info: my_ads_store.payment_info,
                     rate_type: floating_rate_store.rate_type === ad_type.FLOAT ? '-0.01' : '',
                     type: buy_sell_store.create_sell_ad_from_no_ads ? buy_sell.SELL : buy_sell.BUY,
                 }}
                 onSubmit={my_ads_store.handleSubmit}
                 validate={my_ads_store.validateCreateAdForm}
-                initialErrors={{
-                    // Pass one error to ensure Post ad button is disabled initially.
-                    offer_amount: true,
-                }}
             >
-                {({ errors, handleChange, isSubmitting, isValid, setFieldValue, touched, values }) => {
+                {({ errors, handleChange, isSubmitting, isValid, setFieldTouched, setFieldValue, touched, values }) => {
                     const is_sell_advert = values.type === buy_sell.SELL;
 
                     const onChangeAdTypeHandler = user_input => {
@@ -191,7 +190,7 @@ const CreateAdForm = () => {
                                             <CreateAdSummary
                                                 market_feed={
                                                     floating_rate_store.rate_type === ad_type.FLOAT
-                                                        ? getRate(local_currency_config.currency)
+                                                        ? exchange_rate
                                                         : null
                                                 }
                                                 offer_amount={errors.offer_amount ? '' : values.offer_amount}
@@ -221,6 +220,7 @@ const CreateAdForm = () => {
                                                                     {currency}
                                                                 </Text>
                                                             }
+                                                            onFocus={() => setFieldTouched('offer_amount', true)}
                                                             onChange={e => {
                                                                 my_ads_store.restrictLength(e, handleChange);
                                                             }}
@@ -243,7 +243,6 @@ const CreateAdForm = () => {
                                                                       )
                                                             }
                                                             is_relative_hint
-                                                            required
                                                         />
                                                     )}
                                                 </Field>
@@ -255,8 +254,9 @@ const CreateAdForm = () => {
                                                                 data_testid='float_rate_type'
                                                                 error_messages={errors.rate_type}
                                                                 fiat_currency={currency}
-                                                                local_currency={local_currency_config.currency}
+                                                                local_currency={local_currency}
                                                                 onChange={handleChange}
+                                                                onFocus={() => setFieldTouched('rate_type', true)}
                                                                 offset={{
                                                                     upper_limit: parseInt(
                                                                         floating_rate_store.float_rate_offset_limit
@@ -290,12 +290,13 @@ const CreateAdForm = () => {
                                                                         }
                                                                         size={isDesktop() ? 'xxs' : 's'}
                                                                     >
-                                                                        {local_currency_config.currency}
+                                                                        {local_currency}
                                                                     </Text>
                                                                 }
                                                                 onChange={e => {
                                                                     my_ads_store.restrictLength(e, handleChange);
                                                                 }}
+                                                                onFocus={() => setFieldTouched('rate_type', true)}
                                                                 required
                                                             />
                                                         )
@@ -324,6 +325,7 @@ const CreateAdForm = () => {
                                                             onChange={e => {
                                                                 my_ads_store.restrictLength(e, handleChange);
                                                             }}
+                                                            onFocus={() => setFieldTouched('min_transaction', true)}
                                                             required
                                                         />
                                                     )}
@@ -349,6 +351,7 @@ const CreateAdForm = () => {
                                                             onChange={e => {
                                                                 my_ads_store.restrictLength(e, handleChange);
                                                             }}
+                                                            onFocus={() => setFieldTouched('max_transaction', true)}
                                                             required
                                                         />
                                                     )}
@@ -376,6 +379,7 @@ const CreateAdForm = () => {
                                                                 required
                                                                 has_character_counter
                                                                 max_characters={300}
+                                                                onFocus={() => setFieldTouched('contact_info', true)}
                                                             />
                                                         )}
                                                     </Field>
@@ -404,9 +408,15 @@ const CreateAdForm = () => {
                                                         }
                                                         has_character_counter
                                                         max_characters={300}
+                                                        onFocus={() =>
+                                                            setFieldTouched('default_advert_description', true)
+                                                        }
                                                         required
                                                     />
                                                 )}
+                                            </Field>
+                                            <Field name='order_completion_time'>
+                                                {({ field }) => <OrderTimeSelection {...field} />}
                                             </Field>
                                             <div className='create-ad-form__payment-methods--text'>
                                                 <Text color='prominent'>

@@ -1,18 +1,18 @@
 import React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { reaction } from 'mobx';
+import { useP2PCompletedOrdersNotification } from '@deriv/hooks';
 import { useStore, observer } from '@deriv/stores';
 import { getLanguage } from '@deriv/translations';
 import { Loading } from '@deriv/components';
 import { routes, WS } from '@deriv/shared';
-import ServerTime from 'Utils/server-time';
 import { init } from 'Utils/server_time';
 import { waitWS } from 'Utils/websocket';
 import { useStores } from 'Stores';
 import AppContent from 'Components/app-content.jsx';
 import { setLanguage } from 'Components/i18next';
 import { ModalManager, ModalManagerContextProvider } from 'Components/modal-manager';
-import Routes from 'Components/routes/routes.jsx';
+import Routes from 'Components/routes';
 import './app.scss';
 
 const App = () => {
@@ -33,6 +33,8 @@ const App = () => {
     const [order_id, setOrderId] = React.useState(null);
     const [action_param, setActionParam] = React.useState();
     const [code_param, setCodeParam] = React.useState();
+
+    useP2PCompletedOrdersNotification();
 
     React.useEffect(() => {
         init();
@@ -73,8 +75,6 @@ const App = () => {
             history.push(routes.p2p_my_profile);
         }
 
-        ServerTime.init(general_store.server_time);
-
         // force safari refresh on back/forward
         window.onpageshow = function (event) {
             if (event.persisted) {
@@ -90,10 +90,8 @@ const App = () => {
             }
         });
 
-        if (/\/p2p$/.test(location.pathname)) {
-            history.push(routes.p2p_buy_sell);
-            general_store.setActiveIndex(0);
-        } else if (/\/orders$/.test(location.pathname)) {
+        // Redirect to the correct tab based on the url on page load
+        if (/\/orders$/.test(location.pathname)) {
             history.push(routes.p2p_orders);
             general_store.setActiveIndex(1);
         } else if (/\/my-ads$/.test(location.pathname)) {
@@ -105,10 +103,22 @@ const App = () => {
         } else if (/\/advertiser$/.test(location.pathname)) {
             if (location.search || general_store.counterparty_advertiser_id) {
                 const url_params = new URLSearchParams(location.search);
+                const id = url_params.get('id');
+                const advert_id = url_params.get('advert_id');
 
-                // DO NOT REMOVE. This will prevent the page from redirecting to buy sell on reload from advertiser page
-                // as it resets the URL search params
-                history.replace({ pathname: routes.p2p_advertiser_page, search: `?id=${url_params.get('id')}` });
+                general_store.setCounterpartyAdvertiserId(id);
+
+                if (advert_id) {
+                    general_store.setCounterpartyAdvertId(advert_id);
+                    history.replace({
+                        pathname: routes.p2p_advertiser_page,
+                        search: `?id=${id}&advert_id=${advert_id}`,
+                    });
+                } else {
+                    // DO NOT REMOVE. This will prevent the page from redirecting to buy sell on reload from advertiser page
+                    // as it resets the URL search params
+                    history.replace({ pathname: routes.p2p_advertiser_page, search: `?id=${id}` });
+                }
             } else {
                 history.push(routes.p2p_buy_sell);
             }
@@ -120,6 +130,15 @@ const App = () => {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    // Redirect to /p2p/buy-sell if user navigates to /p2p without a subroute
+    React.useEffect(() => {
+        if (/\/p2p$/.test(location.pathname) || location.pathname === '/cashier/p2p/') {
+            history.push(routes.p2p_buy_sell);
+            general_store.setActiveIndex(0);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.pathname]);
 
     React.useEffect(() => {
         const url_params = new URLSearchParams(location.search);
@@ -239,19 +258,17 @@ const App = () => {
     }, [action_param, code_param]);
 
     if (is_logging_in || general_store.is_loading) {
-        return <Loading is_fullscreen />;
+        return <Loading className='p2p__loading' is_fullscreen={false} />;
     }
 
     return (
-        <>
-            <main className='p2p'>
-                <ModalManagerContextProvider>
-                    <ModalManager />
-                    <AppContent order_id={order_id} />
-                    <Routes />
-                </ModalManagerContextProvider>
-            </main>
-        </>
+        <main className='p2p'>
+            <ModalManagerContextProvider>
+                <ModalManager />
+                <AppContent order_id={order_id} />
+                <Routes />
+            </ModalManagerContextProvider>
+        </main>
     );
 };
 

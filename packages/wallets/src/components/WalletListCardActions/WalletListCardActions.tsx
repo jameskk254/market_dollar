@@ -1,16 +1,15 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useAuthorize } from '@deriv/api';
+import { useActiveWalletAccount } from '@deriv/api-v2';
 import useDevice from '../../hooks/useDevice';
 import IcCashierAdd from '../../public/images/ic-cashier-deposit.svg';
 import IcCashierStatement from '../../public/images/ic-cashier-statement.svg';
 import IcCashierTransfer from '../../public/images/ic-cashier-transfer.svg';
 import IcCashierWithdrawal from '../../public/images/ic-cashier-withdrawal.svg';
-import { THooks } from '../../types';
-import { WalletButton, WalletText } from '../Base';
+import { IconButton, WalletButton, WalletText } from '../Base';
 import './WalletListCardActions.scss';
 
-const getWalletHeaderButtons = (isDemo: boolean, handleAction?: () => void) => {
+const getWalletHeaderButtons = (isDemo?: boolean) => {
     const buttons = [
         {
             icon: <IcCashierAdd />,
@@ -37,22 +36,22 @@ const getWalletHeaderButtons = (isDemo: boolean, handleAction?: () => void) => {
     // Filter out the "Withdraw" button when is_demo is true
     const filteredButtons = isDemo ? buttons.filter(button => button.name !== 'withdraw') : buttons;
 
-    return filteredButtons.map(button => ({
-        ...button,
-        action: () => handleAction?.(),
-    }));
+    const orderForDemo = ['transfer', 'transactions', 'reset-balance'];
+
+    const sortedButtons = isDemo
+        ? [...filteredButtons].sort((a, b) => orderForDemo.indexOf(a.name) - orderForDemo.indexOf(b.name))
+        : filteredButtons;
+
+    return sortedButtons;
 };
 
-type TProps = {
-    isActive: THooks.WalletAccountsList['is_active'];
-    isDemo: THooks.WalletAccountsList['is_virtual'];
-    loginid: THooks.WalletAccountsList['loginid'];
-};
-
-const WalletListCardActions: React.FC<TProps> = ({ isActive, isDemo, loginid }) => {
-    const { switchAccount } = useAuthorize();
+const WalletListCardActions = () => {
+    const { data: activeWallet } = useActiveWalletAccount();
     const { isMobile } = useDevice();
     const history = useHistory();
+
+    const isActive = activeWallet?.is_active;
+    const isDemo = activeWallet?.is_virtual;
 
     if (isMobile)
         return (
@@ -60,15 +59,17 @@ const WalletListCardActions: React.FC<TProps> = ({ isActive, isDemo, loginid }) 
                 <div className='wallets-mobile-actions'>
                     {getWalletHeaderButtons(isDemo).map(button => (
                         <div className='wallets-mobile-actions-content' key={button.name}>
-                            <button
+                            <IconButton
+                                aria-label={button.name}
                                 className='wallets-mobile-actions-content-icon'
-                                key={button.name}
+                                color='transparent'
+                                icon={button.icon}
+                                isRound
                                 onClick={() => {
                                     history.push(`/wallets/cashier/${button.name}`);
                                 }}
-                            >
-                                {button.icon}
-                            </button>
+                                size='lg'
+                            />
                             <WalletText size='sm'>{button.text}</WalletText>
                         </div>
                     ))}
@@ -80,16 +81,17 @@ const WalletListCardActions: React.FC<TProps> = ({ isActive, isDemo, loginid }) 
         <div className='wallets-header__actions'>
             {getWalletHeaderButtons(isDemo).map(button => (
                 <WalletButton
+                    ariaLabel={button.name}
                     icon={button.icon}
                     key={button.name}
                     onClick={() => {
-                        switchAccount(loginid);
                         history.push(`/wallets/cashier/${button.name}`);
                     }}
                     rounded='md'
-                    text={isActive ? button.text : undefined}
                     variant='outlined'
-                />
+                >
+                    {isActive ? button.text : ''}
+                </WalletButton>
             ))}
         </div>
     );

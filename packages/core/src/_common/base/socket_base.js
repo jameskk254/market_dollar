@@ -8,7 +8,6 @@ const { getLanguage } = require('@deriv/translations');
 const website_name = require('@deriv/shared').website_name;
 const SocketCache = require('./socket_cache');
 const APIMiddleware = require('./api_middleware');
-const { CFD_PLATFORMS } = require('@deriv/shared');
 
 /*
  * An abstraction layer over native javascript WebSocket,
@@ -40,6 +39,8 @@ const BinarySocketBase = (() => {
     const isReady = () => hasReadyState(1);
 
     const isClose = () => !binary_socket || hasReadyState(2, 3);
+
+    const blockRequest = value => deriv_api?.blockRequest(value);
 
     const close = () => {
         binary_socket.close();
@@ -179,6 +180,8 @@ const BinarySocketBase = (() => {
     const subscribeTransaction = cb => subscribe({ transaction: 1 }, cb);
 
     const subscribeWebsiteStatus = cb => subscribe({ website_status: 1 }, cb);
+
+    const getTicksHistory = request_object => deriv_api.send(request_object);
 
     const buyAndSubscribe = request => {
         return new Promise(resolve => {
@@ -364,8 +367,6 @@ const BinarySocketBase = (() => {
     const p2pSubscribe = (request, cb) => subscribe(request, cb);
     const accountStatistics = () => deriv_api.send({ account_statistics: 1 });
 
-    const realityCheck = () => deriv_api.send({ reality_check: 1 });
-
     const tradingServers = platform => deriv_api.send({ platform, trading_servers: 1 });
 
     const tradingPlatformAccountsList = platform =>
@@ -393,8 +394,7 @@ const BinarySocketBase = (() => {
         });
 
     const getServiceToken = (platform, server) => {
-        let temp_service = platform;
-        if (platform === CFD_PLATFORMS.DERIVEZ) temp_service = 'pandats';
+        const temp_service = platform;
 
         return deriv_api.send({
             service_token: 1,
@@ -437,6 +437,7 @@ const BinarySocketBase = (() => {
         },
         cache: delegateToObject({}, () => deriv_api.cache),
         storage: delegateToObject({}, () => deriv_api.storage),
+        blockRequest,
         buy,
         buyAndSubscribe,
         sell,
@@ -458,6 +459,7 @@ const BinarySocketBase = (() => {
         profitTable,
         statement,
         verifyEmail,
+        getTicksHistory,
         tradingPlatformPasswordChange,
         tradingPlatformPasswordReset,
         tradingPlatformAvailableAccounts,
@@ -485,7 +487,6 @@ const BinarySocketBase = (() => {
         fetchLoginHistory,
         closeAndOpenNewConnection,
         accountStatistics,
-        realityCheck,
         tradingServers,
         tradingPlatformAccountsList,
         tradingPlatformNewAccount,

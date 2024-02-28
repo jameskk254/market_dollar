@@ -1,32 +1,25 @@
 import moment from 'moment';
 import { WS } from '@deriv/shared';
-
-class PromiseClass {
-    promise: Promise<unknown>;
-    reject?: (reason?: unknown) => void;
-    resolve?: (value?: unknown) => void;
-
-    constructor() {
-        this.promise = new Promise((resolve, reject) => {
-            this.reject = reject;
-            this.resolve = resolve;
-        });
-    }
-}
+import { PromiseUtils } from '@deriv-com/utils';
 
 let clock_started = false;
-const pending = new PromiseClass();
+const pending = PromiseUtils.createPromise();
 let server_time: moment.Moment,
     performance_request_time: number,
     get_time_interval: ReturnType<typeof setInterval>,
     update_time_interval: ReturnType<typeof setInterval>,
     onTimeUpdated: VoidFunction;
 
+/** Request server time from the server */
 const requestTime = () => {
     performance_request_time = performance.now();
     WS.send({ time: 1 }).then(timeCounter);
 };
 
+/**
+ * Initialize the clock
+ * @param {Function} fncTimeUpdated - The function to call when the time is updated.
+ */
 export const init = (fncTimeUpdated?: VoidFunction) => {
     if (!clock_started) {
         if (fncTimeUpdated) {
@@ -39,7 +32,11 @@ export const init = (fncTimeUpdated?: VoidFunction) => {
     }
 };
 
-export const timeCounter = (response: { error: unknown; time: number }) => {
+/**
+ * Update the server time
+ * @param {Object} response - The response from the server.
+ */
+const timeCounter = (response: { error?: Error; time: number }) => {
     if (response.error) return;
 
     if (!clock_started) {
@@ -68,6 +65,21 @@ export const timeCounter = (response: { error: unknown; time: number }) => {
     update_time_interval = setInterval(updateTime, 1000);
 };
 
-export const timePromise = pending.promise;
+/**
+ * Get the server time if it is available.
+ * @returns {Object | undefined} The server time.
+ */
+export const get = (): object | undefined => (server_time ? server_time.clone() : undefined);
 
-export const get = () => (server_time ? server_time.clone() : undefined);
+/**
+ * Get the distance to the server time.
+ * @param {Number} compare_time - The time to compare to the server time.
+ * @returns {Number} The distance to the server time.
+ */
+export const getDistanceToServerTime = (compare_time: number): number => {
+    const time = moment(compare_time);
+    const now_time = get();
+    const distance = time.diff(now_time, 'milliseconds');
+
+    return distance;
+};

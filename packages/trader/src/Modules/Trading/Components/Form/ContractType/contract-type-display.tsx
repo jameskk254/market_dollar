@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import { Icon, DesktopWrapper } from '@deriv/components';
+import { Icon, DesktopWrapper, MobileWrapper } from '@deriv/components';
 import IconTradeCategory from 'Assets/Trading/Categories/icon-trade-categories';
 import { findContractCategory } from '../../../Helpers/contract-type';
 import { TContractCategory, TContractType, TList } from './types';
@@ -15,8 +15,8 @@ type TDisplay = {
 
 const Display = ({ is_open, name, list, onClick, value }: TDisplay) => {
     const getDisplayText = () =>
-        findContractCategory(list as unknown as TList[], { value })?.contract_types?.find(
-            (item: TContractType) => item.value === value
+        findContractCategory(list as unknown as TList[], { value })?.contract_types?.find((item: TContractType) =>
+            item.value.includes(value)
         )?.text;
 
     return (
@@ -40,6 +40,9 @@ const Display = ({ is_open, name, list, onClick, value }: TDisplay) => {
                     )}
                 />
             </DesktopWrapper>
+            <MobileWrapper>
+                <Icon icon='IcChevronRight' size={20} className='contract-type-widget__select-arrow--right' />
+            </MobileWrapper>
         </div>
     );
 };

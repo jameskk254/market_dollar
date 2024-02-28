@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import { Icon, Label, Money, ContractCard, ContractCardSell, Popover } from '@deriv/components';
+import { ArrowIndicator, Label, Money, ContractCard, ContractCardSell, Popover } from '@deriv/components';
 import {
     isMobile,
     getCurrencyDisplayCode,
@@ -228,8 +228,9 @@ export const getOpenPositionsColumnsTemplate = (currency: string) => [
         title: localize('Indicative profit/loss'),
         col_index: 'profit',
         renderCellContent: ({ row_obj }: TCellContentProps) => {
-            if (!row_obj.profit_loss && (!row_obj.contract_info || !row_obj.contract_info.profit)) return;
-            const profit = row_obj.profit_loss || row_obj.contract_info.profit;
+            const { profit_loss, contract_info } = row_obj ?? {};
+            if (!profit_loss && profit_loss !== 0 && !contract_info?.profit && contract_info?.profit !== 0) return;
+            const profit = profit_loss ?? contract_info.profit;
             // eslint-disable-next-line consistent-return
             return (
                 <div
@@ -239,9 +240,7 @@ export const getOpenPositionsColumnsTemplate = (currency: string) => [
                     })}
                 >
                     <Money amount={Math.abs(profit)} currency={currency} />
-                    <div className='open-positions__profit-loss--movement'>
-                        {profit > 0 ? <Icon icon='IcProfit' /> : <Icon icon='IcLoss' />}
-                    </div>
+                    <ArrowIndicator className='open-positions__profit-loss--movement' value={profit} />
                 </div>
             );
         },
@@ -404,9 +403,7 @@ export const getMultiplierOpenPositionsColumnsTemplate = ({
                     })}
                 >
                     <Money amount={Math.abs(total_profit)} currency={currency} />
-                    <div className='open-positions__profit-loss--movement'>
-                        {total_profit > 0 ? <Icon icon='IcProfit' /> : <Icon icon='IcLoss' />}
-                    </div>
+                    <ArrowIndicator className='open-positions__profit-loss--movement' value={total_profit} />
                 </div>
             );
         },
@@ -535,9 +532,7 @@ export const getAccumulatorOpenPositionsColumnsTemplate = ({
                     })}
                 >
                     <Money amount={Math.abs(total_profit)} currency={currency} />
-                    <div className='open-positions__profit-loss--movement'>
-                        {total_profit > 0 ? <Icon icon='IcProfit' /> : <Icon icon='IcLoss' />}
-                    </div>
+                    <ArrowIndicator className='open-positions__profit-loss--movement' value={total_profit} />
                 </div>
             );
         },

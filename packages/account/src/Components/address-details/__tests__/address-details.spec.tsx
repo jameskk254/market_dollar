@@ -51,12 +51,10 @@ describe('<AddressDetails/>', () => {
         'We need this for verification. If the information you provide is fake or inaccurate, you won’t be able to deposit and withdraw.';
 
     let modal_root_el: HTMLDivElement;
-
     const mock_props: React.ComponentProps<typeof AddressDetails> = {
         getCurrentStep: jest.fn(),
         goToNextStep: jest.fn(),
         goToPreviousStep: jest.fn(),
-        is_gb_residence: '',
         onCancel: jest.fn(),
         onSave: jest.fn(),
         onSubmit: jest.fn(),
@@ -163,9 +161,9 @@ describe('<AddressDetails/>', () => {
 
         const previous_btn = screen.getByRole('button', { name: /previous/i });
         fireEvent.click(previous_btn);
-        expect(mock_props.getCurrentStep).toHaveBeenCalledTimes(1);
+        expect(mock_props.getCurrentStep).toHaveBeenCalled();
         expect(mock_props.onCancel).toHaveBeenCalledTimes(1);
-        expect(mock_props.onSave).toHaveBeenCalledTimes(1);
+        expect(mock_props.onSave).toHaveBeenCalled();
 
         const address_line_1_input: HTMLInputElement = screen.getByLabelText(address_line_1_marked);
         const first_line_adress_text = 'Test first line address';
@@ -202,7 +200,7 @@ describe('<AddressDetails/>', () => {
         const next_btn = screen.getByRole('button', { name: /next/i });
         fireEvent.click(next_btn);
         await waitFor(() => {
-            expect(mock_props.getCurrentStep).toHaveBeenCalledTimes(2);
+            expect(mock_props.getCurrentStep).toHaveBeenCalled();
             expect(mock_props.onSubmit).toHaveBeenCalledTimes(1);
         });
     });
@@ -228,10 +226,10 @@ describe('<AddressDetails/>', () => {
 
         expect(screen.getByText('Default test state')).toBeInTheDocument();
         const address_state_input: HTMLInputElement = screen.getByRole('combobox');
-        expect(address_state_input.value).toBe('');
+        expect(address_state_input).toHaveValue('');
         fireEvent.change(address_state_input, { target: { value: 'State 2' } });
         await waitFor(() => {
-            expect(address_state_input.value).toBe('State 2');
+            expect(address_state_input).toHaveValue('State 2');
         });
     });
 

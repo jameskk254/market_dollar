@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import { getCurrencyDisplayCode } from '@deriv/shared';
+import Text from '../text';
 
 export type TInputMode = 'search' | 'text' | 'none' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal';
 type TInputProps = {
@@ -13,7 +14,7 @@ type TInputProps = {
     className?: string;
     classNameDynamicSuffix?: string;
     classNameInlinePrefix?: string;
-    current_focus: string | null;
+    current_focus?: string | null;
     data_testid?: string;
     data_tip?: string;
     data_value?: number | string;
@@ -36,7 +37,7 @@ type TInputProps = {
     onKeyPressed: React.KeyboardEventHandler<HTMLInputElement>;
     placeholder?: string;
     required?: boolean;
-    setCurrentFocus: (name: string | null) => void;
+    setCurrentFocus?: (name: string | null) => void;
     type: string;
     value?: number | string;
 };
@@ -80,12 +81,10 @@ const Input = ({
     }, [current_focus, name]);
 
     const onBlurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
-        setCurrentFocus(null);
-        if (onBlur) {
-            onBlur(e);
-        }
+        setCurrentFocus?.(null);
+        onBlur?.(e);
     };
-    const onFocus = () => setCurrentFocus(name);
+    const onFocus = () => setCurrentFocus?.(name);
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         /**
@@ -108,13 +107,14 @@ const Input = ({
         <div className={classNameDynamicSuffix}>
             {inline_prefix ? (
                 <div className={classNameInlinePrefix}>
-                    <span
+                    <Text
                         className={classNames(classNameInlinePrefix ? `${classNameInlinePrefix}--symbol` : '', {
                             disabled: !!is_disabled,
                         })}
+                        size='xs'
                     >
                         {inline_prefix === 'UST' ? getCurrencyDisplayCode(inline_prefix) : inline_prefix}
-                    </span>
+                    </Text>
                 </div>
             ) : null}
             <input

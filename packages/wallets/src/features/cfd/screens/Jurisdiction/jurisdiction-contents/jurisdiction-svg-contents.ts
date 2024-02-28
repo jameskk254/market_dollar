@@ -50,7 +50,8 @@ export const getJurisdictionSvgContents = (): TJurisdictionCardItems => ({
             {
                 clickableDescription: [
                     {
-                        text: 'Dynamic Leverage', // onClick: toggleDynamicLeverage,
+                        tag: 'dynamicLeverage',
+                        text: 'Dynamic Leverage',
                         type: 'link',
                     },
                 ],
@@ -63,7 +64,7 @@ export const getJurisdictionSvgContents = (): TJurisdictionCardItems => ({
                 },
             },
             {
-                key: 'spreadsFrom',
+                key: 'spreads-from',
                 title: 'Spreads from',
                 titleIndicators: {
                     displayText: '0.6 pips',
