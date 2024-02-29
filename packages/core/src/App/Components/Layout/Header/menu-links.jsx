@@ -99,7 +99,7 @@ const MenuLinks = observer(({ is_traders_hub_routes = false }) => {
     return (
         <div key={`menu-links__${i18n.language}`} className='header__menu-links'>
             {!is_traders_hub_routes && <ReportTab />}
-            {!is_mobile && !is_next_wallet_enabled && <CashierTab />}
+            {/* {!is_mobile && !is_next_wallet_enabled && <CashierTab />} */}
         </div>
     );
 });

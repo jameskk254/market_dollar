@@ -17,7 +17,7 @@ const userGuideContent = [
         id: 1,
         type: 'Tour',
         subtype: 'OnBoard',
-        content: 'Get started on Deriv Bot',
+        content: 'Get started on D-Apollo Bot',
         src: 'dbot-onboard-tour.png',
     },
 ];

@@ -102,7 +102,7 @@ const DTraderHeader = observer(() => {
                             )}
                         </React.Fragment>
                     )}
-                    {!is_mobile && <TradersHubHomeButton />}
+                    {/* {!is_mobile && <TradersHubHomeButton />} */}
                     <MenuLinks />
                 </div>
 

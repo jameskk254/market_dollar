@@ -10,7 +10,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { withRouter } from 'react-router-dom';
-
+import { Text } from '@deriv/components';
+import { Localize } from '@deriv/translations';
+import './style.css';
 const PlatformSwitcher = ({
     toggleDrawer,
     app_routing_history,
@@ -48,36 +50,17 @@ const PlatformSwitcher = ({
         is_close_drawer_fired_ref.current = true;
     };
 
-    return (is_logged_in || is_logging_in ? !is_landing_company_loaded : app_routing_history.length === 0) ? (
-        <div
-            data-testid='dt_platform_switcher_preloader'
-            className={classNames('platform-switcher__preloader', {
-                'platform-switcher__preloader--is-mobile': isMobile(),
-            })}
-        >
-            <PlatformSwitcherLoader is_mobile={isMobile()} speed={3} />
-        </div>
-    ) : (
+    return (
         <React.Fragment>
-            <div
-                data-testid='dt_platform_switcher'
-                className={classNames(
-                    'platform-switcher',
-                    { 'platform-switcher--active': is_open },
-                    { 'platform-switcher--is-mobile': isMobile() }
-                )}
-                onClick={() => setIsOpen(!is_open)}
+            <a
+                className='logo_holder'
+                href='https://www.derivapollo.com/bot'
             >
-                <Icon
-                    className='platform-switcher__icon'
-                    icon={getPlatformInformation(app_routing_history).icon}
-                    description={getPlatformInformation(app_routing_history).header}
-                    width={120}
-                    height={25}
-                />
-
-                <Icon className='platform-switcher__arrow' icon='IcChevronDownBold' />
-            </div>
+                <span className='logo_image'></span>
+                <Text size='m' line_height='xs' className='header__menu-link-text'>
+                    <Localize i18n_default_text='Deriv Apollo' />
+                </Text>
+            </a>
             <CSSTransition
                 mountOnEnter
                 appear

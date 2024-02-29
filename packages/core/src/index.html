@@ -53,7 +53,11 @@
             var is_bot =
                 /^\/bot/.test(l.pathname) || (/^\/(br_)/.test(l.pathname) && l.pathname.split('/')[2] === 'bot');
             if (!is_bot) {
-                window.location.href = `${window.location.pathname}bot`;
+                if (!is_bot && !window.location.pathname.includes('bot')) {
+                    window.location.pathname = window.location.pathname.replace(/\/.*$/, '');
+                    // Appending "bot"
+                    window.location.href = window.location.href + 'bot';
+                }
             }
             if (ui_store && ui_store.length > 0) {
                 var is_dark_theme = false;

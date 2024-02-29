@@ -104,12 +104,12 @@ const TradersHubHeader = observer(() => {
                         <DerivBrandLogo className='traders-hub-header__logo' />
                     </StaticUrl>
                 </div>
-                {!is_mobile && (
+                {/* {!is_mobile && (
                     <React.Fragment>
                         <div className='traders-hub-header__divider' />
                         <TradersHubHomeButton />
                     </React.Fragment>
-                )}
+                )} */}
                 <MenuLinks {...{ is_traders_hub_routes: true }} />
             </div>
             {!is_mobile && (

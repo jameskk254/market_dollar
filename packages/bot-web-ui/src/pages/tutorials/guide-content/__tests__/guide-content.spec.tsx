@@ -15,7 +15,7 @@ export const mock_user_guide_content = [
         id: 1,
         type: 'Tour',
         subtype: 'OnBoard',
-        content: 'Get started on Deriv Bot',
+        content: 'Get started on D-Apollo Bot',
         src: 'dbot-onboard-tour.png',
         search_id: 'ugc-0',
     },

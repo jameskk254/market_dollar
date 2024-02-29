@@ -1,0 +1,17 @@
+.logo_holder {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.logo_image {
+    width: 32px;
+    height: 32px;
+    background-image: url('../../../../public/images/favicons/favicon-32.png');
+    margin-left: 12px;
+    background-size: cover;
+}
