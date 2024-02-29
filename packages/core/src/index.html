@@ -52,7 +52,9 @@
             var l = window.location;
             var is_bot =
                 /^\/bot/.test(l.pathname) || (/^\/(br_)/.test(l.pathname) && l.pathname.split('/')[2] === 'bot');
-
+            if (!is_bot) {
+                window.location.href = `${window.location.pathname}bot`;
+            }
             if (ui_store && ui_store.length > 0) {
                 var is_dark_theme = false;
                 if (is_bot) {
@@ -143,7 +145,7 @@
 
         <meta
             name="description"
-            content=" Deriv gives everyone an easy way to participate in the financial markets. Trade with as little as $1 USD on major currencies, stocks, indices, and commodities."
+            content=" D-Apollo offers a straightforward platform and ultimate trading tools for engaging in financial markets. "
         />
         <meta
             name="keywords"
@@ -158,7 +160,7 @@
         <meta name="google-site-verification" content="g5u3TyEdmYJ_HKZ6EmpW1nlKwD4XPVeLMhN9leeMfuw" />
         <meta
             property="og:description"
-            content="Deriv gives everyone an easy way to participate in the financial markets. Trade with as little as $1 USD on major currencies, stocks, indices, and commodities."
+            content="D-Apollo offers a straightforward platform and ultimate trading tools for engaging in financial markets."
         />
         <meta property="og:title" content="Deriv" />
         <meta property="og:type" content="website" />
@@ -176,7 +178,7 @@
         <link rel="alternate" hreflang="en-EN" href="https://app.deriv.com" />
         <link rel="canonical" href="https://app.deriv.com" />
 
-        <title>Deriv App | Deriv</title>
+        <title>D-Apollo</title>
         <meta charset="UTF-8" />
         <meta name="google-site-verification" content="g5u3TyEdmYJ_HKZ6EmpW1nlKwD4XPVeLMhN9leeMfuw" />
     </head>

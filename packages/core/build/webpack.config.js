@@ -10,12 +10,12 @@ module.exports = function (env) {
         context: path.resolve(__dirname, '../src'),
         devServer: {
             publicPath: base,
-            open: openChromeBasedOnPlatform(process.platform),
             openPage: sub_path,
-            host: 'localhost',
+            host: 'localhost.binary.sx',
             https: true,
-            port: 8443,
+            port: 443,
             historyApiFallback: true,
+            hot:true,
             stats: {
                 colors: true,
             },
