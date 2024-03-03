@@ -20,6 +20,7 @@ import ApolloBots from '../apollo_bots';
 import RunStrategy from '../dashboard/run-strategy';
 import Tutorial from '../tutorials';
 import { tour_list } from '../tutorials/dbot-tours/utils';
+import { getUrlBase } from '@deriv/shared';
 
 const AppWrapper = observer(() => {
     const { dashboard, load_modal, run_panel, quick_strategy, summary_card } = useDBotStore();
@@ -164,7 +165,7 @@ const AppWrapper = observer(() => {
                         />
 
                         <div
-                            icon='IcDashboardComponentTab'
+                            icon='IcGear'
                             label={<Localize i18n_default_text='Apollo Bots' />}
                             id='id-dbot-apollo-bots'
                         >

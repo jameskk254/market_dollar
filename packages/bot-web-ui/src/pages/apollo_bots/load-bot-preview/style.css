@@ -37,6 +37,6 @@
 @media screen and (max-width: 720px) {
     .apollo-list__wrapper{
         grid-template-columns: none;
-        height: calc(100vh - 34.8rem);
+        height: calc(100vh - 40rem);
     }
   }
