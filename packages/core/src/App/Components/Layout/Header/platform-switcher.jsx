@@ -52,15 +52,18 @@ const PlatformSwitcher = ({
 
     return (
         <React.Fragment>
-            <a
+            <div
                 className='logo_holder'
-                href='https://www.derivapollo.com/bot'
+                onClick={() => {
+                    const newUrl = window.location.origin + '/bot';
+                    window.location.href = newUrl;
+                }}
             >
                 <span className='logo_image'></span>
                 <Text size='m' line_height='xs' className='header__menu-link-text'>
                     <Localize i18n_default_text='Deriv Apollo' />
                 </Text>
-            </a>
+            </div>
             <CSSTransition
                 mountOnEnter
                 appear

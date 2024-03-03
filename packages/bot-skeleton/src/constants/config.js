@@ -3,6 +3,9 @@ import { localize } from '@deriv/translations';
 const CRYPTO_CURRENCIES = ['BTC', 'ETH', 'LTC', 'BCH', 'UST'];
 
 export const config = {
+    custom_variables: {
+        isApolloBots:false
+    },
     lists: {
         PAYOUTTYPE: [
             // [localize('Payout'), 'payout'],

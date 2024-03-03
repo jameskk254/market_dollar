@@ -36,6 +36,7 @@ export default class ToolbarStore implements IToolbarStore {
             onResetOkButtonClick: action.bound,
             onUndoClick: action.bound,
             resetDefaultStrategy: action.bound,
+            loadCustomStrategy: action.bound,
             setHasUndoStack: action.bound,
             setHasRedoStack: action.bound,
         });
@@ -83,6 +84,23 @@ export default class ToolbarStore implements IToolbarStore {
         workspace.current_strategy_id = Blockly.utils.genUid();
         await load({
             block_string: workspace.cached_xml.main,
+            file_name: config.default_file_name,
+            workspace,
+            drop_event: null,
+            strategy_id: null,
+            from: null,
+            showIncompatibleStrategyDialog: null,
+        });
+        const { is_mobile = false } = this.root_store?.app?.core?.ui || {};
+        await Blockly.derivWorkspace.cleanUp(0, is_mobile ? 60 : 56);
+        workspace.strategy_to_load = workspace.cached_xml.main;
+    };
+
+    loadCustomStrategy = async (index:number) => {
+        const workspace = Blockly.derivWorkspace;
+        workspace.current_strategy_id = Blockly.utils.genUid();
+        await load({
+            block_string: workspace.apollo_cached_xml[index].xml,
             file_name: config.default_file_name,
             workspace,
             drop_event: null,

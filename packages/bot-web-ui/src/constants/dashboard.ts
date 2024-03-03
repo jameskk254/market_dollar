@@ -24,6 +24,13 @@ export const MENU_DESKTOP = [
     },
 ];
 
+export const APOLLO_MENU = [
+    {
+        type: STRATEGY.EDIT,
+        icon: 'IcEdit',
+    },
+]
+
 export const CONTEXT_MENU_MOBILE = [
     {
         type: STRATEGY.PREVIEW_LIST,

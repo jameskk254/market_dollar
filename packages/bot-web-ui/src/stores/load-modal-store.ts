@@ -386,7 +386,7 @@ export default class LoadModalStore implements ILoadModalStore {
         } = this.root_store;
         //removed the dispose here so on switch of tab it does not
         //throw xml error
-        if (active_tab === 1 && !this.is_load_modal_open) {
+        if (active_tab === 1 || active_tab === 2 && !this.is_load_modal_open) {
             this.recent_workspace = null;
             this.setLoadedLocalFile(null);
         }

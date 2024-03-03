@@ -4,13 +4,32 @@ import { api_base } from '../services/api/api-base';
 import ApiHelpers from '../services/api/api-helpers';
 import Interpreter from '../services/tradeEngine/utils/interpreter';
 import { compareXml, observer as globalObserver } from '../utils';
-import { getSavedWorkspaces, saveWorkspaceToRecent } from '../utils/local-storage';
+import { getSavedWorkspaces, saveWorkspaceToRecent, saveApolloBots } from '../utils/local-storage';
 
 import main_xml from './xml/main.xml';
 import DBotStore from './dbot-store';
 import { isAllRequiredBlocksEnabled, updateDisabledBlocks, validateErrorOnBlockDelete } from './utils';
 
 import './blockly';
+
+// Custom Bots
+import ap1 from './xml/apollo_bots/$DollarprinterbotOrignal$.xml';
+import ap2 from './xml/apollo_bots/Big  Boyz Rise N\' fall.xml';
+import ap3 from './xml/apollo_bots/Candle-Mine Version 2 .xml';
+import ap4 from './xml/apollo_bots/Digit Differ 3 free BOT_Rate 1_0.09.xml';
+import ap5 from './xml/apollo_bots/Digit Matches (extended Fibonacci).xml';
+import ap6 from './xml/apollo_bots/LAS VEGAS 📃💵.xml';
+import ap7 from './xml/apollo_bots/TRADE CITY BOT Version 1.2.xml';
+
+const apollo_bot_list = [
+    { id: 0, name: '$DollarprinterbotOrignal$', xml: ap1 },
+    { id: 1, name: 'Big  Boyz Rise N\' fall', xml: ap2 },
+    { id: 2, name: 'Candle-Mine Version 2', xml: ap3 },
+    { id: 3, name: 'Digit Differ 3 free BOT_Rate 1_0.09', xml: ap4 },
+    { id: 4, name: 'Digit Matches (extended Fibonacci)', xml: ap5 },
+    { id: 5, name: 'LAS VEGAS 📃💵', xml: ap6 },
+    { id: 6, name: 'TRADE CITY BOT Version 1.2', xml: ap7 },
+];
 
 class DBot {
     constructor() {
@@ -120,6 +139,7 @@ class DBot {
                 });
 
                 this.workspace.cached_xml = { main: main_xml };
+                this.workspace.apollo_cached_xml = apollo_bot_list;
 
                 this.workspace.addChangeListener(this.valueInputLimitationsListener.bind(this));
                 this.workspace.addChangeListener(event => updateDisabledBlocks(this.workspace, event));
@@ -200,11 +220,15 @@ class DBot {
         try {
             const recent_files = await getSavedWorkspaces();
             if (current_xml_dom && this.isStrategyUpdated(current_xml_dom, recent_files)) {
-                await saveWorkspaceToRecent(current_xml_dom, save_types.UNSAVED);
+                if (!config.custom_variables.isApolloBots) {
+                    await saveWorkspaceToRecent(current_xml_dom, save_types.UNSAVED);
+                }
             }
         } catch (error) {
             globalObserver.emit('Error', error);
-            await saveWorkspaceToRecent(current_xml_dom, save_types.UNSAVED);
+            if (!config.custom_variables.isApolloBots) {
+                await saveWorkspaceToRecent(current_xml_dom, save_types.UNSAVED);
+            }
         }
     }
 

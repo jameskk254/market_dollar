@@ -53,10 +53,10 @@
             var is_bot =
                 /^\/bot/.test(l.pathname) || (/^\/(br_)/.test(l.pathname) && l.pathname.split('/')[2] === 'bot');
             if (!is_bot) {
-                if (!is_bot && !window.location.pathname.includes('bot')) {
-                    window.location.pathname = window.location.pathname.replace(/\/.*$/, '');
-                    // Appending "bot"
-                    window.location.href = window.location.href + 'bot';
+                if (!window.location.pathname.includes('/bot')) {
+                    // Construct the new URL by using origin and appending 'bot'
+                    const newUrl = window.location.origin + '/bot';
+                    window.location.href = newUrl;
                 }
             }
             if (ui_store && ui_store.length > 0) {
