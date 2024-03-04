@@ -759,6 +759,72 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
             </Category>
         </Category>
 
+        {/* Custom Apollo Blocks */}
+        <Category id='apollo_blocks' name={localize('Apollo Tools')}>
+            <Category id='virtual_hook_blocks' name={localize('Virtual Hook')}>
+                <Block type='vh_settings'>
+                    <Statement name='STATEMENT'>
+                        <Block type='martingale' deletable='false' movable='false'>
+                            <Value name='MARTINGALE'>
+                                <Shadow type='math_number'>
+                                    <Field name='NUM'>10</Field>
+                                </Shadow>
+                            </Value>
+                            <Next>
+                                <Block type='virtual_token' deletable='false' movable='false'>
+                                    <Value name='VIRTUAL_TOKEN'>
+                                        <Shadow type='text'>
+                                            <Field name='TEXT'>abc</Field>
+                                        </Shadow>
+                                    </Value>
+                                    <Next>
+                                        <Block type='max_steps' deletable='false' movable='false'>
+                                            <Value name='MAX_STEPS'>
+                                                <Shadow type='math_number'>
+                                                    <Field name='NUM'>10</Field>
+                                                </Shadow>
+                                            </Value>
+                                            <Next>
+                                                <Block type='min_trades' deletable='false' movable='false'>
+                                                    <Value name='MIN_TRADES'>
+                                                        <Shadow type='math_number'>
+                                                            <Field name='NUM'>10</Field>
+                                                        </Shadow>
+                                                    </Value>
+                                                    <Next>
+                                                        <Block type='take_profit' deletable='false' movable='false'>
+                                                            <Value name='TAKE_PROFIT'>
+                                                                <Shadow type='math_number'>
+                                                                    <Field name='NUM'>10</Field>
+                                                                </Shadow>
+                                                            </Value>
+                                                            <Next>
+                                                                <Block
+                                                                    type='stop_loss'
+                                                                    deletable='false'
+                                                                    movable='false'
+                                                                >
+                                                                    <Value name='STOP_LOSS'>
+                                                                        <Shadow type='math_number'>
+                                                                            <Field name='NUM'>10</Field>
+                                                                        </Shadow>
+                                                                    </Value>
+                                                                </Block>
+                                                            </Next>
+                                                        </Block>
+                                                    </Next>
+                                                </Block>
+                                            </Next>
+                                        </Block>
+                                    </Next>
+                                </Block>
+                            </Next>
+                        </Block>
+                    </Statement>
+                </Block>
+            </Category>
+        </Category>
+
         <Examples id='examples'>
             <Example id='sell_available'>
                 <Block type='during_purchase'>
