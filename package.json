@@ -91,7 +91,8 @@
         "stylelint-check": "stylelint-config-prettier-check",
         "prepare": "husky install",
         "install_all": "npm run bootstrap && npm run build:all",
-        "bot": "node start_services.js"
+        "bot": "node start_services.js",
+        "lint": "eslint ."
     },
     "dependencies": {
         "@babel/preset-typescript": "^7.16.5",
@@ -102,6 +103,7 @@
         "dotenv": "^8.2.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
+        "react-icons": "^5.0.1",
         "selfsigned": "^2.1.1",
         "typescript": "^4.6.3",
         "ws": "^8.13.0"
