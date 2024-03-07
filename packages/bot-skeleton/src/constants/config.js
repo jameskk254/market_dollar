@@ -4,7 +4,10 @@ const CRYPTO_CURRENCIES = ['BTC', 'ETH', 'LTC', 'BCH', 'UST'];
 
 export const config = {
     custom_variables: {
-        isApolloBots:false
+        isApolloBots: false,
+    },
+    copy_trading: {
+        is_active: false,
     },
     lists: {
         PAYOUTTYPE: [

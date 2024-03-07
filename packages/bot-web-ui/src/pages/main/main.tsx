@@ -17,6 +17,7 @@ import Chart from '../chart';
 import ChartModal from '../chart/chart-modal';
 import Dashboard from '../dashboard';
 import ApolloBots from '../apollo_bots';
+import CopyTrader from '../copy_trader';
 import RunStrategy from '../dashboard/run-strategy';
 import Tutorial from '../tutorials';
 import { tour_list } from '../tutorials/dbot-tours/utils';
@@ -40,11 +41,11 @@ const AppWrapper = observer(() => {
     const { is_open } = quick_strategy;
     const { cancel_button_text, ok_button_text, title, message } = dialog_options as { [key: string]: string };
     const { clear } = summary_card;
-    const { DASHBOARD, BOT_BUILDER, APOLLOBOTS } = DBOT_TABS;
+    const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
     const init_render = React.useRef(true);
     const { ui } = useStore();
     const { url_hashed_values, is_mobile } = ui;
-    const hash = ['dashboard', 'bot_builder', 'apollo_bots', 'chart', 'tutorial'];
+    const hash = ['dashboard', 'bot_builder', 'apollo_bots', 'chart', 'copy_trader', 'tutorial'];
 
     let tab_value: number | string = active_tab;
     const GetHashedValue = (tab: number) => {
@@ -183,6 +184,15 @@ const AppWrapper = observer(() => {
                         >
                             <Chart />
                         </div>
+
+                        <div
+                            icon='IcChartsTabDbot'
+                            label={<Localize i18n_default_text='Copy Trader' />}
+                            id={'id-copy-trader'}
+                        >
+                            <CopyTrader />
+                        </div>
+
                         <div
                             icon='IcTutorialsTabs'
                             label={<Localize i18n_default_text='Tutorials' />}

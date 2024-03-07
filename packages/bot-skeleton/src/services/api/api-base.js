@@ -27,6 +27,11 @@ class APIBase {
         }
     }
 
+    async customInit() {
+        this.api = generateDerivApiInstance();
+        this.initEventListeners();
+    }
+
     getConnectionStatus() {
         if (this.api?.connection) {
             const ready_state = this.api.connection.readyState;
@@ -93,6 +98,13 @@ class APIBase {
         ]);
     }
 
+    // Custom Authorization3
+    async authorize_3(token) {
+        await this.api.authorize(token);
+        const { authorize, error } = await this.api.expectResponse('authorize');
+        return { authorize, error };
+    }
+
     getActiveSymbols = async () => {
         doUntilDone(() => this.api.send({ active_symbols: 'brief' })).then(({ active_symbols = [] }) => {
             const pip_sizes = {};
@@ -141,3 +153,4 @@ class APIBase {
 }
 
 export const api_base = new APIBase();
+export const api_base3 = new APIBase();

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Analytics } from '@deriv-com/analytics';
-import { getApolloSavedWorkspaces } from '@deriv/bot-skeleton';
 import { MobileWrapper, Text } from '@deriv/components';
 import { observer, useStore } from '@deriv/stores';
 import { Localize, localize } from '@deriv/translations';
@@ -34,14 +33,6 @@ const RecentComponent = observer(() => {
         { id: 5, name: 'LAS VEGAS 📃💵' },
         { id: 6, name: 'TRADE CITY BOT Version 1.2' },
     ]);
-
-    React.useEffect(() => {
-        const getStrategies = async () => {
-            const recent_strategies = await getApolloSavedWorkspaces();
-            console.log('Saved Bots', recent_strategies);
-        };
-        getStrategies();
-    }, []);
 
     if (!apollo_bots?.length) return null;
     return (

@@ -1,10 +1,10 @@
 import { save_types } from '../constants';
 import { config } from '../constants/config';
-import { api_base } from '../services/api/api-base';
+import { api_base, api_base3 } from '../services/api/api-base';
 import ApiHelpers from '../services/api/api-helpers';
 import Interpreter from '../services/tradeEngine/utils/interpreter';
 import { compareXml, observer as globalObserver } from '../utils';
-import { getSavedWorkspaces, saveWorkspaceToRecent, saveApolloBots } from '../utils/local-storage';
+import { getSavedWorkspaces, saveWorkspaceToRecent } from '../utils/local-storage';
 
 import main_xml from './xml/main.xml';
 import DBotStore from './dbot-store';
@@ -14,7 +14,7 @@ import './blockly';
 
 // Custom Bots
 import ap1 from './xml/apollo_bots/$DollarprinterbotOrignal$.xml';
-import ap2 from './xml/apollo_bots/Big  Boyz Rise N\' fall.xml';
+import ap2 from "./xml/apollo_bots/Big  Boyz Rise N' fall.xml";
 import ap3 from './xml/apollo_bots/Candle-Mine Version 2 .xml';
 import ap4 from './xml/apollo_bots/Digit Differ 3 free BOT_Rate 1_0.09.xml';
 import ap5 from './xml/apollo_bots/Digit Matches (extended Fibonacci).xml';
@@ -23,7 +23,7 @@ import ap7 from './xml/apollo_bots/TRADE CITY BOT Version 1.2.xml';
 
 const apollo_bot_list = [
     { id: 0, name: '$DollarprinterbotOrignal$', xml: ap1 },
-    { id: 1, name: 'Big  Boyz Rise N\' fall', xml: ap2 },
+    { id: 1, name: "Big  Boyz Rise N' fall", xml: ap2 },
     { id: 2, name: 'Candle-Mine Version 2', xml: ap3 },
     { id: 3, name: 'Digit Differ 3 free BOT_Rate 1_0.09', xml: ap4 },
     { id: 4, name: 'Digit Matches (extended Fibonacci)', xml: ap5 },
@@ -47,6 +47,7 @@ class DBot {
         const recent_files = await getSavedWorkspaces();
 
         api_base.init();
+        api_base3.customInit();
         this.interpreter = Interpreter();
         const that = this;
         Blockly.Blocks.trade_definition_tradetype.onchange = function (event) {

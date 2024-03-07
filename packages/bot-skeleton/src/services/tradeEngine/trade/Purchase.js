@@ -4,6 +4,8 @@ import { contractStatus, info, log } from '../utils/broadcast';
 import { getUUID, recoverFromError, doUntilDone, tradeOptionToBuy } from '../utils/helpers';
 import { log_types } from '../../../constants/messages';
 import { api_base } from '../../api/api-base';
+import { getToken } from '../../api/appId';
+import { config } from '../../../constants/config';
 
 let delayIndex = 0;
 let purchase_reference;
@@ -18,7 +20,11 @@ export default Engine =>
 
             const onSuccess = response => {
                 // Don't unnecessarily send a forget request for a purchased contract.
-                const { buy } = response;
+                let { buy } = response;
+                const { buy_contract_for_multiple_accounts } = response;
+                if (buy_contract_for_multiple_accounts) {
+                    buy = buy_contract_for_multiple_accounts.result[0];
+                }
 
                 contractStatus({
                     id: 'contract.purchase_received',
@@ -44,10 +50,21 @@ export default Engine =>
                 });
             };
 
+            let cp_tokens = localStorage.getItem(`${api_base.account_id}_tokens`);
+            cp_tokens = JSON.parse(cp_tokens);
+            const isCPActive = config.copy_trading.is_active;
+
             if (this.is_proposal_subscription_required) {
                 const { id, askPrice } = this.selectProposal(contract_type);
 
-                const action = () => api_base.api.send({ buy: id, price: askPrice });
+                const action = () =>
+                    !isCPActive
+                        ? api_base.api.send({ buy: id, price: askPrice })
+                        : api_base.api.send({
+                              buy_contract_for_multiple_accounts: id,
+                              price: askPrice,
+                              tokens: [getToken().token, ...cp_tokens],
+                          });
 
                 this.isSold = false;
 

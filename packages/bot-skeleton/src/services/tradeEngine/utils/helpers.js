@@ -2,6 +2,8 @@ import { formatTime, findValueByKeyRecursively, getRoundedNumber, isEmptyObject 
 import { localize } from '@deriv/translations';
 import { error as logError } from './broadcast';
 import { observer as globalObserver } from '../../../utils/observer';
+import { config } from '../../../constants/config';
+import { getToken } from "../../api/appId";
 
 export const tradeOptionToProposal = (trade_option, purchase_reference) =>
     trade_option.contractTypes.map(type => {
@@ -42,20 +44,39 @@ export const tradeOptionToProposal = (trade_option, purchase_reference) =>
     });
 
 export const tradeOptionToBuy = (contract_type, trade_option) => {
-    const buy = {
-        buy: '1',
-        price: trade_option.amount,
-        parameters: {
-            amount: trade_option.amount,
-            basis: trade_option.basis,
-            contract_type,
-            currency: trade_option.currency,
-            duration: trade_option.duration,
-            duration_unit: trade_option.duration_unit,
-            multiplier: trade_option.multiplier,
-            symbol: trade_option.symbol,
-        },
-    };
+    let cp_tokens = localStorage.getItem(`${getToken().account_id}_tokens`);
+    cp_tokens = JSON.parse(cp_tokens);
+
+    const buy = !config.copy_trading.is_active
+        ? {
+              buy: '1',
+              price: trade_option.amount,
+              parameters: {
+                  amount: trade_option.amount,
+                  basis: trade_option.basis,
+                  contract_type,
+                  currency: trade_option.currency,
+                  duration: trade_option.duration,
+                  duration_unit: trade_option.duration_unit,
+                  multiplier: trade_option.multiplier,
+                  symbol: trade_option.symbol,
+              },
+          }
+        : {
+              buy_contract_for_multiple_accounts: '1',
+              tokens: [getToken().token, ...cp_tokens],
+              price: trade_option.amount,
+              parameters: {
+                  amount: trade_option.amount,
+                  basis: trade_option.basis,
+                  contract_type,
+                  currency: trade_option.currency,
+                  duration: trade_option.duration,
+                  duration_unit: trade_option.duration_unit,
+                  multiplier: trade_option.multiplier,
+                  symbol: trade_option.symbol,
+              },
+          };
     if (trade_option.prediction !== undefined) {
         buy.parameters.selected_tick = trade_option.prediction;
     }
