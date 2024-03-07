@@ -115,7 +115,7 @@ const AccountActions = React.memo(
                                 />
                             </div>
                         )}
-                        {currency && (
+                        {/* {currency && (
                             <Button
                                 className='acc-info__button'
                                 has_effect
@@ -123,7 +123,7 @@ const AccountActions = React.memo(
                                 onClick={onClickDeposit}
                                 primary
                             />
-                        )}
+                        )} */}
                     </DesktopWrapper>
                 </React.Fragment>
             );

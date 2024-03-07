@@ -1,8 +1,7 @@
 import { retrieveCopyTradingTokens } from './appwrite_functions';
-import { api_base } from '../api/api-base';
-
+import { getToken } from '../api';
 export const saveListItemToStorage = token => {
-    const account_id = api_base.account_info.loginid;
+    const account_id = getToken().account_id;
     let items = localStorage.getItem(`${account_id}_tokens`);
     items = JSON.parse(items);
     if (items !== null) {
@@ -25,7 +24,7 @@ export const saveListItemToStorage = token => {
 };
 
 export const deleteItemFromStorage = token => {
-    const account_id = api_base.account_info.loginid;
+    const account_id = getToken().account_id;
     let items = localStorage.getItem(`${account_id}_tokens`);
     items = JSON.parse(items);
     if (items !== null) {
@@ -36,7 +35,7 @@ export const deleteItemFromStorage = token => {
 };
 
 export const retrieveListItem = async () => {
-    const account_id = api_base.account_id;
+    const account_id = getToken().account_id;
     let item = localStorage.getItem(`${account_id}_tokens`);
     item = JSON.parse(item);
     if (item !== null) {
@@ -62,14 +61,14 @@ export const retrieveListItem = async () => {
 };
 
 export const newListTokens = token_list => {
-    const account_id = api_base.account_info.loginid;
+    const account_id = getToken().account_id;
     let items = token_list;
     items = JSON.stringify(items);
     localStorage.setItem(`${account_id}_tokens`, items);
 };
 
 export const reCallTheTokens = async () => {
-    const account_id = api_base.account_info.loginid;
+    const account_id = getToken().account_id;
     const all_tokens = await retrieveCopyTradingTokens();
     if (typeof all_tokens !== 'undefined') {
         if (localStorage.getItem(`${account_id}_tokens`)) {

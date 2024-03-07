@@ -89,18 +89,6 @@ const TradingHubFooter = observer(() => {
             <FooterIconSeparator />
             <div className='footer__links'>
                 {footer_extensions_right.map(FooterExtensionRenderer)}
-                {cs_chat_whatsapp && <WhatsApp />}
-                {cs_chat_livechat && <LiveChat />}
-                <GoToDeriv />
-                <ResponsibleTrading />
-                {is_logged_in && <AccountLimitsFooter />}
-                {is_logged_in && !is_virtual && (
-                    <RegulatoryInformation
-                        landing_company={landing_company_shortcode}
-                        is_eu={is_eu}
-                        show_eu_related_content={show_eu_related_content}
-                    />
-                )}
                 <div className='footer__links--dark-mode'>
                     <Popover alignment='top' message={localize('Change theme')} zIndex={9999}>
                         {is_dark_mode ? (

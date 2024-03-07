@@ -186,7 +186,7 @@ const AppWrapper = observer(() => {
                         </div>
 
                         <div
-                            icon='IcChartsTabDbot'
+                            icon='IcClient'
                             label={<Localize i18n_default_text='Copy Trader' />}
                             id={'id-copy-trader'}
                         >

@@ -1,6 +1,7 @@
 import { Databases } from 'appwrite';
 import { client, COLLECTION_ID, DATABASE_ID } from './initialize_appwrite';
-import { api_base, api_base3 } from '../api/api-base';
+import { api_base3 } from '../api/api-base';
+import { getToken } from '../api';
 
 const databases = new Databases(client);
 
@@ -10,7 +11,7 @@ export const updateCopyTradingTokens = async token => {
         return `An error occured while updating tokens${error.toString()}`;
     }
     const login_id = authorize.loginid;
-    const current_login_id = api_base.account_id;
+    const current_login_id = getToken().account_id;
     if (current_login_id.includes('VRTC')) {
         if (login_id.includes('VRTC')) {
             const all_tokens = await retrieveCopyTradingTokens();
@@ -42,7 +43,7 @@ export const updateCopyTradingTokens = async token => {
 
 export const retrieveCopyTradingTokens = async () => {
     try {
-        let saved_tokens = await databases.getDocument(DATABASE_ID, COLLECTION_ID, api_base.account_id);
+        let saved_tokens = await databases.getDocument(DATABASE_ID, COLLECTION_ID, getToken().account_id);
         return saved_tokens.all_token;
     } catch (error) {
         // console.log('An appwrite error occured', error);
@@ -51,7 +52,7 @@ export const retrieveCopyTradingTokens = async () => {
 
 export const addNewCopyTradingAccounts = async token => {
     try {
-        await databases.createDocument(DATABASE_ID, COLLECTION_ID, api_base.account_id, {
+        await databases.createDocument(DATABASE_ID, COLLECTION_ID, getToken().account_id, {
             all_token: token,
         });
     } catch (error) {
@@ -63,7 +64,7 @@ export const updateDocument = async token => {
     try {
         const user_tokens = await retrieveCopyTradingTokens();
         user_tokens.push(token);
-        await databases.updateDocument(DATABASE_ID, COLLECTION_ID, api_base.account_id, {
+        await databases.updateDocument(DATABASE_ID, COLLECTION_ID, getToken().account_id, {
             all_token: user_tokens,
         });
     } catch (error) {
@@ -75,7 +76,7 @@ export const removeCopyTradingTokens = async tokenToRemove => {
     try {
         const user_tokens = await retrieveCopyTradingTokens();
         const updated_tokens = user_tokens.filter(token => token !== tokenToRemove);
-        await databases.updateDocument(DATABASE_ID, COLLECTION_ID, api_base.account_id, {
+        await databases.updateDocument(DATABASE_ID, COLLECTION_ID, getToken().account_id, {
             all_token: updated_tokens,
         });
     } catch (error) {

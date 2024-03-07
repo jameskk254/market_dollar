@@ -125,7 +125,7 @@ const ToggleMenuDrawer = observer(({ platform_config }) => {
         const has_access = route_config.is_authenticated ? is_logged_in : true;
         if (!has_access) return null;
 
-        if (!route_config.routes) {
+        if (!route_config.routes && route_config.getTitle() === 'Report') {
             return (
                 <MobileDrawer.Item key={idx}>
                     <MenuLink
@@ -164,7 +164,7 @@ const ToggleMenuDrawer = observer(({ platform_config }) => {
                 onToggle={expandSubMenu}
                 route_config_path={route_config.path}
             >
-                {!has_subroutes &&
+                {!has_subroutes  &&
                     route_config.routes.map((route, index) => {
                         if (
                             !route.is_invisible &&
@@ -187,7 +187,7 @@ const ToggleMenuDrawer = observer(({ platform_config }) => {
                         }
                         return undefined;
                     })}
-                {has_subroutes &&
+                {has_subroutes  &&
                     route_config.routes.map((route, index) => {
                         return route.subroutes ? (
                             <MobileDrawer.SubMenuSection
@@ -298,29 +298,9 @@ const ToggleMenuDrawer = observer(({ platform_config }) => {
                                 })}
                             >
                                 <div className='header__menu-mobile-platform-switcher' id='mobile_platform_switcher' />
-                                {is_logged_in && (
-                                    <MobileDrawer.Item>
-                                        <MenuLink
-                                            link_to={is_next_wallet_enabled ? routes.wallets : routes.traders_hub}
-                                            icon={is_dark_mode ? 'IcAppstoreHomeDark' : 'IcAppstoreTradersHubHome'}
-                                            text={localize("Trader's Hub")}
-                                            onClickLink={toggleDrawer}
-                                        />
-                                    </MobileDrawer.Item>
-                                )}
-                                {!is_trading_hub_category && (
-                                    <MobileDrawer.Item>
-                                        <MenuLink
-                                            link_to={routes.trade}
-                                            icon='IcTrade'
-                                            text={localize('Trade')}
-                                            onClickLink={toggleDrawer}
-                                        />
-                                    </MobileDrawer.Item>
-                                )}
-                                {primary_routes_config.map((route_config, idx) =>
+                                {/* {primary_routes_config.map((route_config, idx) =>
                                     getRoutesWithSubMenu(route_config, idx)
-                                )}
+                                )} */}
                                 <MobileDrawer.Item
                                     className='header__menu-mobile-theme'
                                     onClick={e => {
@@ -338,65 +318,7 @@ const ToggleMenuDrawer = observer(({ platform_config }) => {
                                         />
                                     </div>
                                 </MobileDrawer.Item>
-
                                 {HelpCentreRoute()}
-                                {is_logged_in && (
-                                    <React.Fragment>
-                                        <MobileDrawer.Item>
-                                            <MenuLink
-                                                link_to={routes.account_limits}
-                                                icon='IcAccountLimits'
-                                                text={localize('Account Limits')}
-                                                onClickLink={toggleDrawer}
-                                            />
-                                        </MobileDrawer.Item>
-                                        <MobileDrawer.Item>
-                                            <MenuLink
-                                                link_to={getStaticUrl('/responsible')}
-                                                icon='IcVerification'
-                                                text={localize('Responsible trading')}
-                                                onClickLink={toggleDrawer}
-                                            />
-                                        </MobileDrawer.Item>
-                                        {is_eu && show_eu_related_content && !is_virtual && (
-                                            <MobileDrawer.Item>
-                                                <MenuLink
-                                                    link_to={getStaticUrl('/regulatory')}
-                                                    icon='IcRegulatoryInformation'
-                                                    text={localize('Regulatory information')}
-                                                    onClickLink={toggleDrawer}
-                                                />
-                                            </MobileDrawer.Item>
-                                        )}
-                                        <MobileDrawer.Item className='header__menu-mobile-theme--trader-hub'>
-                                            <MenuLink
-                                                link_to={getStaticUrl('/')}
-                                                icon='IcDerivOutline'
-                                                text={localize('Go to Deriv.com')}
-                                                onClickLink={toggleDrawer}
-                                            />
-                                        </MobileDrawer.Item>
-                                    </React.Fragment>
-                                )}
-                                {liveChat.isReady && cs_chat_whatsapp && (
-                                    <MobileDrawer.Item className='header__menu-mobile-whatsapp'>
-                                        <Icon icon='IcWhatsApp' className='drawer-icon' />
-                                        <a
-                                            className='header__menu-mobile-whatsapp-link'
-                                            href={whatsapp_url}
-                                            target='_blank'
-                                            rel='noopener noreferrer'
-                                            onClick={toggleDrawer}
-                                        >
-                                            {localize('WhatsApp')}
-                                        </a>
-                                    </MobileDrawer.Item>
-                                )}
-                                {cs_chat_livechat && (
-                                    <MobileDrawer.Item className='header__menu-mobile-livechat'>
-                                        <LiveChat />
-                                    </MobileDrawer.Item>
-                                )}
                                 {is_logged_in && (
                                     <MobileDrawer.Item
                                         onClick={() => {

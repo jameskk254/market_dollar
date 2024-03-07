@@ -13,6 +13,7 @@ import {
     deleteItemFromStorage,
     config,
     retrieveCopyTradingTokens,
+    getToken
 } from '@deriv/bot-skeleton';
 import { Dialog } from '@deriv/components';
 import { localize, Localize } from '@deriv/translations';
@@ -34,25 +35,17 @@ const CopyTrader = observer(() => {
     const [enableCP, setEnableCP] = React.useState(false);
     const [syncing, setSyncing] = React.useState(false);
 
-    function sleep(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
     React.useEffect(() => {
-        getSavedTokens(true);
+        getSavedTokens();
     }, []);
     React.useEffect(() => {
-        if (api_base.account_id) {
-            // getSavedTokens(false);
-        }
+            getSavedTokens();
+    
     }, [is_dark_mode_on]);
 
-    const getSavedTokens = async (should_sleep: boolean) => {
-        if (should_sleep) {
-            await sleep(5000);
-        }
-        localStorage.removeItem(`${api_base.account_id}_tokens`);
-        retrieveListItem().then(list_item => {
-            const login_id = api_base.account_id;
+    const getSavedTokens = async () => {
+    retrieveListItem().then(list_item => {
+            const login_id = getToken().account_id!;
             if (login_id.includes('VRTC')) {
                 setTokenType('Demo Tokens');
             } else if (login_id.includes('CR')) {
@@ -78,29 +71,35 @@ const CopyTrader = observer(() => {
     };
 
     const addToken = async () => {
-        try {
-            const newToken = tokenInputValue.trim();
-            const response = await updateCopyTradingTokens(tokenInputValue.trim());
-
-            if (response === 'VRTC' || response === 'CR') {
-                saveListItemToStorage(newToken);
-                tokens.unshift(newToken);
-                // setTokens(tokens);
-            } else {
-                setErrorMessage(response!);
-                setShouldShowError(true);
+        if(getToken().account_id){
+            try {
+                const newToken = tokenInputValue.trim();
+                const response = await updateCopyTradingTokens(tokenInputValue.trim());
+    
+                if (response === 'VRTC' || response === 'CR') {
+                    saveListItemToStorage(newToken);
+                    tokens.unshift(newToken);
+                    // setTokens(tokens);
+                } else {
+                    setErrorMessage(response!);
+                    setShouldShowError(true);
+                }
+            } catch (error: any) {
+                if (typeof error.error !== 'undefined') {
+                    setErrorMessage(error.error.message);
+                    setShouldShowError(true);
+                } else {
+                    // console.log(error);
+                }
+            } finally {
+                // This block will run regardless of the try/catch outcome
+                setTokenInputValue('');
             }
-        } catch (error: any) {
-            if (typeof error.error !== 'undefined') {
-                setErrorMessage(error.error.message);
-                setShouldShowError(true);
-            } else {
-                // console.log(error);
-            }
-        } finally {
-            // This block will run regardless of the try/catch outcome
-            setTokenInputValue('');
+        }else{
+            setErrorMessage(localize("It seems you haven't logged in, please login in and try adding the token again."));
+            setShouldShowError(true);
         }
+        
     };
 
     const deleteToken = (token: string) => {
@@ -122,7 +121,7 @@ const CopyTrader = observer(() => {
     };
     const handleSynceData = async () => {
         setSyncing(true);
-        const login_id = api_base.account_id;
+        const login_id = getToken().account_id!;
         const new_tokens = await reCallTheTokens();
         if (typeof new_tokens !== 'undefined') {
             setTokens(new_tokens);
