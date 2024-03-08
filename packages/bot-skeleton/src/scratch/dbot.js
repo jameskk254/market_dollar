@@ -1,6 +1,6 @@
 import { save_types } from '../constants';
 import { config } from '../constants/config';
-import { api_base, api_base3 } from '../services/api/api-base';
+import { api_base, api_base2,api_base3 } from '../services/api/api-base';
 import ApiHelpers from '../services/api/api-helpers';
 import Interpreter from '../services/tradeEngine/utils/interpreter';
 import { compareXml, observer as globalObserver } from '../utils';
@@ -47,6 +47,7 @@ class DBot {
         const recent_files = await getSavedWorkspaces();
 
         api_base.init();
+        api_base2.customInit();
         api_base3.customInit();
         this.interpreter = Interpreter();
         const that = this;

@@ -767,7 +767,7 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                         <Block type='martingale' deletable='false' movable='false'>
                             <Value name='MARTINGALE'>
                                 <Shadow type='math_number'>
-                                    <Field name='NUM'>10</Field>
+                                    <Field name='NUM'>2</Field>
                                 </Shadow>
                             </Value>
                             <Next>
@@ -781,21 +781,21 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                                         <Block type='max_steps' deletable='false' movable='false'>
                                             <Value name='MAX_STEPS'>
                                                 <Shadow type='math_number'>
-                                                    <Field name='NUM'>10</Field>
+                                                    <Field name='NUM'>3</Field>
                                                 </Shadow>
                                             </Value>
                                             <Next>
                                                 <Block type='min_trades' deletable='false' movable='false'>
                                                     <Value name='MIN_TRADES'>
                                                         <Shadow type='math_number'>
-                                                            <Field name='NUM'>10</Field>
+                                                            <Field name='NUM'>1</Field>
                                                         </Shadow>
                                                     </Value>
                                                     <Next>
                                                         <Block type='take_profit' deletable='false' movable='false'>
                                                             <Value name='TAKE_PROFIT'>
                                                                 <Shadow type='math_number'>
-                                                                    <Field name='NUM'>10</Field>
+                                                                    <Field name='NUM'>5</Field>
                                                                 </Shadow>
                                                             </Value>
                                                             <Next>
@@ -806,7 +806,7 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                                                                 >
                                                                     <Value name='STOP_LOSS'>
                                                                         <Shadow type='math_number'>
-                                                                            <Field name='NUM'>10</Field>
+                                                                            <Field name='NUM'>50</Field>
                                                                         </Shadow>
                                                                     </Value>
                                                                 </Block>

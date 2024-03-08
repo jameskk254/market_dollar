@@ -9,6 +9,17 @@ export const config = {
     copy_trading: {
         is_active: false,
     },
+    vh_variables: {
+        martingale: 1,
+        token: '',
+        max_steps: 1,
+        min_trades: 1,
+        take_profit: 8,
+        stop_loss: 20,
+        is_authorized: false,
+        is_enabled: false,
+        stake: 0.35,
+    },
     lists: {
         PAYOUTTYPE: [
             // [localize('Payout'), 'payout'],

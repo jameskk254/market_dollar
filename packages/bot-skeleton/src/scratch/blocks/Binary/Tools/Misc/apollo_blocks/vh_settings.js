@@ -1,8 +1,10 @@
 import { localize } from '@deriv/translations';
-
+import { config } from '../../../../../../constants';
+import { api_base2 } from '../../../../../../services/api/api-base';
+import { notify } from '../../../../../../services/tradeEngine/utils/broadcast';
 Blockly.Blocks.vh_settings = {
     protected_statements: ['STATEMENT'],
-    required_child_blocks: ['martingale','virtual_token','max_steps','min_trades','take_profit','stop_loss'],
+    required_child_blocks: ['martingale', 'virtual_token', 'max_steps', 'min_trades', 'take_profit', 'stop_loss'],
     init() {
         this.jsonInit(this.definition());
     },
@@ -56,8 +58,48 @@ Blockly.JavaScript.vh_settings = block => {
         Blockly.Variables.NAME_TYPE
     );
     // const input = block.childValueToCode('input_list', 'INPUT_LIST');
-    const period = block.childValueToCode('martingale', 'MARTINGALE');
-    const code = `${var_name} = Bot.sma(${input}, ${period});\n`;
+    const martingale = block.childValueToCode('martingale', 'MARTINGALE');
+    config.vh_variables.martingale = parseFloat(martingale);
+    const virtual_token = block.childValueToCode('virtual_token', 'VIRTUAL_TOKEN');
+    config.vh_variables.token = virtual_token.toString();
 
+    notify('success', 'Virtual Hook Enabled');
+    authorizeAccount(cleanToken(config.vh_variables.token));
+
+    const max_steps = block.childValueToCode('max_steps', 'MAX_STEPS');
+    config.vh_variables.max_steps = parseFloat(max_steps);
+    const min_trades = block.childValueToCode('min_trades', 'MIN_TRADES');
+    config.vh_variables.min_trades = parseFloat(min_trades);
+    const take_profit = block.childValueToCode('take_profit', 'TAKE_PROFIT');
+    config.vh_variables.take_profit = parseFloat(take_profit);
+    const stop_loss = block.childValueToCode('stop_loss', 'STOP_LOSS');
+    config.vh_variables.stop_loss = parseFloat(stop_loss);
+    const code = ``;
     return code;
+};
+
+export const authorizeAccount = async token => {
+    try {
+        if (!config.vh_variables.is_authorized) {
+            const response = await api_base2.authorize_3(token);
+
+            if (response.authorize) {
+                config.vh_variables.is_authorized = true;
+                notify('success', 'Virtual Hook Authorized');
+            } else {
+                console.error('Authorization failed:', response.error);
+            }
+        } else {
+            notify('success', 'Virtual Hook Already Authorized');
+        }
+    } catch (error) {
+        console.error('An error occurred during authorization:', error);
+        notify('error', error.error.message.toString());
+    }
+};
+
+const cleanToken = inputToken => {
+    // Remove leading and trailing single quotes
+    const cleanedToken = inputToken.replace(/^'|'$/g, '');
+    return cleanedToken;
 };
