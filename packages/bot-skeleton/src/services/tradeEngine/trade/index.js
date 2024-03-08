@@ -70,7 +70,10 @@ export default class TradeEngine extends Balance(Purchase(Sell(OpenContract(Prop
         this.observe();
         this.data = {
             contract: {},
+            vh_contract: {},
             proposals: [],
+            vh_proposals: [],
+
         };
         this.store = createStore(rootReducer, applyMiddleware(thunk));
     }
@@ -138,8 +141,10 @@ export default class TradeEngine extends Balance(Purchase(Sell(OpenContract(Prop
 
     observe() {
         this.observeOpenContract();
+        this.observeOpenContractVH();
         this.observeBalance();
         this.observeProposals();
+        this.observeProposalsVH();
     }
 
     watch(watchName) {
@@ -156,6 +161,7 @@ export default class TradeEngine extends Balance(Purchase(Sell(OpenContract(Prop
         if (this.is_proposal_subscription_required) {
             this.makeProposals({ ...this.options, ...this.tradeOptions });
             this.checkProposalReady();
+            this.checkProposalReadyVH();
         } else {
             this.store.dispatch(proposalsReady());
         }

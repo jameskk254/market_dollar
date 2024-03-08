@@ -65,7 +65,7 @@ Blockly.JavaScript.vh_settings = block => {
 
     notify('success', 'Virtual Hook Enabled');
     authorizeAccount(cleanToken(config.vh_variables.token));
-
+    config.vh_variables.is_enabled = true;
     const max_steps = block.childValueToCode('max_steps', 'MAX_STEPS');
     config.vh_variables.max_steps = parseFloat(max_steps);
     const min_trades = block.childValueToCode('min_trades', 'MIN_TRADES');

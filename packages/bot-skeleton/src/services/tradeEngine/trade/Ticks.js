@@ -21,6 +21,7 @@ export default Engine =>
                 const callback = ticks => {
                     if (this.is_proposal_subscription_required) {
                         this.checkProposalReady();
+                        this.checkProposalReadyVH();
                     }
                     const lastTick = ticks.slice(-1)[0];
                     const { epoch } = lastTick;

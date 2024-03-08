@@ -3,7 +3,7 @@ import { BEFORE_PURCHASE } from './state/constants';
 import { contractStatus, info, log } from '../utils/broadcast';
 import { getUUID, recoverFromError, doUntilDone, tradeOptionToBuy } from '../utils/helpers';
 import { log_types } from '../../../constants/messages';
-import { api_base } from '../../api/api-base';
+import { api_base, api_base2 } from '../../api/api-base';
 import { getToken } from '../../api/appId';
 import { config } from '../../../constants/config';
 
@@ -36,7 +36,7 @@ export default Engine =>
                 this.store.dispatch(purchaseSuccessful());
 
                 if (this.is_proposal_subscription_required) {
-                    this.renewProposalsOnPurchase();
+                    !vh_active ? this.renewProposalsOnPurchase() : this.renewProposalsOnPurchaseVH();
                 }
 
                 delayIndex = 0;
@@ -53,12 +53,16 @@ export default Engine =>
             let cp_tokens = localStorage.getItem(`${api_base.account_id}_tokens`);
             cp_tokens = JSON.parse(cp_tokens);
             const isCPActive = config.copy_trading.is_active;
-
+            const vh_active = config.vh_variables.is_enabled;
             if (this.is_proposal_subscription_required) {
-                const { id, askPrice } = this.selectProposal(contract_type);
+                const { id, askPrice } = vh_active
+                    ? this.selectProposalVH(contract_type)
+                    : this.selectProposal(contract_type);
 
                 const action = () =>
-                    !isCPActive
+                    vh_active
+                        ? api_base2.api.send({ buy: id, price: askPrice })
+                        : !isCPActive
                         ? api_base.api.send({ buy: id, price: askPrice })
                         : api_base.api.send({
                               buy_contract_for_multiple_accounts: id,
@@ -82,7 +86,7 @@ export default Engine =>
                     (errorCode, makeDelay) => {
                         // if disconnected no need to resubscription (handled by live-api)
                         if (errorCode !== 'DisconnectError') {
-                            this.renewProposalsOnPurchase();
+                            !vh_active ? this.renewProposalsOnPurchase() : this.renewProposalsOnPurchaseVH();
                         } else {
                             this.clearProposals();
                         }
@@ -100,7 +104,7 @@ export default Engine =>
                 ).then(onSuccess);
             }
             const trade_option = tradeOptionToBuy(contract_type, this.tradeOptions);
-            const action = () => api_base.api.send(trade_option);
+            const action = () => (vh_active ? api_base2.api.send(trade_option) : api_base.api.send(trade_option));
 
             this.isSold = false;
 
