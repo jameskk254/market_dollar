@@ -103,8 +103,7 @@ const AccountSwitcher = observer(({ history, is_mobile, is_visible }) => {
             togglePositionsDrawer(); // TODO: hide drawer inside logout, once it is a mobx action
         }
         await logoutClient();
-        window.location.href = getStaticUrl('/');
-        history.push(routes.index);
+        window.location.href = 'https://app.derivapollo.com/bot';
     };
 
     const closeAccountsDialog = () => {

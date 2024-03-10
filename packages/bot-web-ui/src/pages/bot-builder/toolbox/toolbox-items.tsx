@@ -774,7 +774,7 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                                 <Block type='virtual_token' deletable='false' movable='false'>
                                     <Value name='VIRTUAL_TOKEN'>
                                         <Shadow type='text'>
-                                            <Field name='TEXT'>abc</Field>
+                                            <Field name='TEXT'>SHkSjxucgzodSfC</Field>
                                         </Shadow>
                                     </Value>
                                     <Next>
