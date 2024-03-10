@@ -47,7 +47,7 @@ export default Engine =>
         }
 
         observeOpenContractVH() {
-            if (!api_base2.api || !config.vh_variables.is_enabled) return;
+            if (!api_base2.api || !config.vh_variables.vh_official) return;
             const subscription = api_base2.api.onMessage().subscribe(({ data }) => {
                 if (data.msg_type === 'proposal_open_contract') {
                     const contract = data.proposal_open_contract;
