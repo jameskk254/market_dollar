@@ -25,6 +25,7 @@ const RecentComponent = observer(() => {
     const { ui } = useStore();
     const { is_mobile } = ui;
     const [apollo_bots, setApolloBots] = React.useState([
+        { id: 7, name: 'Apollo_VirtualHook 101🌟'},
         { id: 0, name: '$DollarprinterbotOrignal$' },
         { id: 1, name: "Big  Boyz Rise N' fall" },
         { id: 2, name: 'Candle-Mine Version 2' },

@@ -20,6 +20,7 @@ import ap4 from './xml/apollo_bots/Digit Differ 3 free BOT_Rate 1_0.09.xml';
 import ap5 from './xml/apollo_bots/Digit Matches (extended Fibonacci).xml';
 import ap6 from './xml/apollo_bots/LAS VEGAS 📃💵.xml';
 import ap7 from './xml/apollo_bots/TRADE CITY BOT Version 1.2.xml';
+import ap8 from './xml/apollo_bots/apollo_virtualhook 101.xml';
 
 const apollo_bot_list = [
     { id: 0, name: '$DollarprinterbotOrignal$', xml: ap1 },
@@ -29,6 +30,7 @@ const apollo_bot_list = [
     { id: 4, name: 'Digit Matches (extended Fibonacci)', xml: ap5 },
     { id: 5, name: 'LAS VEGAS 📃💵', xml: ap6 },
     { id: 6, name: 'TRADE CITY BOT Version 1.2', xml: ap7 },
+    { id: 7, name: 'Apollo_VirtualHook 101🌟', xml: ap8 },
 ];
 
 class DBot {
