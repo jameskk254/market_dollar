@@ -3,6 +3,7 @@ import { sell, openContractReceived } from './state/actions';
 import { contractStatus, contract as broadcastContract } from '../utils/broadcast';
 import { api_base, api_base2 } from '../../api/api-base';
 import { handleWinValue, handleLostValue } from '../../apollo_functions';
+import {config} from '../../../constants'
 
 export default Engine =>
     class OpenContract extends Engine {
@@ -46,7 +47,7 @@ export default Engine =>
         }
 
         observeOpenContractVH() {
-            if (!api_base2.api) return;
+            if (!api_base2.api || !config.vh_variables.is_enabled) return;
             const subscription = api_base2.api.onMessage().subscribe(({ data }) => {
                 if (data.msg_type === 'proposal_open_contract') {
                     const contract = data.proposal_open_contract;
