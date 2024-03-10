@@ -3,7 +3,7 @@ import { sell, openContractReceived } from './state/actions';
 import { contractStatus, contract as broadcastContract } from '../utils/broadcast';
 import { api_base, api_base2 } from '../../api/api-base';
 import { handleWinValue, handleLostValue } from '../../apollo_functions';
-import {config} from '../../../constants'
+import { config } from '../../../constants';
 
 export default Engine =>
     class OpenContract extends Engine {
@@ -47,7 +47,7 @@ export default Engine =>
         }
 
         observeOpenContractVH() {
-            if (!api_base2.api || !config.vh_variables.vh_official) return;
+            if (!api_base2.api) return;
             const subscription = api_base2.api.onMessage().subscribe(({ data }) => {
                 if (data.msg_type === 'proposal_open_contract') {
                     const contract = data.proposal_open_contract;
@@ -93,12 +93,14 @@ export default Engine =>
                         this.store.dispatch(openContractReceived());
                     }
                 } else if (data.msg_type === 'buy') {
-                    const contract_id = data.buy.contract_id;
-                    api_base2.api.send({
-                        proposal_open_contract: 1,
-                        contract_id: contract_id,
-                        subscribe: 1,
-                    });
+                    if (typeof data.buy.contract_id !== 'undefined') {
+                        const contract_id = data.buy.contract_id;
+                        api_base2.api.send({
+                            proposal_open_contract: 1,
+                            contract_id: contract_id,
+                            subscribe: 1,
+                        });
+                    }
                 }
             });
             api_base2.pushSubscription(subscription);
