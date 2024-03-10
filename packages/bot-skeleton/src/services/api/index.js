@@ -22,6 +22,5 @@ export {
     handleLostValue,
     handleWinValue,
     handleWonLiveStep,
-    resetMartingaleVars,
 } from '../apollo_functions';
 

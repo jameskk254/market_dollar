@@ -20,13 +20,7 @@ export const handleWinValue = () => {
 
 export const handleWonLiveStep = total_profit => {
     if (total_profit >= config.vh_variables.take_profit) {
-        config.vh_variables.is_enabled = false;
-        config.vh_variables.current_step = 1;
-        config.vh_variables.current_trades_real = 0;
-        config.vh_variables.is_martingale_active = false;
-        config.vh_variables.mart_total_lost = 0;
         alert('Take Profit Hitted!!');
-        // notify('success', 'Take Profit Hitted!!');
         dbot.stopBot();
     } else {
         config.vh_variables.current_trades_real++;
@@ -43,11 +37,6 @@ export const handleWonLiveStep = total_profit => {
 export const handleLostLiveStep = total_profit => {
     const sl = config.vh_variables.stop_loss * -1;
     if (total_profit <= sl) {
-        config.vh_variables.is_enabled = false;
-        config.vh_variables.current_step = 1;
-        config.vh_variables.current_trades_real = 0;
-        config.vh_variables.is_martingale_active = false;
-        config.vh_variables.mart_total_lost = 0;
         alert('Stop Loss Hitted!!');
         dbot.stopBot();
     } else {
@@ -64,9 +53,7 @@ export const calculateMartingale = profit => {
 // Custom Functions(When VH is Disabled)
 export const calculateWonStatus = total_profit => {
     if (total_profit >= config.vh_variables.take_profit) {
-        config.vh_variables.is_enabled = false;
-        config.vh_variables.mart_total_lost = 0;
-        notify('success', 'Take Profit Hitted!!');
+        alert('Take Profit Hitted!!');
         dbot.stopBot();
     } else {
         config.vh_variables.is_enabled = true;
@@ -78,8 +65,6 @@ export const calculateWonStatus = total_profit => {
 export const calculateLostStatus = (profit, total_profit) => {
     const sl = config.vh_variables.stop_loss * -1;
     if (total_profit <= sl) {
-        config.vh_variables.is_martingale_active = false;
-        config.vh_variables.mart_total_lost = 0;
         alert('Stop Loss Hitted!!');
         dbot.stopBot();
     } else if (config.vh_variables.allow_martingale === true) {
@@ -88,11 +73,3 @@ export const calculateLostStatus = (profit, total_profit) => {
     }
 };
 
-export const resetMartingaleVars = () => {
-    // Switching VH off incase its inactive
-    config.vh_variables.is_enabled = false;
-    config.vh_variables.current_step = 1;
-    config.vh_variables.current_trades_real = 0;
-    config.vh_variables.is_martingale_active = false;
-    config.vh_variables.mart_total_lost = 0;
-};

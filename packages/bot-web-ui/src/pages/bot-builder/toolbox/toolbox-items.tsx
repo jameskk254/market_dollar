@@ -767,7 +767,7 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                         <Block type='martingale' deletable='false' movable='false'>
                             <Value name='MARTINGALE'>
                                 <Shadow type='math_number'>
-                                    <Field name='NUM'>2</Field>
+                                    <Field name='NUM'>1.5</Field>
                                 </Shadow>
                             </Value>
                             <Next>

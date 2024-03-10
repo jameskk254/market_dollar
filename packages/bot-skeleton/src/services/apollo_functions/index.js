@@ -6,5 +6,4 @@ export {
     handleLostValue,
     handleWinValue,
     handleWonLiveStep,
-    resetMartingaleVars,
 } from './vh_functions';

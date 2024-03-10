@@ -162,7 +162,7 @@ const CopyTrader = observer(() => {
                 </div>
                 <div className='enable_sync'>
                     <div className='enable_disable'>
-                        <input type='checkbox' checked={enableCP} onChange={handleCPChange} />
+                        <input type='checkbox' checked={config.copy_trading.is_active} onChange={handleCPChange} />
                         <Localize i18n_default_text='On/Off' />
                     </div>
                     <div className='sync_data'>

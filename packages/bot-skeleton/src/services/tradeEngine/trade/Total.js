@@ -11,7 +11,6 @@ import {
     calculateWonStatus,
     handleLostLiveStep,
     handleWonLiveStep,
-    resetMartingaleVars,
 } from '../../apollo_functions';
 const skeleton = {
     totalProfit: 0,
@@ -69,8 +68,6 @@ export default Engine =>
                     const isRunning1 = api_base2.is_running;
                     if(isRunning || isRunning1){
                         calculateLostStatus(profit, parseFloat(accountStat.totalProfit))
-                    }else{
-                        resetMartingaleVars()
                     }
                 }
             }

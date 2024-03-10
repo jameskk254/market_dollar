@@ -1,5 +1,5 @@
 import { save_types } from '../constants';
-import { config } from '../constants/config';
+import { config,resetVhVariables } from '../constants';
 import { api_base, api_base2,api_base3 } from '../services/api/api-base';
 import ApiHelpers from '../services/api/api-helpers';
 import Interpreter from '../services/tradeEngine/utils/interpreter';
@@ -355,7 +355,7 @@ class DBot {
      */
     async stopBot() {
         if (api_base.is_stopping) return;
-
+        resetVhVariables()
         api_base.setIsRunning(false);
 
         await this.interpreter.stop();
@@ -370,6 +370,7 @@ class DBot {
      */
     async terminateBot() {
         if (this.interpreter) {
+            resetVhVariables()
             await this.interpreter.terminateSession();
             this.interpreter = null;
             this.interpreter = Interpreter();
