@@ -1,5 +1,5 @@
 import { action, computed, makeObservable, observable, reaction } from 'mobx';
-import { log_types } from '@deriv/bot-skeleton';
+import { log_types,config } from '@deriv/bot-skeleton';
 import { formatDate, isEnded } from '@deriv/shared';
 import { transaction_elements } from '../constants/transactions';
 import { getStoredItemsByKey, getStoredItemsByUser, setStoredItemsByKey } from '../utils/session-storage';
@@ -85,6 +85,7 @@ export default class TransactionsStore {
             tick_count: data.tick_count,
             transaction_ids: data.transaction_ids,
             underlying: data.underlying,
+            is_virtual_trade: config.vh_variables.is_enabled
         };
 
         if (!this.elements[current_account]) {

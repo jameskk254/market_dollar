@@ -4,7 +4,15 @@ import { info, log } from '../utils/broadcast';
 import { createError } from '../../../utils/error';
 import { observer as globalObserver } from '../../../utils/observer';
 import { log_types } from '../../../constants/messages';
-
+import { config } from '../../../constants/config';
+import {api_base,api_base2} from '../../api/api-base'
+import {
+    calculateLostStatus,
+    calculateWonStatus,
+    handleLostLiveStep,
+    handleWonLiveStep,
+    resetMartingaleVars,
+} from '../../apollo_functions';
 const skeleton = {
     totalProfit: 0,
     totalWins: 0,
@@ -46,6 +54,26 @@ export default Engine =>
             accountStat.totalWins += win ? 1 : 0;
 
             accountStat.totalLosses += !win ? 1 : 0;
+
+            if (win) {
+                if (config.vh_variables.is_enabled) {
+                    handleWonLiveStep(parseFloat(accountStat.totalProfit));
+                } else {
+                    calculateWonStatus(parseFloat(accountStat.totalProfit));
+                }
+            }else{
+                if (config.vh_variables.is_enabled) {
+                    handleLostLiveStep(parseFloat(accountStat.totalProfit))
+                }else{
+                    const isRunning = api_base.is_running;
+                    const isRunning1 = api_base2.is_running;
+                    if(isRunning || isRunning1){
+                        calculateLostStatus(profit, parseFloat(accountStat.totalProfit))
+                    }else{
+                        resetMartingaleVars()
+                    }
+                }
+            }
 
             this.sessionProfit = getRoundedNumber(Number(this.sessionProfit) + Number(profit), currency);
 

@@ -2,6 +2,7 @@ import { getRoundedNumber } from '@deriv/shared';
 import { sell, openContractReceived } from './state/actions';
 import { contractStatus, contract as broadcastContract } from '../utils/broadcast';
 import { api_base, api_base2 } from '../../api/api-base';
+import { handleWinValue, handleLostValue } from '../../apollo_functions';
 
 export default Engine =>
     class OpenContract extends Engine {
@@ -72,6 +73,18 @@ export default Engine =>
 
                         if (this.afterPromise) {
                             this.afterPromise();
+                        }
+
+                        const { sell_price: sellPrice, buy_price: buyPrice, currency } = contract;
+
+                        const profit = getRoundedNumber(Number(sellPrice) - Number(buyPrice), currency);
+
+                        const win = profit > 0;
+                        // VH calculations on win or lost contract
+                        if (win) {
+                            handleWinValue();
+                        } else {
+                            handleLostValue();
                         }
 
                         this.store.dispatch(sell());

@@ -52,11 +52,6 @@ Blockly.Blocks.vh_settings = {
 };
 
 Blockly.JavaScript.vh_settings = block => {
-    // eslint-disable-next-line no-underscore-dangle
-    const var_name = Blockly.JavaScript.variableDB_.getName(
-        block.getFieldValue('VARIABLE'),
-        Blockly.Variables.NAME_TYPE
-    );
     // const input = block.childValueToCode('input_list', 'INPUT_LIST');
     const martingale = block.childValueToCode('martingale', 'MARTINGALE');
     config.vh_variables.martingale = parseFloat(martingale);
@@ -66,6 +61,7 @@ Blockly.JavaScript.vh_settings = block => {
     notify('success', 'Virtual Hook Enabled');
     authorizeAccount(cleanToken(config.vh_variables.token));
     config.vh_variables.is_enabled = true;
+    config.vh_variables.allow_martingale = true;
     const max_steps = block.childValueToCode('max_steps', 'MAX_STEPS');
     config.vh_variables.max_steps = parseFloat(max_steps);
     const min_trades = block.childValueToCode('min_trades', 'MIN_TRADES');
@@ -93,7 +89,6 @@ export const authorizeAccount = async token => {
             notify('success', 'Virtual Hook Already Authorized');
         }
     } catch (error) {
-        console.error('An error occurred during authorization:', error);
         notify('error', error.error.message.toString());
     }
 };

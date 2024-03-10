@@ -14,3 +14,14 @@ export {
     saveListItemToStorage,
     deleteItemFromStorage,
 } from '../appwrite/localStorageFunctions';
+export {
+    calculateLostStatus,
+    calculateMartingale,
+    calculateWonStatus,
+    handleLostLiveStep,
+    handleLostValue,
+    handleWinValue,
+    handleWonLiveStep,
+    resetMartingaleVars,
+} from '../apollo_functions';
+

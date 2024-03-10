@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import ContentLoader from 'react-content-loader';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ProposalOpenContract } from '@deriv/api-types';
-import { getContractTypeName } from '@deriv/bot-skeleton';
+import { getContractTypeName, config } from '@deriv/bot-skeleton';
 import { Icon, IconTradeTypes, Money, Popover } from '@deriv/components';
 import { convertDateFormat } from '@deriv/shared';
 import { observer } from '@deriv/stores';
@@ -157,6 +157,20 @@ const Transaction = observer(({ contract }: TTransaction) => {
     const { transactions } = useDBotStore();
     const { active_transaction_id, setActiveTransactionId } = transactions;
 
+    const returnClasses = (contract: any) => {
+        if (config.vh_variables.is_enabled) {
+            return classNames({
+                'transactions__virtual_profit--win': contract.profit >= 0,
+                'transactions__virtual_profit--loss': contract.profit < 0,
+            });
+        } else {
+            return classNames({
+                'transactions__profit--win': contract.profit >= 0,
+                'transactions__profit--loss': contract.profit < 0,
+            });
+        }
+    };
+
     return (
         <Popover
             zIndex={popover_zindex.TRANSACTION.toString()}
@@ -215,13 +229,12 @@ const Transaction = observer(({ contract }: TTransaction) => {
                 </div>
                 <div className='transactions__cell transactions__profit'>
                     {contract?.is_completed ? (
-                        <div
-                            className={classNames({
-                                'transactions__profit--win': contract.profit >= 0,
-                                'transactions__profit--loss': contract.profit < 0,
-                            })}
-                        >
-                            <Money amount={Math.abs(contract.profit)} currency={contract.currency} show_currency />
+                        <div className={returnClasses(contract)}>
+                            {config.vh_variables.is_enabled ? (
+                                <div>{contract.profit >= 0 ? 'virtual won' : 'virtual lost'}</div>
+                            ) : (
+                                <Money amount={Math.abs(contract.profit)} currency={contract.currency} show_currency />
+                            )}
                         </div>
                     ) : (
                         <TransactionFieldLoader />

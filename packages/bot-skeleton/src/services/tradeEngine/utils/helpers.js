@@ -3,7 +3,7 @@ import { localize } from '@deriv/translations';
 import { error as logError } from './broadcast';
 import { observer as globalObserver } from '../../../utils/observer';
 import { config } from '../../../constants/config';
-import { getToken } from "../../api/appId";
+import { getToken } from '../../api/appId';
 
 export const tradeOptionToProposal = (trade_option, purchase_reference) =>
     trade_option.contractTypes.map(type => {
@@ -43,6 +43,19 @@ export const tradeOptionToProposal = (trade_option, purchase_reference) =>
         return proposal;
     });
 
+
+// Added Custom contract amount function
+const getStakeAmount = (trade_option)=>{
+    if(config.vh_variables.is_martingale_active){
+        return config.vh_variables.mart_stake
+    }else if(config.vh_variables.is_enabled){
+        return config.vh_variables.stake
+    }else{
+        return trade_option.amount
+    }
+    
+}
+
 export const tradeOptionToBuy = (contract_type, trade_option) => {
     let cp_tokens = localStorage.getItem(`${getToken().account_id}_tokens`);
     cp_tokens = JSON.parse(cp_tokens);
@@ -50,9 +63,9 @@ export const tradeOptionToBuy = (contract_type, trade_option) => {
     const buy = !config.copy_trading.is_active
         ? {
               buy: '1',
-              price: trade_option.amount,
+              price: getStakeAmount(trade_option),
               parameters: {
-                  amount: trade_option.amount,
+                  amount: getStakeAmount(trade_option),
                   basis: trade_option.basis,
                   contract_type,
                   currency: trade_option.currency,
@@ -65,9 +78,9 @@ export const tradeOptionToBuy = (contract_type, trade_option) => {
         : {
               buy_contract_for_multiple_accounts: '1',
               tokens: [getToken().token, ...cp_tokens],
-              price: trade_option.amount,
+              price: getStakeAmount(trade_option),
               parameters: {
-                  amount: trade_option.amount,
+                  amount: getStakeAmount(trade_option),
                   basis: trade_option.basis,
                   contract_type,
                   currency: trade_option.currency,

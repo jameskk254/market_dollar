@@ -199,6 +199,14 @@
             }
         }
     }
+    &__virtual_profit {
+        &--win {
+            color: var(--text-profit-success);
+        }
+        &--loss {
+            color: var(--text-loss-danger);
+        }
+    }
     &__info {
         &-header {
             font-weight: bold;

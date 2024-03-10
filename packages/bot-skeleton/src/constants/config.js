@@ -19,6 +19,12 @@ export const config = {
         is_authorized: false,
         is_enabled: false,
         stake: 0.35,
+        current_step: 1,
+        current_trades_real: 0,
+        is_martingale_active: false,
+        mart_total_lost: 0,
+        allow_martingale: false,
+        mart_stake: 0,
     },
     lists: {
         PAYOUTTYPE: [

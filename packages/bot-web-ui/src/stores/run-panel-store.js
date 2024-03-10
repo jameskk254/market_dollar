@@ -102,15 +102,21 @@ export default class RunPanelStore {
             (stats, { data: trx }) => {
                 if (trx.is_completed) {
                     if (trx.profit > 0) {
-                        stats.won_contracts += 1;
-                        stats.total_payout += trx.payout;
+                        if (!trx.is_virtual_trade) {
+                            stats.won_contracts += 1;
+                            stats.total_payout += trx.payout;
+                        }
                     } else {
-                        stats.lost_contracts += 1;
+                        if (!trx.is_virtual_trade) {
+                            stats.lost_contracts += 1;
+                        }
                     }
 
-                    stats.total_profit += trx.profit;
-                    stats.total_stake += trx.buy_price;
-                    total_runs += 1;
+                    if (!trx.is_virtual_trade) {
+                        stats.total_profit += trx.profit;
+                        stats.total_stake += trx.buy_price;
+                        total_runs += 1;
+                    }
                 }
 
                 return stats;
