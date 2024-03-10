@@ -1,12 +1,10 @@
 import React from 'react';
-import { Analytics } from '@deriv-com/analytics';
 import { MobileWrapper, Text } from '@deriv/components';
 import { observer, useStore } from '@deriv/stores';
 import { Localize, localize } from '@deriv/translations';
-import { useDBotStore } from 'Stores/useDBotStore';
-import DeleteDialog from './delete-dialog';
 import RecentWorkspace from './recent-workspace';
 import SaveModal from './save-modal';
+import {apollo_bot_list} from '@deriv/bot-skeleton'
 import './index.scss';
 
 type THeader = {
@@ -24,16 +22,7 @@ const HEADERS: THeader[] = [
 const RecentComponent = observer(() => {
     const { ui } = useStore();
     const { is_mobile } = ui;
-    const [apollo_bots, setApolloBots] = React.useState([
-        { id: 7, name: 'Apollo_VirtualHook 101🌟'},
-        { id: 0, name: '$DollarprinterbotOrignal$' },
-        { id: 1, name: "Big  Boyz Rise N' fall" },
-        { id: 2, name: 'Candle-Mine Version 2' },
-        { id: 3, name: 'Digit Differ 3 free BOT_Rate 1_0.09' },
-        { id: 4, name: 'Digit Matches (extended Fibonacci)' },
-        { id: 5, name: 'LAS VEGAS 📃💵' },
-        { id: 6, name: 'TRADE CITY BOT Version 1.2' },
-    ]);
+    const [apollo_bots, setApolloBots] = React.useState(apollo_bot_list);
 
     if (!apollo_bots?.length) return null;
     return (

@@ -6,3 +6,5 @@ export {
     runGroupedEvents,
     runIrreversibleEvents,
 } from './utils/index';
+
+export {apollo_bot_list} from './dbot'

@@ -22,15 +22,15 @@ import ap6 from './xml/apollo_bots/LAS VEGAS 📃💵.xml';
 import ap7 from './xml/apollo_bots/TRADE CITY BOT Version 1.2.xml';
 import ap8 from './xml/apollo_bots/apollo_virtualhook 101.xml';
 
-const apollo_bot_list = [
-    { id: 0, name: '$DollarprinterbotOrignal$', xml: ap1 },
-    { id: 1, name: "Big  Boyz Rise N' fall", xml: ap2 },
-    { id: 2, name: 'Candle-Mine Version 2', xml: ap3 },
-    { id: 3, name: 'Digit Differ 3 free BOT_Rate 1_0.09', xml: ap4 },
-    { id: 4, name: 'Digit Matches (extended Fibonacci)', xml: ap5 },
-    { id: 5, name: 'LAS VEGAS 📃💵', xml: ap6 },
-    { id: 6, name: 'TRADE CITY BOT Version 1.2', xml: ap7 },
-    { id: 7, name: 'Apollo_VirtualHook 101🌟', xml: ap8 },
+export const apollo_bot_list = [
+    { id: 0, name: 'Apollo_VirtualHook 101🌟', xml: ap8 },
+    { id: 1, name: '$DollarprinterbotOrignal$', xml: ap1 },
+    { id: 2, name: "Big  Boyz Rise N' fall", xml: ap2 },
+    { id: 3, name: 'Candle-Mine Version 2', xml: ap3 },
+    { id: 4, name: 'Digit Differ 3 free BOT_Rate 1_0.09', xml: ap4 },
+    { id: 5, name: 'Digit Matches (extended Fibonacci)', xml: ap5 },
+    { id: 6, name: 'LAS VEGAS 📃💵', xml: ap6 },
+    { id: 7, name: 'TRADE CITY BOT Version 1.2', xml: ap7 },
 ];
 
 class DBot {
