@@ -53,6 +53,7 @@ Blockly.Blocks.vh_settings = {
 
 Blockly.JavaScript.vh_settings = block => {
     // const input = block.childValueToCode('input_list', 'INPUT_LIST');
+    config.vh_variables.vh_official = true;
     const martingale = block.childValueToCode('martingale', 'MARTINGALE');
     config.vh_variables.martingale = parseFloat(martingale);
     const virtual_token = block.childValueToCode('virtual_token', 'VIRTUAL_TOKEN');

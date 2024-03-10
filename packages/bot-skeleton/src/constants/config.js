@@ -2,15 +2,16 @@ import { localize } from '@deriv/translations';
 
 const CRYPTO_CURRENCIES = ['BTC', 'ETH', 'LTC', 'BCH', 'UST'];
 
-export const resetVhVariables = () =>{
-    config.vh_variables.max_steps = 1
-    config.vh_variables.is_enabled = false
-    config.vh_variables.current_step = 1
-    config.vh_variables.current_trades_real = 0
-    config.vh_variables.is_martingale_active = false
-    config.vh_variables.mart_total_lost = 0
-    config.vh_variables.allow_martingale = false
-}
+export const resetVhVariables = () => {
+    config.vh_variables.vh_official = false;
+    config.vh_variables.max_steps = 1;
+    config.vh_variables.is_enabled = false;
+    config.vh_variables.current_step = 1;
+    config.vh_variables.current_trades_real = 0;
+    config.vh_variables.is_martingale_active = false;
+    config.vh_variables.mart_total_lost = 0;
+    config.vh_variables.allow_martingale = false;
+};
 
 export const config = {
     custom_variables: {
@@ -20,6 +21,7 @@ export const config = {
         is_active: false,
     },
     vh_variables: {
+        vh_official: false,
         martingale: 1,
         token: '',
         max_steps: 1,
