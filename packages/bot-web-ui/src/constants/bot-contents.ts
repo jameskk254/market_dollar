@@ -17,11 +17,12 @@ export const DBOT_TABS: TDashboardTabIndex = Object.freeze({
     APOLLOBOTS: 2,
     CHART: 3,
     COPYTRADER: 4,
-    TUTORIAL: 5,
+    ANALYSISPAGE: 5,
+    TUTORIAL: 6,
 });
 
 export const MAX_STRATEGIES = 10;
 
-export const TAB_IDS = ['id-dbot-dashboard', 'id-bot-builder', 'id-dbot-apollo-bots', 'id-charts','id-copy-trader' ,'id-tutorials'];
+export const TAB_IDS = ['id-dbot-dashboard', 'id-bot-builder', 'id-dbot-apollo-bots', 'id-charts','id-copy-trader', 'id-analysis-page' ,'id-tutorials'];
 
 export const DEBOUNCE_INTERVAL_TIME = 500;

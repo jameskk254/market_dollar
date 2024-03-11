@@ -13,10 +13,10 @@ import './index.scss';
 import './style.css';
 const LocalComponent = observer(() => {
     return (
-        <div className='apollo_massive_logo'>  
+        <div className='apollo_massive_logo'>
             <Text size='m' line_height='xs' className='header__menu-link-text'>
-                    <Localize i18n_default_text='Deriv Apollo' />
-                </Text>
+                <Localize i18n_default_text='D-Apollo' />
+            </Text>
         </div>
     );
 });

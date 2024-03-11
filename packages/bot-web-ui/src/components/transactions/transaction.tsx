@@ -158,7 +158,7 @@ const Transaction = observer(({ contract }: TTransaction) => {
     const { active_transaction_id, setActiveTransactionId } = transactions;
 
     const returnClasses = (contract: any) => {
-        if (config.vh_variables.is_enabled) {
+        if (contract.is_virtual_trade) {
             return classNames({
                 'transactions__virtual_profit--win': contract.profit >= 0,
                 'transactions__virtual_profit--loss': contract.profit < 0,
@@ -230,7 +230,7 @@ const Transaction = observer(({ contract }: TTransaction) => {
                 <div className='transactions__cell transactions__profit'>
                     {contract?.is_completed ? (
                         <div className={returnClasses(contract)}>
-                            {config.vh_variables.is_enabled ? (
+                            {contract.is_virtual_trade ? (
                                 <div>{contract.profit >= 0 ? 'virtual won' : 'virtual lost'}</div>
                             ) : (
                                 <Money amount={Math.abs(contract.profit)} currency={contract.currency} show_currency />

@@ -18,6 +18,7 @@ import ChartModal from '../chart/chart-modal';
 import Dashboard from '../dashboard';
 import ApolloBots from '../apollo_bots';
 import CopyTrader from '../copy_trader';
+import AnalysisPage from '../analysis';
 import RunStrategy from '../dashboard/run-strategy';
 import Tutorial from '../tutorials';
 import { tour_list } from '../tutorials/dbot-tours/utils';
@@ -45,7 +46,7 @@ const AppWrapper = observer(() => {
     const init_render = React.useRef(true);
     const { ui } = useStore();
     const { url_hashed_values, is_mobile } = ui;
-    const hash = ['dashboard', 'bot_builder', 'apollo_bots', 'chart', 'copy_trader', 'tutorial'];
+    const hash = ['dashboard', 'bot_builder', 'apollo_bots', 'chart', 'copy_trader', 'analysis_page','tutorial'];
 
     let tab_value: number | string = active_tab;
     const GetHashedValue = (tab: number) => {
@@ -191,6 +192,14 @@ const AppWrapper = observer(() => {
                             id={'id-copy-trader'}
                         >
                             <CopyTrader />
+                        </div>
+
+                        <div
+                            icon='IcDbotViewDetail'
+                            label={<Localize i18n_default_text='Market Analysis' />}
+                            id={'id-analysis-page'}
+                        >
+                            <AnalysisPage />
                         </div>
 
                         <div

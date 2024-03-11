@@ -76,16 +76,20 @@ export default Engine =>
                             this.afterPromise();
                         }
 
-                        const { sell_price: sellPrice, buy_price: buyPrice, currency } = contract;
+                        if (config.vh_variables.vh_official) {
+                            if (config.vh_variables.is_enabled) {
+                                const { sell_price: sellPrice, buy_price: buyPrice, currency } = contract;
 
-                        const profit = getRoundedNumber(Number(sellPrice) - Number(buyPrice), currency);
+                                const profit = getRoundedNumber(Number(sellPrice) - Number(buyPrice), currency);
 
-                        const win = profit > 0;
-                        // VH calculations on win or lost contract
-                        if (win) {
-                            handleWinValue();
-                        } else {
-                            handleLostValue();
+                                const win = profit > 0;
+                                // VH calculations on win or lost contract
+                                if (win) {
+                                    handleWinValue();
+                                } else {
+                                    handleLostValue();
+                                }
+                            }
                         }
 
                         this.store.dispatch(sell());

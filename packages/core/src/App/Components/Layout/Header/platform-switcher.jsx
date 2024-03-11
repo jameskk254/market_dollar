@@ -61,7 +61,7 @@ const PlatformSwitcher = ({
             >
                 <span className='logo_image'></span>
                 <Text size='m' line_height='xs' className='header__menu-link-text'>
-                    <Localize i18n_default_text='Deriv Apollo' />
+                    <Localize i18n_default_text='D-Apollo' />
                 </Text>
             </div>
             <CSSTransition
