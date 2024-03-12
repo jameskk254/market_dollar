@@ -1,6 +1,6 @@
 import { save_types } from '../constants';
 import { config,resetVhVariables } from '../constants';
-import { api_base, api_base2,api_base3 } from '../services/api/api-base';
+import { api_base, api_base2,api_base3,api_base4 } from '../services/api/api-base';
 import ApiHelpers from '../services/api/api-helpers';
 import Interpreter from '../services/tradeEngine/utils/interpreter';
 import { compareXml, observer as globalObserver } from '../utils';
@@ -51,6 +51,7 @@ class DBot {
         api_base.init();
         api_base2.customInit();
         api_base3.customInit();
+        api_base4.customInit();
         this.interpreter = Interpreter();
         const that = this;
         Blockly.Blocks.trade_definition_tradetype.onchange = function (event) {
