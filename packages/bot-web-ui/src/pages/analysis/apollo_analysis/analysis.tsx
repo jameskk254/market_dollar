@@ -18,13 +18,37 @@ type LineChartProps = {
     value: number;
 };
 
+type SymbolData = {
+    allow_forward_starting: number;
+    display_name: string;
+    display_order: number;
+    exchange_is_open: number;
+    is_trading_suspended: number;
+    market: string;
+    market_display_name: string;
+    pip: number;
+    subgroup: string;
+    subgroup_display_name: string;
+    submarket: string;
+    submarket_display_name: string;
+    symbol: string;
+    symbol_type: string;
+};
+
+type ActiveSymbolTypes = {
+    active_symbols: SymbolData[];
+};
 
 const ApolloAnalysisPage = observer(() => {
     const [isSubscribed, setIsSubscribed] = useState(false);
-    const [currentTick, setCurrentTick] = useState<number | String>('...');
+    const [currentTick, setCurrentTick] = useState<number | String>('Loading...');
     const [allLastDigitList, setAllLastDigitList] = useState<number[]>([]);
     const [lineChartList, setLineChartList] = useState<LineChartProps[]>([]);
     const [lastDigit, setLastDigit] = useState(0);
+    const [numberOfTicks, setNumberOfTicks] = useState(50);
+    const [optionsList, setOptions] = useState<SymbolData[]>([]);
+    let active_symbol = 'R_100';
+
     useEffect(() => {
         startApi();
     }, []);
@@ -33,12 +57,8 @@ const ApolloAnalysisPage = observer(() => {
         await sleep(5000);
         if (!isSubscribed) {
             api_base4.api.send({
-                ticks_history: 'R_50',
-                adjust_start_time: 1,
-                count: 50,
-                end: 'latest',
-                start: 1,
-                style: 'ticks',
+                active_symbols: 'brief',
+                product_type: 'basic',
             });
             setIsSubscribed(true);
         }
@@ -66,15 +86,33 @@ const ApolloAnalysisPage = observer(() => {
                 if (data.msg_type === 'history') {
                     const { history, pip_size } = data;
                     const { prices } = history;
+                    const { ticks_history } = data.echo_req;
+                    setAllLastDigitList([]);
+                    setLineChartList([]);
                     prices.forEach((tick: number) => {
                         const last_digit = getLastDigits(tick, pip_size);
                         setAllLastDigitList(prevList => [...prevList, last_digit]);
                         setLineChartList(prevList => [...prevList, { name: last_digit.toString(), value: last_digit }]);
                     });
                     api_base4.api.send({
-                        ticks: 'R_50',
+                        ticks: ticks_history,
                         subscribe: 1,
                     });
+                }
+
+                if (data.msg_type === 'active_symbols') {
+                    const { active_symbols }: ActiveSymbolTypes = data;
+                    const filteredSymbols = active_symbols.filter(symbol => symbol.subgroup === 'synthetics');
+                    filteredSymbols.sort((a, b) => a.display_order - b.display_order);
+                    api_base4.api.send({
+                        ticks_history: filteredSymbols[0].symbol,
+                        adjust_start_time: 1,
+                        count: numberOfTicks,
+                        end: 'latest',
+                        start: 1,
+                        style: 'ticks',
+                    });
+                    setOptions(filteredSymbols);
                 }
             });
 
@@ -88,14 +126,57 @@ const ApolloAnalysisPage = observer(() => {
         setLineChartList(prevList => prevList.slice(1));
     };
 
+    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = event.target.value;
+        api_base4.api.forgetAll('ticks').then(() => {
+            active_symbol = selectedValue;
+            api_base4.api.send({
+                ticks_history: active_symbol,
+                adjust_start_time: 1,
+                count: numberOfTicks,
+                end: 'latest',
+                start: 1,
+                style: 'ticks',
+            });
+        });
+    };
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = Number(event.target.value);
+        setNumberOfTicks(newValue);
+        if (newValue > 9 && newValue <= 5000) {
+            api_base4.api.forgetAll('ticks').then(() => {
+                api_base4.api.send({
+                    ticks_history: active_symbol,
+                    adjust_start_time: 1,
+                    count: newValue,
+                    end: 'latest',
+                    start: 1,
+                    style: 'ticks',
+                });
+            });
+        }
+    };
+
     return (
         <div className='main_app'>
             <div className='top_bar'>
                 <div className='symbol_price'>
                     <div className='active_symbol'>
-                        <select name='' id='symbol_options'>
-                            <option value='100'>Volatility 100</option>
+                        <select name='' id='symbol_options' onChange={handleSelectChange}>
+                            {optionsList.length > 0 ? (
+                                optionsList.map(option => (
+                                    <option key={option.symbol} value={option.symbol}>
+                                        {option.display_name}
+                                    </option>
+                                ))
+                            ) : (
+                                <option value=''>Loading...</option>
+                            )}
                         </select>
+                    </div>
+                    <div className='no_of_ticks'>
+                        <input type='number' name='' id='' value={numberOfTicks} onChange={handleInputChange} />
                     </div>
                     <div className='current_price'>
                         <h3>{currentTick.toString()}</h3>

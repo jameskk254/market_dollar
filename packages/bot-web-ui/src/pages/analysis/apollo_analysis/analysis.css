@@ -7,6 +7,20 @@
     margin: 2rem;
 }
 
+.main_app #symbol_options {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 2px;
+}
+
+.no_of_ticks input {
+    text-align: center;
+    padding: 8px;
+    border-radius: 2px;
+    font-size: 14px;
+    width: 80px;
+}
+
 .main_app .symbol_price {
     display: flex;
     align-items: center;
