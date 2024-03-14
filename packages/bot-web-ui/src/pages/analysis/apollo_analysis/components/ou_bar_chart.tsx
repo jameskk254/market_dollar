@@ -1,22 +1,7 @@
 import React, { PureComponent } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 
-const data = [
-    {
-        name: 'Rise',
-        uv: 58,
-        pv: 2400,
-        amt: 2400,
-    },
-    {
-        name: 'Fall',
-        uv: 42,
-        pv: 1398,
-        amt: 2210,
-    },
-];
-
-const renderCustomizedLabel = props => {
+const renderCustomizedLabel = (props:any) => {
     const { x, y, width, value } = props;
     return (
         <text x={x + width + 5} y={y + 10} fill='#666' textAnchor='start' fontSize={12}>
@@ -25,9 +10,36 @@ const renderCustomizedLabel = props => {
     );
 };
 
-export default class ApolloBarChart extends PureComponent {
+const calculatePercentage = (arr: Number[], over: Number, under: Number) => {
+    const totalCount = arr.length;
+    const overCount = arr.filter(item => item > over).length;
+    const underCount = arr.filter(item => item < under).length;
 
+    const overPercentage = (overCount / totalCount) * 100;
+    const underPercentage = (underCount / totalCount) * 100;
+
+    return [overPercentage, underPercentage];
+};
+
+interface OverUnderProps {
+    overUnderList: Number[];
+}
+
+export default class OverUnderBarChart extends PureComponent<OverUnderProps> {
     render() {
+        const { overUnderList } = this.props;
+        const [overPercentage, underPercentage] = calculatePercentage(overUnderList, 3, 4);
+        const data = [
+            {
+                name: `Over`,
+                uv: +overPercentage.toFixed(2),
+            },
+            {
+                name: `Under`,
+                uv: +underPercentage.toFixed(2),
+            },
+        ];
+
         return (
             <ResponsiveContainer width='140%' height={211}>
                 <BarChart
@@ -43,7 +55,7 @@ export default class ApolloBarChart extends PureComponent {
                     }}
                 >
                     <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis type="number" label="" />
+                    <XAxis type='number' label='' />
                     <YAxis type='category' dataKey='name' />
                     <Tooltip />
                     <Bar dataKey='uv' fill='#8884d8'>

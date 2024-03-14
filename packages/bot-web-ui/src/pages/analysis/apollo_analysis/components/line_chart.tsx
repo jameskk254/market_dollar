@@ -1,59 +1,31 @@
 import React, { PureComponent } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Text } from 'recharts';
+import { LineChart, Line, ResponsiveContainer } from 'recharts';
 
-const data = [
-    {
-        name: 'Page A',
-        uv: 4000,
-        pv: 4,
-        amt: 2400,
-    },
-    {
-        name: 'Page B',
-        uv: 3000,
-        pv: 8,
-        amt: 2210,
-    },
-    {
-        name: 'Page C',
-        uv: 2000,
-        pv: 0,
-        amt: 2290,
-    },
-    {
-        name: 'Page D',
-        uv: 2780,
-        pv: 9,
-        amt: 2000,
-    },
-    {
-        name: 'Page E',
-        uv: 1890,
-        pv: 4,
-        amt: 2181,
-    },
-    {
-        name: 'Page F',
-        uv: 2390,
-        pv: 3,
-        amt: 2500,
-    },
-    {
-        name: 'Page G',
-        uv: 3490,
-        pv: 4,
-        amt: 2100,
-    },
-];
+type LineChartProps = {
+    name: string;
+    value: number;
+};
 
-export default class ApolloLineChart extends PureComponent {
+interface ApolloLineChartProps {
+    data: LineChartProps[];
+}
+
+export default class ApolloLineChart extends PureComponent<ApolloLineChartProps> {
     render() {
+        const { data } = this.props;
+        let last10Elements;
+        if (data.length > 9) {
+            last10Elements = data.slice(-10);
+        }
+
         return (
             <ResponsiveContainer width='100%' height='100%'>
-                <LineChart width={300} height={100} data={data}>
+                <LineChart width={300} height={100} data={data.length > 9 ? last10Elements : data}>
                     <Line
+                        isAnimationActive={false}
+                        key='line'
                         type='monotone'
-                        dataKey='pv'
+                        dataKey='value'
                         stroke='#8884d8'
                         strokeWidth={2}
                         dot={props => {

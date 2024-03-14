@@ -38,6 +38,14 @@ export const config = {
         allow_martingale: false,
         mart_stake: 0,
     },
+    analysis_vars: {
+        tick_list: [],
+        sub_id: '',
+        last_digit: 0,
+        current_tick: '...',
+        symbol_list: [],
+        subscribed: false
+    },
     lists: {
         PAYOUTTYPE: [
             // [localize('Payout'), 'payout'],
