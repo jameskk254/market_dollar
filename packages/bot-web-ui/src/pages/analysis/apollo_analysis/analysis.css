@@ -1,4 +1,8 @@
 /* #DFE1E7 */
+.main_app {
+    height: 100vh;
+    overflow: auto;
+}
 
 .main_app .top_bar {
     display: flex;
@@ -13,12 +17,43 @@
     border-radius: 2px;
 }
 
+.no_of_ticks {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
 .no_of_ticks input {
     text-align: center;
     padding: 8px;
     border-radius: 2px;
     font-size: 14px;
     width: 80px;
+}
+
+.no_of_ticks .sync_btn {
+    background: #0ba70b;
+    padding: 1px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.no_of_ticks .sync_btn svg {
+    width: 30px;
+    height: 30px;
+}
+
+.no_of_ticks .sync_btn svg.sync_active {
+    animation: rotate-circle 2s infinite linear;
+}
+
+@keyframes rotate-circle {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .main_app .symbol_price {
@@ -57,6 +92,36 @@
     flex-direction: column;
     align-items: center;
     padding: 0px 40px 0px 15px;
+}
+
+.main_app .over_under_options {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.main_app .over_under_options .digit_inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.main_app .over_under_options .digit_inputs .over_digit,
+.main_app .over_under_options .digit_inputs .under_digit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.main_app .over_under_options .digit_inputs .over_digit input,
+.main_app .over_under_options .digit_inputs .under_digit input {
+    padding: 3%;
+    width: 70px;
+    text-align: center;
 }
 
 .recharts-responsive-container {
@@ -188,37 +253,65 @@
     z-index: 100;
     color: #f85656;
     transition: all 0.3s ease;
+    display: none;
 }
 
-
+/* Responsive Desktop */
+@media (max-height: 660px) {
+    .main_app .pie_diff {
+        height: 70%;
+    }
+}
 
 /* Responsive (Mobile) */
 @media (max-width: 720px) {
-    .main_app{
-        height: 100vh;
-        overflow: auto;
+
+    .main_app .top_bar {
+        gap: 0px;
+        justify-content: center;
+    }
+    .main_app .top_bar .guide {
+        display: none;
     }
 
-    .main_app .rf_ou{
+    .main_app .symbol_price {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    .main_app .rf_ou {
         flex-direction: column;
     }
 
-    .line_chart{
+    .line_chart {
         width: 90%;
     }
 
-    .main_app .pie_diff{
+    .card3 {
+        height: 27%;
+    }
+
+    .main_app .pie_diff {
         flex-direction: column;
         padding: 15px;
         margin-top: 0rem;
-        height: 113%;
+        height: 100%;
     }
 
-    .pie_diff .pie{
+    .pie_diff .pie {
         width: 100%;
     }
 
-    .main_app .digit_diff{
+    .main_app .digit_diff {
         width: 100%;
+    }
+
+    .differs_container {
+        display: grid;
+        gap: 30px 4px;
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .differs_container .progress {
+        width: 58px;
+        height: 58px;
     }
 }

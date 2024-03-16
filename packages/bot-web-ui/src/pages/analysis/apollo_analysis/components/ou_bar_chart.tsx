@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 
-const renderCustomizedLabel = (props:any) => {
+const renderCustomizedLabel = (props: any) => {
     const { x, y, width, value } = props;
     return (
         <text x={x + width + 5} y={y + 10} fill='#666' textAnchor='start' fontSize={12}>
@@ -23,12 +23,14 @@ const calculatePercentage = (arr: Number[], over: Number, under: Number) => {
 
 interface OverUnderProps {
     overUnderList: Number[];
+    overValue: number;
+    underValue: number;
 }
 
 export default class OverUnderBarChart extends PureComponent<OverUnderProps> {
     render() {
-        const { overUnderList } = this.props;
-        const [overPercentage, underPercentage] = calculatePercentage(overUnderList, 3, 4);
+        const { overUnderList, overValue, underValue } = this.props;
+        const [overPercentage, underPercentage] = calculatePercentage(overUnderList, overValue, underValue);
         const data = [
             {
                 name: `Over`,

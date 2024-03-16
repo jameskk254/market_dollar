@@ -6,6 +6,7 @@ import OverUnderBarChart from './components/ou_bar_chart';
 import { observer, useStore } from '@deriv/stores';
 import DiffersBalls from './components/differs_balls';
 import { api_base4, config } from '@deriv/bot-skeleton';
+import { IoSyncCircleOutline } from 'react-icons/io5';
 import './analysis.css';
 import RiseFallBarChart from './components/rf_bar_chart';
 
@@ -47,6 +48,9 @@ const ApolloAnalysisPage = observer(() => {
     const [lastDigit, setLastDigit] = useState(0);
     const [numberOfTicks, setNumberOfTicks] = useState(50);
     const [optionsList, setOptions] = useState<SymbolData[]>([]);
+    const [isSyncing, setIsSyncing] = useState(true);
+    const [overValue, setOverValue] = useState(4);
+    const [underValue, setUnderValue] = useState(4);
     let active_symbol = 'R_100';
 
     useEffect(() => {
@@ -81,6 +85,7 @@ const ApolloAnalysisPage = observer(() => {
                     removeFirstElement();
                     setAllLastDigitList(prevList => [...prevList, last_digit]);
                     setLineChartList(prevList => [...prevList, { name: last_digit.toString(), value: last_digit }]);
+                    setIsSyncing(false);
                 }
 
                 if (data.msg_type === 'history') {
@@ -129,6 +134,7 @@ const ApolloAnalysisPage = observer(() => {
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
         api_base4.api.forgetAll('ticks').then(() => {
+            setIsSyncing(true);
             active_symbol = selectedValue;
             api_base4.api.send({
                 ticks_history: active_symbol,
@@ -144,12 +150,24 @@ const ApolloAnalysisPage = observer(() => {
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = Number(event.target.value);
         setNumberOfTicks(newValue);
-        if (newValue > 9 && newValue <= 5000) {
+    };
+    const handleOverInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = Number(event.target.value);
+        setOverValue(newValue);
+    };
+    const handleUnderInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = Number(event.target.value);
+        setUnderValue(newValue);
+    };
+
+    const handleSyncClick = () => {
+        if (numberOfTicks > 9 && numberOfTicks <= 5000) {
             api_base4.api.forgetAll('ticks').then(() => {
+                setIsSyncing(true);
                 api_base4.api.send({
                     ticks_history: active_symbol,
                     adjust_start_time: 1,
-                    count: newValue,
+                    count: numberOfTicks,
                     end: 'latest',
                     start: 1,
                     style: 'ticks',
@@ -177,6 +195,9 @@ const ApolloAnalysisPage = observer(() => {
                     </div>
                     <div className='no_of_ticks'>
                         <input type='number' name='' id='' value={numberOfTicks} onChange={handleInputChange} />
+                        <div className='sync_btn' onClick={() => handleSyncClick()}>
+                            <IoSyncCircleOutline className={`${isSyncing && 'sync_active'}`} />
+                        </div>
                     </div>
                     <div className='current_price'>
                         <h3>{currentTick.toString()}</h3>
@@ -193,8 +214,20 @@ const ApolloAnalysisPage = observer(() => {
                     <RiseFallBarChart allDigitList={allLastDigitList} />
                 </div>
                 <div className='over_under card1'>
+                    <div className="over_under_options">
                     <h2 className='analysis_title'>Over/Under</h2>
-                    <OverUnderBarChart overUnderList={allLastDigitList} />
+                    <div className="digit_inputs">
+                        <div className="over_digit">
+                            <label htmlFor="over_input">Over</label>
+                            <input type="number" value={overValue} onChange={handleOverInputChange}/>
+                        </div>
+                        <div className="under_digit">
+                            <label htmlFor="under_input">Under</label>
+                            <input type="number" value={underValue} onChange={handleUnderInputChange}/>
+                        </div>
+                    </div>
+                    </div>
+                    <OverUnderBarChart overUnderList={allLastDigitList} overValue={overValue} underValue={underValue}/>
                 </div>
                 <div className='line_chart card2'>
                     <h2 className='analysis_title'>Last Digits Charts</h2>
