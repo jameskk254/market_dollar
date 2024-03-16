@@ -273,6 +273,9 @@
     .main_app .top_bar .guide {
         display: none;
     }
+    .no_of_ticks .sync_btn svg.sync_active {
+        animation: none;
+    }
 
     .main_app .symbol_price {
         flex-direction: column;
