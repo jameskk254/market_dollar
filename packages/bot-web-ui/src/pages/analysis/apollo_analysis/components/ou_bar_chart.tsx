@@ -60,7 +60,7 @@ export default class OverUnderBarChart extends PureComponent<OverUnderProps> {
                     <XAxis type='number' label='' />
                     <YAxis type='category' dataKey='name' />
                     <Tooltip />
-                    <Bar dataKey='uv' fill='#8884d8'>
+                    <Bar dataKey='uv' fill='#8884d8'  isAnimationActive={false}>
                         <LabelList dataKey='uv' content={renderCustomizedLabel} />
                     </Bar>
                 </BarChart>
