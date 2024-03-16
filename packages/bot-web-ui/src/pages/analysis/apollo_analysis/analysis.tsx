@@ -5,10 +5,11 @@ import MyResponsivePie from './components/pie_chart';
 import OverUnderBarChart from './components/ou_bar_chart';
 import { observer, useStore } from '@deriv/stores';
 import DiffersBalls from './components/differs_balls';
-import { api_base4 } from '@deriv/bot-skeleton';
+import { api_base4, api_base } from '@deriv/bot-skeleton';
 import { IoSyncCircleOutline } from 'react-icons/io5';
-import './analysis.css';
 import RiseFallBarChart from './components/rf_bar_chart';
+import { useDBotStore } from 'Stores/useDBotStore';
+import './analysis.css';
 
 function sleep(milliseconds: any) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -51,13 +52,19 @@ const ApolloAnalysisPage = observer(() => {
     const [isSyncing, setIsSyncing] = useState(true);
     const [overValue, setOverValue] = useState(4);
     const [underValue, setUnderValue] = useState(4);
+    const [isOneClickActive, setIsOneClickActive] = useState(false);
+    const [oneClickContract, setOneClickContract] = useState('DIGITDIFF');
+    const [oneClickDuration, setOneClickDuration] = useState(1);
+    const [oneClickAmount, setOneClickAmount] = useState(0.50);
+    const [accountCurrency,setAccountCurrency] = useState('');
     let active_symbol = 'R_100';
 
-    const {
-        ui
-    } = useStore();
+    const { ui } = useStore();
+    const DBotStores = useDBotStore();
+    const { transactions } = DBotStores;
 
     const { is_mobile } = ui;
+    const { updateResultsCompletedContract } = transactions;
 
     useEffect(() => {
         startApi();
@@ -129,6 +136,18 @@ const ApolloAnalysisPage = observer(() => {
 
             api_base4.pushSubscription(subscription);
         }
+
+        if (api_base.api) {
+            const subscription = api_base.api.onMessage().subscribe(({ data }: { data: any }) => {
+                if (data.msg_type === 'proposal_open_contract') {
+                    const { proposal_open_contract } = data;
+                    updateResultsCompletedContract(proposal_open_contract);
+                }
+            });
+
+            api_base.pushSubscription(subscription);
+        }
+        setAccountCurrency(api_base.account_info.currency);
     };
 
     //
@@ -165,6 +184,20 @@ const ApolloAnalysisPage = observer(() => {
         const newValue = Number(event.target.value);
         setUnderValue(newValue);
     };
+    const handleOneClickAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = Number(event.target.value);
+        setOneClickAmount(newValue);
+    };
+
+    const handleContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = event.target.value;
+        setOneClickContract(selectedValue);
+    };
+
+    const handleDurationSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = event.target.value;
+        setOneClickDuration(Number(selectedValue));
+    };
 
     const handleSyncClick = () => {
         if (numberOfTicks > 9 && numberOfTicks <= 5000) {
@@ -180,6 +213,10 @@ const ApolloAnalysisPage = observer(() => {
                 });
             });
         }
+    };
+
+    const handleIsOneClick = () => {
+        setIsOneClickActive(!isOneClickActive);
     };
 
     return (
@@ -217,23 +254,28 @@ const ApolloAnalysisPage = observer(() => {
             <div className='rf_ou'>
                 <div className='rise_fall card1'>
                     <h2 className='analysis_title'>Rise/Fall</h2>
-                    <RiseFallBarChart allDigitList={allLastDigitList} is_mobile/>
+                    <RiseFallBarChart allDigitList={allLastDigitList} is_mobile={is_mobile} />
                 </div>
                 <div className='over_under card1'>
-                    <div className="over_under_options">
-                    <h2 className='analysis_title'>Over/Under</h2>
-                    <div className="digit_inputs">
-                        <div className="over_digit">
-                            <label htmlFor="over_input">Over</label>
-                            <input type="number" value={overValue} onChange={handleOverInputChange}/>
-                        </div>
-                        <div className="under_digit">
-                            <label htmlFor="under_input">Under</label>
-                            <input type="number" value={underValue} onChange={handleUnderInputChange}/>
+                    <div className='over_under_options'>
+                        <h2 className='analysis_title'>Over/Under</h2>
+                        <div className='digit_inputs'>
+                            <div className='over_digit'>
+                                <label htmlFor='over_input'>Over</label>
+                                <input type='number' value={overValue} onChange={handleOverInputChange} />
+                            </div>
+                            <div className='under_digit'>
+                                <label htmlFor='under_input'>Under</label>
+                                <input type='number' value={underValue} onChange={handleUnderInputChange} />
+                            </div>
                         </div>
                     </div>
-                    </div>
-                    <OverUnderBarChart overUnderList={allLastDigitList} overValue={overValue} underValue={underValue} is_mobile/>
+                    <OverUnderBarChart
+                        overUnderList={allLastDigitList}
+                        overValue={overValue}
+                        underValue={underValue}
+                        is_mobile={is_mobile}
+                    />
                 </div>
                 <div className='line_chart card2'>
                     <h2 className='analysis_title'>Last Digits Charts</h2>
@@ -247,8 +289,44 @@ const ApolloAnalysisPage = observer(() => {
                     <MyResponsivePie allDigitList={allLastDigitList} />
                 </div>
                 <div className='digit_diff card3'>
-                    <h2 className='analysis_title'>Differs/Matches</h2>
-                    <DiffersBalls lastDigitList={allLastDigitList} active_last={lastDigit} />
+                    <div className='title_oc_trader'>
+                        <h2 className='analysis_title'>Differs/Matches</h2>
+                        <div className='oneclick_trader'>
+                            <input type='checkbox' checked={isOneClickActive} onChange={handleIsOneClick} />
+                            <select name='ct_types' id='contract_types' onChange={handleContractSelect}>
+                                <option value='DIGITDIFF'>Differs</option>
+                                <option value='DIGITMATCH'>Matches</option>
+                            </select>
+                            <select name='intervals' id='contract_duration' onChange={handleDurationSelect}>
+                                <option value='1'>1</option>
+                                <option value='2'>2</option>
+                                <option value='2'>3</option>
+                                <option value='2'>4</option>
+                                <option value='2'>5</option>
+                                <option value='2'>6</option>
+                                <option value='2'>7</option>
+                                <option value='2'>8</option>
+                                <option value='2'>9</option>
+                            </select>
+                            <div className='oneclick_amout'>
+                                <input
+                                    type='number'
+                                    value={oneClickAmount}
+                                    onChange={handleOneClickAmountInputChange}
+                                />
+                                <h3 className='user_currency'>{accountCurrency}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <DiffersBalls
+                        lastDigitList={allLastDigitList}
+                        active_last={lastDigit}
+                        active_symbol={active_symbol}
+                        contract_type={oneClickContract}
+                        duration={oneClickDuration}
+                        isOneClickActive={isOneClickActive}
+                        stake_amount={oneClickAmount}
+                    />
                 </div>
             </div>
         </div>

@@ -1,11 +1,9 @@
 import { getRoundedNumber } from '@deriv/shared';
 import { sell, openContractReceived } from './state/actions';
-import { contractStatus, contract as broadcastContract, info, log } from '../utils/broadcast';
-import { purchaseSuccessful } from './state/actions';
+import { contractStatus, contract as broadcastContract } from '../utils/broadcast';
 import { api_base, api_base2 } from '../../api/api-base';
 import { handleWinValue, handleLostValue } from '../../apollo_functions';
 import { config } from '../../../constants';
-import { log_types } from '../../../constants/messages';
 
 export default Engine =>
     class OpenContract extends Engine {
@@ -43,10 +41,6 @@ export default Engine =>
                         this.store.dispatch(sell());
                     } else {
                         this.store.dispatch(openContractReceived());
-                    }
-                } else if (data.msg_type === 'buy') {
-                    if (typeof data.buy.contract_id !== 'undefined') {
-                        this.updatePurchase(data);
                     }
                 }
             });
@@ -115,34 +109,6 @@ export default Engine =>
                 }
             });
             api_base2.pushSubscription(subscription);
-        }
-
-        updatePurchase(response) {
-            let { buy } = response;
-            const { buy_contract_for_multiple_accounts } = response;
-            if (buy_contract_for_multiple_accounts) {
-                buy = buy_contract_for_multiple_accounts.result[0];
-            }
-
-            contractStatus({
-                id: 'contract.purchase_received',
-                data: buy.transaction_id,
-                buy,
-            });
-
-            this.contractId = buy.contract_id;
-            this.store.dispatch(purchaseSuccessful());
-
-            log(log_types.PURCHASE, { longcode: buy.longcode, transaction_id: buy.transaction_id });
-
-            const { loginid: accountID } = api_base.account_info;
-            info({
-                accountID: accountID,
-                totalRuns: this.updateAndReturnTotalRuns(),
-                transaction_ids: { buy: buy.transaction_id },
-                contract_type:'DIGITDIFF',
-                buy_price: buy.buy_price,
-            });
         }
 
         waitForAfter() {

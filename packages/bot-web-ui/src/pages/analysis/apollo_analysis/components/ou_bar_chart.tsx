@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList,Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList, Cell } from 'recharts';
 
 const renderCustomizedLabel = (props: any) => {
     const { x, y, width, value } = props;
@@ -63,8 +63,8 @@ export default class OverUnderBarChart extends PureComponent<OverUnderProps> {
                     <XAxis type='number' label='' />
                     <YAxis type='category' dataKey='name' />
                     <Tooltip />
-                    <Bar dataKey='uv' fill='#8884d8' isAnimationActive={is_mobile}>
-                    {data.map((entry, index) => (
+                    <Bar dataKey='uv' fill='#8884d8' isAnimationActive={!is_mobile}>
+                        {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={barColors[index]} />
                         ))}
                         <LabelList dataKey='uv' content={renderCustomizedLabel} />

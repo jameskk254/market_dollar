@@ -9,6 +9,7 @@ export default class TransactionsStore {
         makeObservable(this, {
             elements: observable,
             active_transaction_id: observable,
+            is_buying_contract: observable,
             recovered_completed_transactions: observable,
             recovered_transactions: observable,
             is_called_proposal_open_contract: observable,
@@ -38,6 +39,7 @@ export default class TransactionsStore {
 
     elements = getStoredItemsByUser(this.TRANSACTION_CACHE, this.core?.client?.loginid, []);
     active_transaction_id = null;
+    is_buying_contract = null;
     recovered_completed_transactions = [];
     recovered_transactions = [];
     is_called_proposal_open_contract = false;

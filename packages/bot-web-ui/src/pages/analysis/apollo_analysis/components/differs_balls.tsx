@@ -4,9 +4,22 @@ import { MdKeyboardArrowUp } from 'react-icons/md';
 type DiffersBallType = {
     lastDigitList: number[];
     active_last: number;
+    isOneClickActive: boolean;
+    contract_type: string;
+    duration: number;
+    active_symbol: string;
+    stake_amount:number
 };
 
-const DiffersBalls = ({ lastDigitList, active_last }: DiffersBallType) => {
+const DiffersBalls = ({
+    lastDigitList,
+    active_last,
+    contract_type,
+    duration,
+    isOneClickActive,
+    active_symbol,
+    stake_amount
+}: DiffersBallType) => {
     const calculatePercentageAppearance = (numbers: number[]): Record<string, number> => {
         // Initialize an object to store the count of each number
         let counts: Record<string, number> = {};
@@ -109,93 +122,93 @@ const DiffersBalls = ({ lastDigitList, active_last }: DiffersBallType) => {
 
     let percentages: Record<string, number> = calculatePercentageAppearance(lastDigitList);
 
-    const buy_contract = () => {
-        api_base.api.send({
-            buy: '1',
-            price: 1,
-            subscribe: 1,
-            parameters: {
-                amount: 1,
-                basis: 'stake',
-                contract_type: 'DIGITDIFF',
-                currency: 'USD',
-                duration: 1,
-                duration_unit: 't',
-                symbol: 'R_100',
-                barrier: '4',
-            },
-        });
-
-        console.log('Hello Orld');
+    const buy_contract = (prediction: string) => {
+        if (isOneClickActive) {
+            api_base.api.send({
+                buy: '1',
+                price: stake_amount,
+                subscribe: 1,
+                parameters: {
+                    amount: stake_amount,
+                    basis: 'stake',
+                    contract_type,
+                    currency: 'USD',
+                    duration,
+                    duration_unit: 't',
+                    symbol: active_symbol,
+                    barrier: prediction,
+                },
+            });
+        }
     };
 
     return (
         <div>
             <div className='differs_container'>
-                <div className='progress top' data-number='0' onClick={() => buy_contract()}>
+                <div className='progress top' data-number='0' onClick={() => buy_contract('0')}>
                     <h3>0</h3>
                     <h4>
                         {percentages['0'].toFixed(2)}
                         <span>%</span>
                     </h4>
                 </div>
-                <div className='progress' data-number='1'>
+                <div className='progress' data-number='1' onClick={() => buy_contract('1')}>
                     <h3>1</h3>
                     <h4>
                         {percentages['1'].toFixed(2)}
                         <span>%</span>
                     </h4>
                 </div>
-                <div className='progress' data-number='2'>
+                <div className='progress' data-number='2' onClick={() => buy_contract('2')}>
                     <h3>2</h3>
                     <h4>
                         {percentages['2'].toFixed(2)}
                         <span>%</span>
                     </h4>
                 </div>
-                <div className='progress' data-number='3'>
+                <div className='progress' data-number='3' onClick={() => buy_contract('3')}>
                     <h3>3</h3>
                     <h4>
                         {percentages['3'].toFixed(2)}
                         <span>%</span>
                     </h4>
                 </div>
-                <div className='progress less' data-number='4'>
+                <div className='progress less' data-number='4' onClick={() => buy_contract('4')}>
                     <h3>4</h3>
                     <h4>
                         {percentages['4'].toFixed(2)}
                         <span>%</span>
                     </h4>
                 </div>
-                <div className='progress' data-number='5'>
+                <div className='progress' data-number='5' onClick={() => buy_contract('5')}>
                     <h3>5</h3>
                     <h4>
                         {percentages['5'].toFixed(2)}
                         <span>%</span>
                     </h4>
                 </div>
-                <div className='progress' data-number='6'>
+                <div className='progress' data-number='6' onClick={() => buy_contract('6')}>
                     <h3>6</h3>
                     <h4>
                         {percentages['6'].toFixed(2)}
                         <span>%</span>
                     </h4>
                 </div>
-                <div className='progress' data-number='7'>
+                <div className='progress' data-number='7' onClick={() => buy_contract('7')}>
                     <h3>7</h3>
                     <h4>
                         {percentages['7'].toFixed(2)}
                         <span>%</span>
                     </h4>
                 </div>
-                <div className='progress' data-number='8'>
+                <div className='progress' data-number='8' onClick={() => buy_contract('8')}>
                     <h3>8</h3>
                     <h4>
                         {percentages['8'].toFixed(2)}
                         <span>%</span>
                     </h4>
                 </div>
-                <div className='progress' data-number='9'>
+                <div className='progress' data-number='9' onClick={() => buy_contract('9')}>
                     <h3>9</h3>
                     <h4>
                         {percentages['9'].toFixed(2)}

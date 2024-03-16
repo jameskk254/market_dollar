@@ -184,6 +184,50 @@
     margin-top: 2rem;
 }
 
+.main_app .pie_diff .digit_diff .title_oc_trader {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    align-items: center;
+}
+
+.main_app .pie_diff .digit_diff .title_oc_trader .oneclick_trader {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.main_app .pie_diff .digit_diff .title_oc_trader .oneclick_trader input {
+    width: 20px;
+    height: 20px;
+}
+
+.main_app .pie_diff .digit_diff .title_oc_trader .oneclick_trader #contract_types {
+    border: none;
+    padding: 2px 5px;
+    border-radius: 2px;
+}
+
+.main_app .pie_diff .digit_diff .title_oc_trader .oneclick_trader #contract_duration {
+    border: none;
+    border-radius: 2px;
+    padding: 2px;
+}
+
+.main_app .pie_diff .digit_diff .title_oc_trader .oneclick_trader .oneclick_amout {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 13px;
+}
+
+.main_app .pie_diff .digit_diff .title_oc_trader .oneclick_trader .oneclick_amout input {
+    width: 75px;
+    padding: 12px 10px;
+    text-align: center;
+    border-radius: 2px;
+}
+
 /* ========== DIFFERSBALLS CSS =============== */
 .differs_container {
     position: relative;
@@ -196,6 +240,7 @@
 
 .differs_container .progress {
     position: relative;
+    cursor: pointer;
     width: 68px;
     height: 68px;
     border-radius: 50%;
@@ -265,7 +310,6 @@
 
 /* Responsive (Mobile) */
 @media (max-width: 720px) {
-
     .main_app .top_bar {
         gap: 0px;
         justify-content: center;
@@ -313,5 +357,8 @@
     .differs_container .progress {
         width: 58px;
         height: 58px;
+    }
+    .main_app .pie_diff .digit_diff .title_oc_trader {
+        width: 100%;
     }
 }
