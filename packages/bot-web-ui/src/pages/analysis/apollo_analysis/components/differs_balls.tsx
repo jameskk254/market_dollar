@@ -1,4 +1,5 @@
 import React from 'react';
+import { api_base } from '@deriv/bot-skeleton';
 import { MdKeyboardArrowUp } from 'react-icons/md';
 type DiffersBallType = {
     lastDigitList: number[];
@@ -108,10 +109,30 @@ const DiffersBalls = ({ lastDigitList, active_last }: DiffersBallType) => {
 
     let percentages: Record<string, number> = calculatePercentageAppearance(lastDigitList);
 
+    const buy_contract = () => {
+        api_base.api.send({
+            buy: '1',
+            price: 1,
+            subscribe: 1,
+            parameters: {
+                amount: 1,
+                basis: 'stake',
+                contract_type: 'DIGITDIFF',
+                currency: 'USD',
+                duration: 1,
+                duration_unit: 't',
+                symbol: 'R_100',
+                barrier: '4',
+            },
+        });
+
+        console.log('Hello Orld');
+    };
+
     return (
         <div>
             <div className='differs_container'>
-                <div className='progress top' data-number='0'>
+                <div className='progress top' data-number='0' onClick={() => buy_contract()}>
                     <h3>0</h3>
                     <h4>
                         {percentages['0'].toFixed(2)}

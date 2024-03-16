@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList,Cell } from 'recharts';
 
 const renderCustomizedLabel = (props: any) => {
     const { x, y, width, value } = props;
@@ -25,11 +25,12 @@ interface OverUnderProps {
     overUnderList: Number[];
     overValue: number;
     underValue: number;
+    is_mobile: boolean;
 }
 
 export default class OverUnderBarChart extends PureComponent<OverUnderProps> {
     render() {
-        const { overUnderList, overValue, underValue } = this.props;
+        const { overUnderList, overValue, underValue, is_mobile } = this.props;
         const [overPercentage, underPercentage] = calculatePercentage(overUnderList, overValue, underValue);
         const data = [
             {
@@ -41,6 +42,8 @@ export default class OverUnderBarChart extends PureComponent<OverUnderProps> {
                 uv: +underPercentage.toFixed(2),
             },
         ];
+
+        const barColors = ['#4CAF50', '#F44336'];
 
         return (
             <ResponsiveContainer width='140%' height={211}>
@@ -60,7 +63,10 @@ export default class OverUnderBarChart extends PureComponent<OverUnderProps> {
                     <XAxis type='number' label='' />
                     <YAxis type='category' dataKey='name' />
                     <Tooltip />
-                    <Bar dataKey='uv' fill='#8884d8'  isAnimationActive={false}>
+                    <Bar dataKey='uv' fill='#8884d8' isAnimationActive={is_mobile}>
+                    {data.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={barColors[index]} />
+                        ))}
                         <LabelList dataKey='uv' content={renderCustomizedLabel} />
                     </Bar>
                 </BarChart>

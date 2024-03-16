@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList, Cell } from 'recharts';
 
 const renderCustomizedLabel = (props: any) => {
     const { x, y, width, value } = props;
@@ -42,11 +42,12 @@ function calculateRiseAndFallPercentages(numbers: number[]): { risePercentage: n
 
 interface OverUnderProps {
     allDigitList: number[];
+    is_mobile: boolean;
 }
 
 export default class RiseFallBarChart extends PureComponent<OverUnderProps> {
     render() {
-        const { allDigitList } = this.props;
+        const { allDigitList, is_mobile } = this.props;
         const percentages: { risePercentage: number; fallPercentage: number } =
             calculateRiseAndFallPercentages(allDigitList);
         const data = [
@@ -59,6 +60,8 @@ export default class RiseFallBarChart extends PureComponent<OverUnderProps> {
                 uv: +percentages.fallPercentage.toFixed(2),
             },
         ];
+
+        const barColors = ['#4CAF50', '#F44336'];
 
         return (
             <ResponsiveContainer width='140%' height={211}>
@@ -78,7 +81,10 @@ export default class RiseFallBarChart extends PureComponent<OverUnderProps> {
                     <XAxis type='number' label='' />
                     <YAxis type='category' dataKey='name' />
                     <Tooltip />
-                    <Bar dataKey='uv' fill='#8884d8' isAnimationActive={false}>
+                    <Bar dataKey='uv'  isAnimationActive={is_mobile}>
+                        {data.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={barColors[index]} />
+                        ))}
                         <LabelList dataKey='uv' content={renderCustomizedLabel} />
                     </Bar>
                 </BarChart>

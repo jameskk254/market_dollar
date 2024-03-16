@@ -5,7 +5,7 @@ import MyResponsivePie from './components/pie_chart';
 import OverUnderBarChart from './components/ou_bar_chart';
 import { observer, useStore } from '@deriv/stores';
 import DiffersBalls from './components/differs_balls';
-import { api_base4, config } from '@deriv/bot-skeleton';
+import { api_base4 } from '@deriv/bot-skeleton';
 import { IoSyncCircleOutline } from 'react-icons/io5';
 import './analysis.css';
 import RiseFallBarChart from './components/rf_bar_chart';
@@ -52,6 +52,12 @@ const ApolloAnalysisPage = observer(() => {
     const [overValue, setOverValue] = useState(4);
     const [underValue, setUnderValue] = useState(4);
     let active_symbol = 'R_100';
+
+    const {
+        ui
+    } = useStore();
+
+    const { is_mobile } = ui;
 
     useEffect(() => {
         startApi();
@@ -211,7 +217,7 @@ const ApolloAnalysisPage = observer(() => {
             <div className='rf_ou'>
                 <div className='rise_fall card1'>
                     <h2 className='analysis_title'>Rise/Fall</h2>
-                    <RiseFallBarChart allDigitList={allLastDigitList} />
+                    <RiseFallBarChart allDigitList={allLastDigitList} is_mobile/>
                 </div>
                 <div className='over_under card1'>
                     <div className="over_under_options">
@@ -227,7 +233,7 @@ const ApolloAnalysisPage = observer(() => {
                         </div>
                     </div>
                     </div>
-                    <OverUnderBarChart overUnderList={allLastDigitList} overValue={overValue} underValue={underValue}/>
+                    <OverUnderBarChart overUnderList={allLastDigitList} overValue={overValue} underValue={underValue} is_mobile/>
                 </div>
                 <div className='line_chart card2'>
                     <h2 className='analysis_title'>Last Digits Charts</h2>

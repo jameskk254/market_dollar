@@ -148,6 +148,7 @@ export default Engine =>
         }
 
         getAccountStat() {
+            this.accountInfo = api_base.account_info
             const { loginid: accountID } = this.accountInfo;
 
             if (!(accountID in globalStat)) {
