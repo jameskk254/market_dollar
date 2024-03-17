@@ -53,11 +53,11 @@ export default class RiseFallBarChart extends PureComponent<OverUnderProps> {
         const data = [
             {
                 name: `Rise`,
-                uv: +percentages.risePercentage.toFixed(2),
+                percentage: +percentages.risePercentage.toFixed(2),
             },
             {
                 name: `Fall`,
-                uv: +percentages.fallPercentage.toFixed(2),
+                percentage: +percentages.fallPercentage.toFixed(2),
             },
         ];
 
@@ -81,11 +81,11 @@ export default class RiseFallBarChart extends PureComponent<OverUnderProps> {
                     <XAxis type='number' label='' />
                     <YAxis type='category' dataKey='name' />
                     <Tooltip />
-                    <Bar dataKey='uv'  isAnimationActive={!is_mobile}>
+                    <Bar dataKey='percentage'  isAnimationActive={!is_mobile}>
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={barColors[index]} />
                         ))}
-                        <LabelList dataKey='uv' content={renderCustomizedLabel} />
+                        <LabelList dataKey='percentage' content={renderCustomizedLabel} />
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>

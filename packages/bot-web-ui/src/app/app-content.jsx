@@ -48,7 +48,6 @@ const AppContent = observer(() => {
     };
 
     React.useEffect(() => {
-        console.log('Hey James', 'data');
         // Listen for proposal open contract messages to check
         // if there is any active contract from bot still running
         if (api_base?.api && !is_subscribed_to_msg_listener.current) {

@@ -35,11 +35,11 @@ export default class OverUnderBarChart extends PureComponent<OverUnderProps> {
         const data = [
             {
                 name: `Over`,
-                uv: +overPercentage.toFixed(2),
+                percentage: +overPercentage.toFixed(2),
             },
             {
                 name: `Under`,
-                uv: +underPercentage.toFixed(2),
+                percentage: +underPercentage.toFixed(2),
             },
         ];
 
@@ -63,11 +63,11 @@ export default class OverUnderBarChart extends PureComponent<OverUnderProps> {
                     <XAxis type='number' label='' />
                     <YAxis type='category' dataKey='name' />
                     <Tooltip />
-                    <Bar dataKey='uv' fill='#8884d8' isAnimationActive={!is_mobile}>
+                    <Bar dataKey='percentage' fill='#8884d8' isAnimationActive={!is_mobile}>
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={barColors[index]} />
                         ))}
-                        <LabelList dataKey='uv' content={renderCustomizedLabel} />
+                        <LabelList dataKey='percentage' content={renderCustomizedLabel} />
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>

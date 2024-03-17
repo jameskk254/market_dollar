@@ -57,8 +57,9 @@ const ApolloAnalysisPage = observer(() => {
     const [oneClickDuration, setOneClickDuration] = useState(1);
     const [oneClickAmount, setOneClickAmount] = useState<number | string>(0.5);
     const [accountCurrency, setAccountCurrency] = useState('');
+    const [active_symbol, setActiveSymbol] = useState('R_100');
+    const [prev_symbol, setPrevSymbol] = useState('R_100');
     const [pip_size, setPipSize] = useState(2);
-    let active_symbol = 'R_100';
 
     const { ui } = useStore();
     const DBotStores = useDBotStore();
@@ -70,6 +71,20 @@ const ApolloAnalysisPage = observer(() => {
     useEffect(() => {
         startApi();
     }, []);
+
+    useEffect(() => {
+        if (prev_symbol !== active_symbol) {
+            api_base4.api.send({
+                ticks_history: active_symbol,
+                adjust_start_time: 1,
+                count: 5000,
+                end: 'latest',
+                start: 1,
+                style: 'ticks',
+            });
+        }
+        setPrevSymbol(active_symbol);
+    }, [active_symbol]);
 
     const getLastDigits = (tick: any, pip_size: any) => {
         let lastDigit = tick.toFixed(pip_size);
@@ -107,6 +122,7 @@ const ApolloAnalysisPage = observer(() => {
                     const { prices } = history;
                     const { ticks_history } = data.echo_req;
                     setAllLastDigitList(prices);
+                    setActiveSymbol(ticks_history);
                     api_base4.api.send({
                         ticks: ticks_history,
                         subscribe: 1,
@@ -177,15 +193,7 @@ const ApolloAnalysisPage = observer(() => {
         api_base4.api.forgetAll('ticks').then(() => {
             setIsSyncing(true);
             setCurrentTick('Loading...');
-            active_symbol = selectedValue;
-            api_base4.api.send({
-                ticks_history: active_symbol,
-                adjust_start_time: 1,
-                count: numberOfTicks,
-                end: 'latest',
-                start: 1,
-                style: 'ticks',
-            });
+            setActiveSymbol(selectedValue);
         });
     };
 
