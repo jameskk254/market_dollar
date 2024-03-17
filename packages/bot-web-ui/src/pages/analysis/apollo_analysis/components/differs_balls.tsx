@@ -1,6 +1,5 @@
 import React from 'react';
 import { api_base } from '@deriv/bot-skeleton';
-import { MdKeyboardArrowUp } from 'react-icons/md';
 type DiffersBallType = {
     lastDigitList: number[];
     active_last: number;
@@ -8,7 +7,7 @@ type DiffersBallType = {
     contract_type: string;
     duration: number;
     active_symbol: string;
-    stake_amount:number
+    stake_amount: number | string;
 };
 
 const DiffersBalls = ({
@@ -18,7 +17,7 @@ const DiffersBalls = ({
     duration,
     isOneClickActive,
     active_symbol,
-    stake_amount
+    stake_amount,
 }: DiffersBallType) => {
     const calculatePercentageAppearance = (numbers: number[]): Record<string, number> => {
         // Initialize an object to store the count of each number
@@ -57,8 +56,6 @@ const DiffersBalls = ({
     const highlightActiveBall = (number: number) => {
         // Use querySelectorAll with type assertion to HTMLElement because querySelectorAll returns NodeList of Elements
         const progressBalls = document.querySelectorAll<HTMLElement>('.progress');
-        // Use non-null assertion operator (!) for pointer as you're confident it won't be null
-        const pointer = document.querySelector<HTMLElement>('.differs_pointer')!;
 
         progressBalls.forEach(ball => {
             ball.classList.remove('active');
@@ -66,20 +63,6 @@ const DiffersBalls = ({
             if (parseInt(ball.dataset.number!) === number) {
                 // Use non-null assertion for dataset properties
                 ball.classList.add('active');
-                const ballRect = ball.getBoundingClientRect();
-                // pointer is already asserted to be non-null and HTMLElement, so offsetWidth and offsetHeight are valid
-                const pointerWidth = pointer.offsetWidth;
-                const pointerHeight = pointer.offsetHeight;
-                const pointerX = ballRect.left + ballRect.width / 2 - pointerWidth / 2;
-                const pointerY = ballRect.top + ballRect.height / 2 - pointerHeight / 2;
-
-                // Adjust pointer position to account for scrolling
-                const adjustedPointerX = pointerX + window.scrollX;
-                const adjustedPointerY = pointerY + window.scrollY + 60;
-
-                pointer.style.position = 'absolute';
-                pointer.style.left = `${adjustedPointerX}px`;
-                pointer.style.top = `${adjustedPointerY}px`;
             }
         });
     };
@@ -215,10 +198,6 @@ const DiffersBalls = ({
                         <span>%</span>
                     </h4>
                 </div>
-            </div>
-
-            <div className='differs_pointer'>
-                <MdKeyboardArrowUp size={20} />
             </div>
         </div>
     );

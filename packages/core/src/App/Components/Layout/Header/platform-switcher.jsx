@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import { withRouter } from 'react-router-dom';
 import { Text } from '@deriv/components';
 import { Localize } from '@deriv/translations';
+import { FaTelegram } from 'react-icons/fa';
 import './style.css';
 const PlatformSwitcher = ({
     toggleDrawer,
@@ -50,20 +51,32 @@ const PlatformSwitcher = ({
         is_close_drawer_fired_ref.current = true;
     };
 
+    const telegramUrl = 'https://t.me/deriv_apollo';
+
+    const openUrlInNewTab = (url) =>{
+        window.open(url, '_blank');
+      }
+
     return (
         <React.Fragment>
-            <div
-                className='logo_holder'
-                onClick={() => {
-                    const newUrl = window.location.origin + '/bot';
-                    window.location.href = newUrl;
-                }}
-            >
-                <span className='logo_image'></span>
-                <Text size='m' line_height='xs' className='header__menu-link-text'>
-                    <Localize i18n_default_text='D-Apollo' />
-                </Text>
+            <div className='apollo_info'>
+                <div
+                    className='logo_holder'
+                    onClick={() => {
+                        const newUrl = window.location.origin + '/bot';
+                        window.location.href = newUrl;
+                    }}
+                >
+                    <span className='logo_image'></span>
+                    <Text size='m' line_height='xs' className='header__menu-link-text'>
+                        <Localize i18n_default_text='D-Apollo' />
+                    </Text>
+                </div>
+                <div className='social_acc' onClick={() => openUrlInNewTab(telegramUrl)}>
+                    <FaTelegram />
+                </div>
             </div>
+
             <CSSTransition
                 mountOnEnter
                 appear

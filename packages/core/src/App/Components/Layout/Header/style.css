@@ -1,3 +1,10 @@
+.apollo_info{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-right: 20px;
+}
+
 .logo_holder {
     display: flex;
     gap: 0.5rem;
@@ -14,4 +21,23 @@
     background-image: url('../../../../public/images/favicons/favicon-32.png');
     margin-left: 12px;
     background-size: cover;
+}
+
+.social_acc{
+    font-size: 28px;
+    color: #60b5ff;
+    cursor: pointer;
+}
+
+/* Responsive (Mobile) */
+@media (max-width: 720px) {
+    .apollo_info{
+        width: 100%;
+        justify-content: center;
+        gap: 2rem;
+    }
+
+    .social_acc{
+        font-size: 38px;
+    }
 }

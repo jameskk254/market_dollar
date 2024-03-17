@@ -23,15 +23,15 @@ const calculatePercentage = (arr: Number[], over: Number, under: Number) => {
 
 interface OverUnderProps {
     overUnderList: Number[];
-    overValue: number;
-    underValue: number;
+    overValue: number|string;
+    underValue: number|string;
     is_mobile: boolean;
 }
 
 export default class OverUnderBarChart extends PureComponent<OverUnderProps> {
     render() {
         const { overUnderList, overValue, underValue, is_mobile } = this.props;
-        const [overPercentage, underPercentage] = calculatePercentage(overUnderList, overValue, underValue);
+        const [overPercentage, underPercentage] = calculatePercentage(overUnderList, Number(overValue), Number(underValue));
         const data = [
             {
                 name: `Over`,

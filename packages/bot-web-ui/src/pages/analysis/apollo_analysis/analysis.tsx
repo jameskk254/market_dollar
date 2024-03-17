@@ -45,18 +45,19 @@ const ApolloAnalysisPage = observer(() => {
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [currentTick, setCurrentTick] = useState<number | String>('Loading...');
     const [allLastDigitList, setAllLastDigitList] = useState<number[]>([]);
-    const [lineChartList, setLineChartList] = useState<LineChartProps[]>([]);
+
     const [lastDigit, setLastDigit] = useState(0);
-    const [numberOfTicks, setNumberOfTicks] = useState(50);
+    const [numberOfTicks, setNumberOfTicks] = useState<string | number>(50);
     const [optionsList, setOptions] = useState<SymbolData[]>([]);
     const [isSyncing, setIsSyncing] = useState(true);
-    const [overValue, setOverValue] = useState(4);
-    const [underValue, setUnderValue] = useState(4);
+    const [overValue, setOverValue] = useState<string | number>(4);
+    const [underValue, setUnderValue] = useState<string | number>(4);
     const [isOneClickActive, setIsOneClickActive] = useState(false);
     const [oneClickContract, setOneClickContract] = useState('DIGITDIFF');
     const [oneClickDuration, setOneClickDuration] = useState(1);
-    const [oneClickAmount, setOneClickAmount] = useState(0.50);
-    const [accountCurrency,setAccountCurrency] = useState('');
+    const [oneClickAmount, setOneClickAmount] = useState<number | string>(0.5);
+    const [accountCurrency, setAccountCurrency] = useState('');
+    const [pip_size, setPipSize] = useState(2);
     let active_symbol = 'R_100';
 
     const { ui } = useStore();
@@ -70,6 +71,12 @@ const ApolloAnalysisPage = observer(() => {
         startApi();
     }, []);
 
+    const getLastDigits = (tick: any, pip_size: any) => {
+        let lastDigit = tick.toFixed(pip_size);
+        lastDigit = String(lastDigit).slice(-1);
+        return Number(lastDigit);
+    };
+
     const startApi = async () => {
         await sleep(5000);
         if (!isSubscribed) {
@@ -79,12 +86,6 @@ const ApolloAnalysisPage = observer(() => {
             });
             setIsSubscribed(true);
         }
-
-        const getLastDigits = (tick: any, pip_size: any) => {
-            let lastDigit = tick.toFixed(pip_size);
-            lastDigit = String(lastDigit).slice(-1);
-            return Number(lastDigit);
-        };
 
         if (api_base4.api) {
             const subscription = api_base4.api.onMessage().subscribe(({ data }: { data: any }) => {
@@ -96,22 +97,16 @@ const ApolloAnalysisPage = observer(() => {
                     setLastDigit(last_digit);
                     setCurrentTick(ask);
                     removeFirstElement();
-                    setAllLastDigitList(prevList => [...prevList, last_digit]);
-                    setLineChartList(prevList => [...prevList, { name: last_digit.toString(), value: last_digit }]);
+                    setAllLastDigitList(prevList => [...prevList, ask]);
                     setIsSyncing(false);
                 }
 
                 if (data.msg_type === 'history') {
                     const { history, pip_size } = data;
+                    setPipSize(pip_size);
                     const { prices } = history;
                     const { ticks_history } = data.echo_req;
-                    setAllLastDigitList([]);
-                    setLineChartList([]);
-                    prices.forEach((tick: number) => {
-                        const last_digit = getLastDigits(tick, pip_size);
-                        setAllLastDigitList(prevList => [...prevList, last_digit]);
-                        setLineChartList(prevList => [...prevList, { name: last_digit.toString(), value: last_digit }]);
-                    });
+                    setAllLastDigitList(prices);
                     api_base4.api.send({
                         ticks: ticks_history,
                         subscribe: 1,
@@ -125,7 +120,7 @@ const ApolloAnalysisPage = observer(() => {
                     api_base4.api.send({
                         ticks_history: filteredSymbols[0].symbol,
                         adjust_start_time: 1,
-                        count: numberOfTicks,
+                        count: 5000,
                         end: 'latest',
                         start: 1,
                         style: 'ticks',
@@ -153,13 +148,35 @@ const ApolloAnalysisPage = observer(() => {
     //
     const removeFirstElement = () => {
         setAllLastDigitList(prevList => prevList.slice(1));
-        setLineChartList(prevList => prevList.slice(1));
+    };
+
+    const getLastDigitList = () => {
+        const requiredItems = allLastDigitList.slice(-numberOfTicks);
+        const returnedList: number[] = [];
+        requiredItems.forEach((tick: number) => {
+            const last_digit = getLastDigits(tick, pip_size);
+            returnedList.push(last_digit);
+        });
+
+        return returnedList;
+    };
+
+    const getLineChartList = () => {
+        const requiredItems = allLastDigitList.slice(-numberOfTicks);
+        const returnedList: LineChartProps[] = [];
+        requiredItems.forEach((tick: number) => {
+            const last_digit = getLastDigits(tick, pip_size);
+            returnedList.push({ name: last_digit.toString(), value: last_digit });
+        });
+
+        return returnedList;
     };
 
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
         api_base4.api.forgetAll('ticks').then(() => {
             setIsSyncing(true);
+            setCurrentTick('Loading...');
             active_symbol = selectedValue;
             api_base4.api.send({
                 ticks_history: active_symbol,
@@ -173,20 +190,20 @@ const ApolloAnalysisPage = observer(() => {
     };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = Number(event.target.value);
-        setNumberOfTicks(newValue);
+        const newValue = event.target.value;
+        setNumberOfTicks(newValue === '' ? '' : Number(newValue));
     };
     const handleOverInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = Number(event.target.value);
-        setOverValue(newValue);
+        const newValue = event.target.value;
+        setOverValue(newValue === '' ? '' : Number(newValue));
     };
     const handleUnderInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = Number(event.target.value);
-        setUnderValue(newValue);
+        const newValue = event.target.value;
+        setUnderValue(newValue === '' ? '' : Number(newValue));
     };
     const handleOneClickAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = Number(event.target.value);
-        setOneClickAmount(newValue);
+        const newValue = event.target.value;
+        setOneClickAmount(newValue === '' ? '' : Number(newValue));
     };
 
     const handleContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -197,22 +214,6 @@ const ApolloAnalysisPage = observer(() => {
     const handleDurationSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
         setOneClickDuration(Number(selectedValue));
-    };
-
-    const handleSyncClick = () => {
-        if (numberOfTicks > 9 && numberOfTicks <= 5000) {
-            api_base4.api.forgetAll('ticks').then(() => {
-                setIsSyncing(true);
-                api_base4.api.send({
-                    ticks_history: active_symbol,
-                    adjust_start_time: 1,
-                    count: numberOfTicks,
-                    end: 'latest',
-                    start: 1,
-                    style: 'ticks',
-                });
-            });
-        }
     };
 
     const handleIsOneClick = () => {
@@ -238,9 +239,6 @@ const ApolloAnalysisPage = observer(() => {
                     </div>
                     <div className='no_of_ticks'>
                         <input type='number' name='' id='' value={numberOfTicks} onChange={handleInputChange} />
-                        <div className='sync_btn' onClick={() => handleSyncClick()}>
-                            <IoSyncCircleOutline className={`${isSyncing && 'sync_active'}`} />
-                        </div>
                     </div>
                     <div className='current_price'>
                         <h3>{currentTick.toString()}</h3>
@@ -254,7 +252,7 @@ const ApolloAnalysisPage = observer(() => {
             <div className='rf_ou'>
                 <div className='rise_fall card1'>
                     <h2 className='analysis_title'>Rise/Fall</h2>
-                    <RiseFallBarChart allDigitList={allLastDigitList} is_mobile={is_mobile} />
+                    <RiseFallBarChart allDigitList={getLastDigitList()} is_mobile={is_mobile} />
                 </div>
                 <div className='over_under card1'>
                     <div className='over_under_options'>
@@ -271,7 +269,7 @@ const ApolloAnalysisPage = observer(() => {
                         </div>
                     </div>
                     <OverUnderBarChart
-                        overUnderList={allLastDigitList}
+                        overUnderList={getLastDigitList()}
                         overValue={overValue}
                         underValue={underValue}
                         is_mobile={is_mobile}
@@ -279,14 +277,14 @@ const ApolloAnalysisPage = observer(() => {
                 </div>
                 <div className='line_chart card2'>
                     <h2 className='analysis_title'>Last Digits Charts</h2>
-                    <ApolloLineChart data={lineChartList} />
+                    <ApolloLineChart data={getLineChartList()} />
                 </div>
             </div>
             {/* Bottom Cards */}
             <div className='pie_diff'>
                 <div className='pie card1'>
                     <h2 className='analysis_title'>Even/Odd</h2>
-                    <MyResponsivePie allDigitList={allLastDigitList} />
+                    <MyResponsivePie allDigitList={getLastDigitList()} />
                 </div>
                 <div className='digit_diff card3'>
                     <div className='title_oc_trader'>
@@ -319,7 +317,7 @@ const ApolloAnalysisPage = observer(() => {
                         </div>
                     </div>
                     <DiffersBalls
-                        lastDigitList={allLastDigitList}
+                        lastDigitList={getLastDigitList()}
                         active_last={lastDigit}
                         active_symbol={active_symbol}
                         contract_type={oneClickContract}
