@@ -159,7 +159,6 @@
     text-align: center;
     width: 65px;
     padding: 5px 0px;
-    text-align: center;
     border-radius: 2px;
 }
 
@@ -390,11 +389,11 @@
     .line_chart {
         width: 90%;
     }
-    .main_app .line_chart .linechat_oct{
+    .main_app .line_chart .linechat_oct {
         flex-direction: column;
         gap: 5px;
     }
-    .main_app .line_chart .oct_trading_options .rise_fall_buttons button{
+    .main_app .line_chart .oct_trading_options .rise_fall_buttons button {
         padding: 6px 12px;
     }
 
@@ -438,5 +437,4 @@
         flex-direction: column;
         gap: 10px;
     }
-    
 }
