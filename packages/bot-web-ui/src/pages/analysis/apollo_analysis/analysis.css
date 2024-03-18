@@ -124,6 +124,66 @@
     text-align: center;
 }
 
+.main_app .line_chart .linechat_oct {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.main_app .line_chart .oct_trading_options {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.main_app .line_chart .oct_trading_options .details_options {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.main_app .line_chart .oct_trading_options .details_options input {
+    width: 20px;
+    height: 20px;
+}
+
+.main_app .line_chart .oct_trading_options .details_options .oneclick_amout {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+}
+
+.main_app .line_chart .oct_trading_options .details_options .oneclick_amout input {
+    text-align: center;
+    width: 65px;
+    padding: 5px 0px;
+    text-align: center;
+    border-radius: 2px;
+}
+
+.main_app .line_chart .oct_trading_options .rise_fall_buttons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.main_app .line_chart .oct_trading_options .rise_fall_buttons button {
+    border: none;
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.main_app .line_chart .oct_trading_options .rise_fall_buttons .rise_btn {
+    background: #00a79e;
+}
+
+.main_app .line_chart .oct_trading_options .rise_fall_buttons .fall_btn {
+    background: #cc2e3d;
+}
+
 .recharts-responsive-container {
     font-size: 14px;
 }
@@ -330,6 +390,13 @@
     .line_chart {
         width: 90%;
     }
+    .main_app .line_chart .linechat_oct{
+        flex-direction: column;
+        gap: 5px;
+    }
+    .main_app .line_chart .oct_trading_options .rise_fall_buttons button{
+        padding: 6px 12px;
+    }
 
     .card3 {
         height: 27%;
@@ -360,10 +427,10 @@
         width: 58px;
         height: 58px;
     }
-    .differs_container .progress.active h3{
+    .differs_container .progress.active h3 {
         font-size: 11px;
     }
-    .differs_container .progress.active h4{
+    .differs_container .progress.active h4 {
         font-size: 8px;
     }
     .main_app .pie_diff .digit_diff .title_oc_trader {
@@ -371,4 +438,5 @@
         flex-direction: column;
         gap: 10px;
     }
+    
 }

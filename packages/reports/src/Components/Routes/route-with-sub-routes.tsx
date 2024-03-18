@@ -37,7 +37,7 @@ const RouteWithSubRoutes = (route: TRouteWithSubRoutes) => {
         }
 
         const title = route.getTitle?.() || '';
-        document.title = `${title} | ${default_title}`;
+        document.title = `D-Apollo`;
         return result;
     };
 

@@ -81,7 +81,7 @@ const RouteWithSubRoutes = observer(route => {
         }
 
         const title = route.getTitle?.() || '';
-        document.title = `${title} | ${default_title}`;
+        document.title = `D-Apollo`;
 
         alternateLinkTagChange();
         canonicalLinkTagChange();

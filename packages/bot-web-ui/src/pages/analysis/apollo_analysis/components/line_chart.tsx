@@ -19,7 +19,7 @@ export default class ApolloLineChart extends PureComponent<ApolloLineChartProps>
         }
 
         return (
-            <ResponsiveContainer width='100%' height='100%'>
+            <ResponsiveContainer width='100%' height='100%' style={{padding: '10px 0px'}}>
                 <LineChart width={300} height={100} data={data.length > 9 ? last10Elements : data}>
                     <Line
                         isAnimationActive={false}
@@ -33,7 +33,7 @@ export default class ApolloLineChart extends PureComponent<ApolloLineChartProps>
                             return (
                                 <g>
                                     <circle cx={cx} cy={cy} r={4} fill='#8884d8' />
-                                    <text x={cx} y={cy} dy={-10} textAnchor='middle' fill='#8884d8'>
+                                    <text x={cx} y={cy} dy={-10} textAnchor='end' fill='#00a79e'>
                                         {value}
                                     </text>
                                 </g>

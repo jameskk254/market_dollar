@@ -45,14 +45,14 @@ const ApolloAnalysisPage = observer(() => {
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [currentTick, setCurrentTick] = useState<number | String>('Loading...');
     const [allLastDigitList, setAllLastDigitList] = useState<number[]>([]);
-
+    const [isTickChart, setIsTickChart] = useState(true);
     const [lastDigit, setLastDigit] = useState(0);
     const [numberOfTicks, setNumberOfTicks] = useState<string | number>(50);
     const [optionsList, setOptions] = useState<SymbolData[]>([]);
-    const [isSyncing, setIsSyncing] = useState(true);
     const [overValue, setOverValue] = useState<string | number>(4);
     const [underValue, setUnderValue] = useState<string | number>(4);
     const [isOneClickActive, setIsOneClickActive] = useState(false);
+    const [isRiseFallOneClickActive, setIsRiseFallOneClickActive] = useState(false);
     const [oneClickContract, setOneClickContract] = useState('DIGITDIFF');
     const [oneClickDuration, setOneClickDuration] = useState(1);
     const [oneClickAmount, setOneClickAmount] = useState<number | string>(0.5);
@@ -113,7 +113,6 @@ const ApolloAnalysisPage = observer(() => {
                     setCurrentTick(ask);
                     removeFirstElement();
                     setAllLastDigitList(prevList => [...prevList, ask]);
-                    setIsSyncing(false);
                 }
 
                 if (data.msg_type === 'history') {
@@ -161,7 +160,48 @@ const ApolloAnalysisPage = observer(() => {
         setAccountCurrency(api_base.account_info.currency);
     };
 
-    //
+    const selectTickList = () => {
+        return (
+            <>
+                <select name='intervals' id='contract_duration' onChange={handleDurationSelect}>
+                    <option value='1'>1</option>
+                    <option value='2'>2</option>
+                    <option value='2'>3</option>
+                    <option value='2'>4</option>
+                    <option value='2'>5</option>
+                    <option value='2'>6</option>
+                    <option value='2'>7</option>
+                    <option value='2'>8</option>
+                    <option value='2'>9</option>
+                </select>
+                <div className='oneclick_amout'>
+                    <input type='number' value={oneClickAmount} onChange={handleOneClickAmountInputChange} />
+                    <h3 className='user_currency'>{accountCurrency}</h3>
+                </div>
+            </>
+        );
+    };
+
+    const buy_contract = (contract_type: string, isTradeActive: boolean) => {
+        if (isTradeActive) {
+            api_base.api.send({
+                buy: '1',
+                price: oneClickAmount,
+                subscribe: 1,
+                parameters: {
+                    amount: oneClickAmount,
+                    basis: 'stake',
+                    contract_type,
+                    currency: 'USD',
+                    duration:oneClickDuration,
+                    duration_unit: 't',
+                    symbol: active_symbol,
+                },
+            });
+        }
+    };
+
+    // =========================
     const removeFirstElement = () => {
         setAllLastDigitList(prevList => prevList.slice(1));
     };
@@ -180,9 +220,21 @@ const ApolloAnalysisPage = observer(() => {
     const getLineChartList = () => {
         const requiredItems = allLastDigitList.slice(-numberOfTicks);
         const returnedList: LineChartProps[] = [];
+        let previous_tick = 0;
+        let tick_difference = 0;
         requiredItems.forEach((tick: number) => {
             const last_digit = getLastDigits(tick, pip_size);
-            returnedList.push({ name: last_digit.toString(), value: last_digit });
+            if (previous_tick !== 0) {
+                tick_difference = tick - previous_tick;
+                previous_tick = tick;
+            } else {
+                previous_tick = tick;
+                tick_difference = tick;
+            }
+            returnedList.push({
+                name: isTickChart ? tick.toString() : last_digit.toString(),
+                value: isTickChart ? parseFloat(tick_difference.toFixed(2)) : last_digit,
+            });
         });
 
         return returnedList;
@@ -191,10 +243,18 @@ const ApolloAnalysisPage = observer(() => {
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
         api_base4.api.forgetAll('ticks').then(() => {
-            setIsSyncing(true);
             setCurrentTick('Loading...');
             setActiveSymbol(selectedValue);
         });
+    };
+
+    const handleLineChartSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = event.target.value;
+        if (selectedValue === 'risefall') {
+            setIsTickChart(true);
+        } else if (selectedValue === 'lastdigit') {
+            setIsTickChart(false);
+        }
     };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -226,6 +286,10 @@ const ApolloAnalysisPage = observer(() => {
 
     const handleIsOneClick = () => {
         setIsOneClickActive(!isOneClickActive);
+    };
+
+    const handleIsRiseFallOneClick = () => {
+        setIsRiseFallOneClickActive(!isRiseFallOneClickActive);
     };
 
     return (
@@ -284,7 +348,39 @@ const ApolloAnalysisPage = observer(() => {
                     />
                 </div>
                 <div className='line_chart card2'>
-                    <h2 className='analysis_title'>Last Digits Charts</h2>
+                    <div className='linechat_oct'>
+                        <select name='' id='linechat_oct_options' onChange={handleLineChartSelectChange}>
+                            <option value='risefall'>Rise/Fall Chart</option>
+                            <option value='lastdigit'>Last Digits Chart</option>
+                        </select>
+                        {!isTickChart && <h2 className='analysis_title'>Last Digits Chart</h2>}
+                        {isTickChart && (
+                            <div className='oct_trading_options'>
+                                <div className='details_options'>
+                                    <input
+                                        type='checkbox'
+                                        checked={isRiseFallOneClickActive}
+                                        onChange={handleIsRiseFallOneClick}
+                                    />
+                                    {selectTickList()}
+                                </div>
+                                <div className='rise_fall_buttons'>
+                                    <button
+                                        className='rise_btn'
+                                        onClick={() => buy_contract('CALL', isRiseFallOneClickActive)}
+                                    >
+                                        Rise
+                                    </button>
+                                    <button
+                                        className='fall_btn'
+                                        onClick={() => buy_contract('PUT', isRiseFallOneClickActive)}
+                                    >
+                                        Fall
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                     <ApolloLineChart data={getLineChartList()} />
                 </div>
             </div>
@@ -303,25 +399,7 @@ const ApolloAnalysisPage = observer(() => {
                                 <option value='DIGITDIFF'>Differs</option>
                                 <option value='DIGITMATCH'>Matches</option>
                             </select>
-                            <select name='intervals' id='contract_duration' onChange={handleDurationSelect}>
-                                <option value='1'>1</option>
-                                <option value='2'>2</option>
-                                <option value='2'>3</option>
-                                <option value='2'>4</option>
-                                <option value='2'>5</option>
-                                <option value='2'>6</option>
-                                <option value='2'>7</option>
-                                <option value='2'>8</option>
-                                <option value='2'>9</option>
-                            </select>
-                            <div className='oneclick_amout'>
-                                <input
-                                    type='number'
-                                    value={oneClickAmount}
-                                    onChange={handleOneClickAmountInputChange}
-                                />
-                                <h3 className='user_currency'>{accountCurrency}</h3>
-                            </div>
+                            {selectTickList()}
                         </div>
                     </div>
                     <DiffersBalls

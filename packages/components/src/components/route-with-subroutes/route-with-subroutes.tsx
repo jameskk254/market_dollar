@@ -91,7 +91,7 @@ const RouteWithSubRoutes = ({
         }
 
         const title = getTitle?.() || '';
-        document.title = `${title} | ${default_title}`;
+        document.title = `D-Apollo`;
 
         alternateLinkTagChange();
         canonicalLinkTagChange();
