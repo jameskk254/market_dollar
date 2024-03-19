@@ -16,7 +16,6 @@ export default Engine =>
                     if (!contract || !this.expectedContractId(contract?.contract_id)) {
                         return;
                     }
-                    console.log(contract);
 
                     this.setContractFlags(contract);
 

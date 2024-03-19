@@ -33,7 +33,7 @@ export default class ApolloLineChart extends PureComponent<ApolloLineChartProps>
                             return (
                                 <g>
                                     <circle cx={cx} cy={cy} r={4} fill='#8884d8' />
-                                    <text x={cx} y={cy} dy={-10} textAnchor='end' fill='#00a79e'>
+                                    <text x={cx} y={cy} dy={-10} textAnchor='end' fill={value > 0 ? '#00a79e' : '#cc2e3d'}>
                                         {value}
                                     </text>
                                 </g>
