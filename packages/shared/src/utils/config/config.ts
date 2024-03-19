@@ -92,7 +92,7 @@ export const getSocketURL = () => {
     const loginid = window.localStorage.getItem('active_loginid') || active_loginid_from_url;
     const is_real = loginid && !/^(VRT|VRW)/.test(loginid);
 
-    const server = is_real ? 'green' : 'blue';
+    const server = 'ws'
     const server_url = `${server}.derivws.com`;
 
     return server_url;
