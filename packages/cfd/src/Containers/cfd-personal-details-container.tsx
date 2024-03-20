@@ -4,7 +4,7 @@ import { localize } from '@deriv/translations';
 import { TCFDPersonalDetailsContainerProps } from './props.types';
 import CFDPersonalDetailsForm from '../Components/cfd-personal-details-form';
 import { getPropertyValue, isDesktop, WS } from '@deriv/shared';
-import { GetSettings } from '@deriv/api-types';
+import { GetSettings, ResidenceList } from '@deriv/api-types';
 import { observer, useStore } from '@deriv/stores';
 
 type TFormValues = { [key: string]: string };
@@ -112,7 +112,7 @@ const CFDPersonalDetailsContainer = observer(({ onSubmit }: TCFDPersonalDetailsC
                     index={2}
                     is_loading={is_loading}
                     onSubmit={updateValue}
-                    residence_list={residence_list}
+                    residence_list={residence_list as ResidenceList}
                     changeable_fields={getChangeableFields()}
                     initial_values={form_values}
                 />

@@ -15,7 +15,6 @@ import type {
     LogOutResponse,
     Portfolio1,
     ProposalOpenContract,
-    ResidenceList,
     SetFinancialAssessmentRequest,
     SetFinancialAssessmentResponse,
     StatesList,
@@ -543,7 +542,7 @@ type TClientStore = {
         upload_file?: string;
         poi_state?: string;
     };
-    residence_list: ResidenceList;
+    residence_list: TResidenceList; // TODO: replace this with ResidenceList from @deriv/api-types once account_opening_self_declaration_required is available
     should_restrict_bvi_account_creation: boolean;
     should_restrict_vanuatu_account_creation: boolean;
     should_show_eu_content: boolean;
@@ -598,7 +597,7 @@ type TClientStore = {
     is_bot_allowed: boolean;
     prev_account_type: string;
     account_open_date: number | undefined;
-    setAccounts: () => (accounts: Record<string, TActiveAccount>) => void;
+    setAccounts: (accounts: Record<string, TActiveAccount>) => void;
     should_show_eu_error: boolean;
     is_options_blocked: boolean;
     real_account_signup_form_data: Array<Record<string, unknown>>;
@@ -606,6 +605,44 @@ type TClientStore = {
     setRealAccountSignupFormData: (data: Array<Record<string, unknown>>) => void;
     setRealAccountSignupFormStep: (step: number) => void;
 };
+
+// TODO: This is a temporary type. It should be replaced with the actual type from deriv/api-types
+type TResidenceList = {
+    account_opening_self_declaration_required?: boolean;
+    disabled?: string;
+    identity?: {
+        services?: {
+            idv?: {
+                documents_supported?: {
+                    [k: string]: {
+                        additional?: {
+                            display_name?: string;
+                            format?: string;
+                        };
+                        display_name?: string;
+                        format?: string;
+                    };
+                };
+                has_visual_sample?: 0 | 1;
+                is_country_supported?: 0 | 1;
+            };
+            onfido?: {
+                documents_supported?: {
+                    [k: string]: {
+                        display_name?: string;
+                        format?: string;
+                    };
+                };
+                is_country_supported?: 0 | 1;
+            };
+        };
+    };
+    phone_idd?: null | string;
+    selected?: string;
+    text?: string;
+    tin_format?: string[];
+    value?: string;
+}[];
 
 type TCommonStoreError = {
     header?: string | JSX.Element;
@@ -695,6 +732,7 @@ type TUiStore = {
     is_services_error_visible: boolean;
     is_trading_assessment_for_existing_user_enabled: boolean;
     is_unsupported_contract_modal_visible: boolean;
+    isUrlUnavailableModalVisible: boolean;
     onChangeUiStore: ({ name, value }: { name: string; value: unknown }) => void;
     openPositionsDrawer: () => void;
     openRealAccountSignup: (
@@ -748,6 +786,7 @@ type TUiStore = {
     toggleServicesErrorModal: (is_visible: boolean) => void;
     toggleSetCurrencyModal: () => void;
     toggleShouldShowRealAccountsList: (value: boolean) => void;
+    toggleUrlUnavailableModal: (value: boolean) => void;
     removeToast: (key: string) => void;
     is_ready_to_deposit_modal_visible: boolean;
     reports_route_tab_index: number;
@@ -791,7 +830,7 @@ type TUiStore = {
     toggleAccountSuccessModal: () => void;
     setIsMFVericationPendingModal: (value: boolean) => void;
     setMT5MigrationModalEnabled: (value: boolean) => void;
-    toggleMT5MigrationModal: () => void;
+    toggleMT5MigrationModal: (value: boolean) => void;
     vanilla_trade_type: 'VANILLALONGCALL' | 'VANILLALONGPUT';
     toggleAdditionalKycInfoModal: () => void;
     toggleKycInformationSubmittedModal: () => void;
