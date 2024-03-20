@@ -250,6 +250,19 @@
     align-items: center;
 }
 
+.main_app .pie_diff .digit_diff .title_oc_trader .auto_clicker{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 12px;
+}
+
+.main_app .pie_diff .digit_diff .title_oc_trader .auto_clicker input {
+    width: 16px;
+    height: 16px;
+}
+
 .main_app .pie_diff .digit_diff .title_oc_trader .oneclick_trader {
     display: flex;
     align-items: center;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { api_base } from '@deriv/bot-skeleton';
 type DiffersBallType = {
     lastDigitList: number[];
@@ -8,6 +8,9 @@ type DiffersBallType = {
     duration: number;
     active_symbol: string;
     stake_amount: number | string;
+    isAutoClickerActive: boolean;
+    prevLowestValue: string | number;
+    setPrevLowestValue: React.Dispatch<React.SetStateAction<string | number>>;
 };
 
 const DiffersBalls = ({
@@ -18,7 +21,30 @@ const DiffersBalls = ({
     isOneClickActive,
     active_symbol,
     stake_amount,
+    prevLowestValue,
+    isAutoClickerActive,
+    setPrevLowestValue,
 }: DiffersBallType) => {
+    const buy_contract = (prediction: string) => {
+        if (isOneClickActive) {
+            api_base.api.send({
+                buy: '1',
+                price: stake_amount,
+                subscribe: 1,
+                parameters: {
+                    amount: stake_amount,
+                    basis: 'stake',
+                    contract_type,
+                    currency: 'USD',
+                    duration,
+                    duration_unit: 't',
+                    symbol: active_symbol,
+                    barrier: prediction,
+                },
+            });
+        }
+    };
+
     const calculatePercentageAppearance = (numbers: number[]): Record<string, number> => {
         // Initialize an object to store the count of each number
         let counts: Record<string, number> = {};
@@ -100,30 +126,19 @@ const DiffersBalls = ({
             }
         });
 
+        if (prevLowestValue === '') {
+            setPrevLowestValue(parseFloat(minKey));
+        } else if (prevLowestValue !== parseFloat(minKey)) {
+            setPrevLowestValue(parseFloat(minKey));
+            if (isAutoClickerActive && parseFloat(minKey) !== active_last) {
+                buy_contract(minKey);
+            }
+        }
+
         return { maxKey, minKey };
     };
 
     let percentages: Record<string, number> = calculatePercentageAppearance(lastDigitList);
-
-    const buy_contract = (prediction: string) => {
-        if (isOneClickActive) {
-            api_base.api.send({
-                buy: '1',
-                price: stake_amount,
-                subscribe: 1,
-                parameters: {
-                    amount: stake_amount,
-                    basis: 'stake',
-                    contract_type,
-                    currency: 'USD',
-                    duration,
-                    duration_unit: 't',
-                    symbol: active_symbol,
-                    barrier: prediction,
-                },
-            });
-        }
-    };
 
     return (
         <div>

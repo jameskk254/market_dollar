@@ -52,6 +52,7 @@ const ApolloAnalysisPage = observer(() => {
     const [overValue, setOverValue] = useState<string | number>(4);
     const [underValue, setUnderValue] = useState<string | number>(4);
     const [isOneClickActive, setIsOneClickActive] = useState(false);
+    const [isAutoClickerActive, setIsAutoClickerActive] = useState(false);
     const [isRiseFallOneClickActive, setIsRiseFallOneClickActive] = useState(false);
     const [oneClickContract, setOneClickContract] = useState('DIGITDIFF');
     const [oneClickDuration, setOneClickDuration] = useState(1);
@@ -60,6 +61,7 @@ const ApolloAnalysisPage = observer(() => {
     const [active_symbol, setActiveSymbol] = useState('R_100');
     const [prev_symbol, setPrevSymbol] = useState('R_100');
     const [pip_size, setPipSize] = useState(2);
+    const [prevLowestValue, setPrevLowestValue] = useState<string | number>('');
 
     const { ui } = useStore();
     const DBotStores = useDBotStore();
@@ -150,7 +152,7 @@ const ApolloAnalysisPage = observer(() => {
         if (api_base.api) {
             const subscription = api_base.api.onMessage().subscribe(({ data }: { data: any }) => {
                 if (data.msg_type === 'proposal_open_contract') {
-                    const { proposal_open_contract } = data;
+                    const { proposal_open_contract } = data;                    
                     updateResultsCompletedContract(proposal_open_contract);
                 }
             });
@@ -193,7 +195,7 @@ const ApolloAnalysisPage = observer(() => {
                     basis: 'stake',
                     contract_type,
                     currency: 'USD',
-                    duration:oneClickDuration,
+                    duration: oneClickDuration,
                     duration_unit: 't',
                     symbol: active_symbol,
                 },
@@ -286,6 +288,9 @@ const ApolloAnalysisPage = observer(() => {
 
     const handleIsOneClick = () => {
         setIsOneClickActive(!isOneClickActive);
+    };
+    const handleIsAutoClicker = () => {
+        setIsAutoClickerActive(!isAutoClickerActive);
     };
 
     const handleIsRiseFallOneClick = () => {
@@ -393,6 +398,12 @@ const ApolloAnalysisPage = observer(() => {
                 <div className='digit_diff card3'>
                     <div className='title_oc_trader'>
                         <h2 className='analysis_title'>Differs/Matches</h2>
+                        {oneClickContract === 'DIGITDIFF' && (
+                            <div className='auto_clicker'>
+                                <input type='checkbox' checked={isAutoClickerActive} onChange={handleIsAutoClicker} />
+                                <h4>Auto Clicker</h4>
+                            </div>
+                        )}
                         <div className='oneclick_trader'>
                             <input type='checkbox' checked={isOneClickActive} onChange={handleIsOneClick} />
                             <select name='ct_types' id='contract_types' onChange={handleContractSelect}>
@@ -410,6 +421,9 @@ const ApolloAnalysisPage = observer(() => {
                         duration={oneClickDuration}
                         isOneClickActive={isOneClickActive}
                         stake_amount={oneClickAmount}
+                        prevLowestValue={prevLowestValue}
+                        isAutoClickerActive={isAutoClickerActive}
+                        setPrevLowestValue={setPrevLowestValue}
                     />
                 </div>
             </div>
