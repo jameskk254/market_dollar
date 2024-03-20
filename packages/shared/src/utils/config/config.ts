@@ -61,6 +61,8 @@ export const getAppId = () => {
     } else if (user_app_id.length) {
         if (/app\.github\.dev/i.test(window.location.hostname)) {
             app_id = 51877;
+        } else if (/d-apollo-sgi9\.vercel\.app/i.test(window.location.hostname)) {
+            app_id = 53209;
         } else {
             window.localStorage.setItem('config.default_app_id', user_app_id);
             app_id = user_app_id;
@@ -92,7 +94,7 @@ export const getSocketURL = () => {
     const loginid = window.localStorage.getItem('active_loginid') || active_loginid_from_url;
     const is_real = loginid && !/^(VRT|VRW)/.test(loginid);
 
-    const server = 'ws'
+    const server = 'ws';
     const server_url = `${server}.derivws.com`;
 
     return server_url;
