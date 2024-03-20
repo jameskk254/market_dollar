@@ -823,6 +823,16 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                     </Statement>
                 </Block>
             </Category>
+            <Category id='apollo_utility' name={localize('Apollo Utility')}>
+                <Block type='apollo_notify'>
+                    <Field name='NOTIFICATION_TYPE'>success</Field>
+                    <Value name='MESSAGE'>
+                        <Shadow type='text'>
+                            <Field name='TEXT'>abc</Field>
+                        </Shadow>
+                    </Value>
+                </Block>
+            </Category>
         </Category>
 
         <Examples id='examples'>

@@ -8,7 +8,6 @@ Blockly.Blocks.apollo_notify = {
     },
     definition() {
         return {
-
             message0: localize(
                 'Apollo-Notify {{ notification_type }} with sound: {{ notification_sound }} {{ input_message }}',
                 {
@@ -73,6 +72,6 @@ Blockly.JavaScript.apollo_notify = block => {
         Blockly.JavaScript.valueToCode(block, 'MESSAGE', Blockly.JavaScript.ORDER_ATOMIC) ||
         `"${localize('<empty message>')}"`;
 
-    const code = `Bot.apollo_notify({ className: 'journal__text--${notificationType}', message: ${message}, sound: '${sound}', block_id: '${block.id}', variable_name: '${variable_name}' });\n`;
+    const code = `Bot.notify({ className: 'journal__text--${notificationType}', message: ${message}, sound: '${sound}', block_id: '${block.id}', variable_name: '${variable_name}' });\n`;
     return code;
 };
