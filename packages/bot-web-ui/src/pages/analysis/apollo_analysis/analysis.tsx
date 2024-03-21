@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import { BsExclamationCircle } from 'react-icons/bs';
 import ApolloLineChart from './components/line_chart';
 import MyResponsivePie from './components/pie_chart';
@@ -50,18 +50,25 @@ const ApolloAnalysisPage = observer(() => {
     const [numberOfTicks, setNumberOfTicks] = useState<string | number>(50);
     const [optionsList, setOptions] = useState<SymbolData[]>([]);
     const [overValue, setOverValue] = useState<string | number>(4);
+    const [martingaleValue, setMartingaleValue] = useState<string | number>(1.2);
+    const [percentageValue, setPercentageValue] = useState<string | number>(60);
     const [underValue, setUnderValue] = useState<string | number>(4);
     const [isOneClickActive, setIsOneClickActive] = useState(false);
     const [isAutoClickerActive, setIsAutoClickerActive] = useState(false);
     const [isRiseFallOneClickActive, setIsRiseFallOneClickActive] = useState(false);
+    const [isOverUnderOneClickActive, setIsOverUnderOneClickActive] = useState(false);
+    const [isTradeActive, setIsTradeActive] = useState(false);
     const [oneClickContract, setOneClickContract] = useState('DIGITDIFF');
+    const [overUnderContract, setOverUnderContract] = useState('DIGITOVER');
     const [oneClickDuration, setOneClickDuration] = useState(1);
     const [oneClickAmount, setOneClickAmount] = useState<number | string>(0.5);
+    const [oneClickDefaultAmount, setOneClickDefaultAmount] = useState<number | string>(0.5);
     const [accountCurrency, setAccountCurrency] = useState('');
     const [active_symbol, setActiveSymbol] = useState('R_100');
     const [prev_symbol, setPrevSymbol] = useState('R_100');
     const [pip_size, setPipSize] = useState(2);
     const [prevLowestValue, setPrevLowestValue] = useState<string | number>('');
+    const martingaleValueRef = useRef(martingaleValue);
 
     const { ui } = useStore();
     const DBotStores = useDBotStore();
@@ -73,6 +80,10 @@ const ApolloAnalysisPage = observer(() => {
     useEffect(() => {
         startApi();
     }, []);
+
+    useEffect(() => {
+        martingaleValueRef.current = martingaleValue;
+    }, [martingaleValue]);
 
     useEffect(() => {
         if (prev_symbol !== active_symbol) {
@@ -152,7 +163,23 @@ const ApolloAnalysisPage = observer(() => {
         if (api_base.api) {
             const subscription = api_base.api.onMessage().subscribe(({ data }: { data: any }) => {
                 if (data.msg_type === 'proposal_open_contract') {
-                    const { proposal_open_contract } = data;                    
+                    const { proposal_open_contract } = data;
+                    if (
+                        proposal_open_contract.contract_type === 'DIGITOVER' ||
+                        proposal_open_contract.contract_type === 'DIGITUNDER'
+                    ) {
+                        if (proposal_open_contract.is_sold) {
+                            if (proposal_open_contract.status === 'lost') {
+                                const newStake = Math.abs(proposal_open_contract.profit) * parseFloat(martingaleValueRef.current);
+                                setOneClickAmount(parseFloat(newStake.toFixed(2)));
+                            } else {
+                                setOneClickAmount(oneClickDefaultAmount);
+                            }
+                            setIsTradeActive(false);
+                        } else {
+                            setIsTradeActive(true);
+                        }
+                    }
                     updateResultsCompletedContract(proposal_open_contract);
                 }
             });
@@ -267,6 +294,14 @@ const ApolloAnalysisPage = observer(() => {
         const newValue = event.target.value;
         setOverValue(newValue === '' ? '' : Number(newValue));
     };
+    const handleMartingaleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value;
+        setMartingaleValue(newValue === '' ? '' : Number(newValue));
+    };
+    const handlePercentageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value;
+        setPercentageValue(newValue === '' ? '' : Number(newValue));
+    };
     const handleUnderInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
         setUnderValue(newValue === '' ? '' : Number(newValue));
@@ -274,11 +309,16 @@ const ApolloAnalysisPage = observer(() => {
     const handleOneClickAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
         setOneClickAmount(newValue === '' ? '' : Number(newValue));
+        setOneClickDefaultAmount(newValue === '' ? '' : Number(newValue));
     };
 
     const handleContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
         setOneClickContract(selectedValue);
+    };
+    const handleOverUnderContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = event.target.value;
+        setOverUnderContract(selectedValue);
     };
 
     const handleDurationSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -295,6 +335,9 @@ const ApolloAnalysisPage = observer(() => {
 
     const handleIsRiseFallOneClick = () => {
         setIsRiseFallOneClickActive(!isRiseFallOneClickActive);
+    };
+    const handleIsOverUnderOneClick = () => {
+        setIsOverUnderOneClickActive(!isOverUnderOneClickActive);
     };
 
     return (
@@ -333,7 +376,7 @@ const ApolloAnalysisPage = observer(() => {
                 </div>
                 <div className='over_under card1'>
                     <div className='over_under_options'>
-                        <h2 className='analysis_title'>Over/Under</h2>
+                        {/* <h2 className='analysis_title'>Over/Under</h2> */}
                         <div className='digit_inputs'>
                             <div className='over_digit'>
                                 <label htmlFor='over_input'>Over</label>
@@ -344,12 +387,52 @@ const ApolloAnalysisPage = observer(() => {
                                 <input type='number' value={underValue} onChange={handleUnderInputChange} />
                             </div>
                         </div>
+                        <div className='over_oct_container'>
+                            <div className='over_oct'>
+                                <input
+                                    type='checkbox'
+                                    checked={isOverUnderOneClickActive}
+                                    onChange={handleIsOverUnderOneClick}
+                                />
+                                {selectTickList()}
+                            </div>
+                            <div className='over_under_settings'>
+                                <select name='ct_types' id='contract_types' onChange={handleOverUnderContractSelect}>
+                                    <option value='DIGITOVER'>Over</option>
+                                    <option value='DIGITUNDER'>Under</option>
+                                </select>
+                                <div className='martingale'>
+                                    <small>martingale</small>
+                                    <input
+                                        type='number'
+                                        value={martingaleValue}
+                                        onChange={handleMartingaleInputChange}
+                                    />
+                                </div>
+                                <div className='percentage_value'>
+                                    <small>% value</small>
+                                    <input
+                                        type='number'
+                                        value={percentageValue}
+                                        onChange={handlePercentageInputChange}
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                     <OverUnderBarChart
                         overUnderList={getLastDigitList()}
                         overValue={overValue}
                         underValue={underValue}
                         is_mobile={is_mobile}
+                        active_symbol={active_symbol}
+                        isOverUnderOneClickActive={isOverUnderOneClickActive}
+                        oneClickAmount={oneClickAmount}
+                        oneClickDuration={oneClickDuration}
+                        isTradeActive={isTradeActive}
+                        percentageValue={percentageValue}
+                        overUnderContract={overUnderContract}
                     />
                 </div>
                 <div className='line_chart card2'>
