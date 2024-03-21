@@ -68,7 +68,10 @@ const ApolloAnalysisPage = observer(() => {
     const [prev_symbol, setPrevSymbol] = useState('R_100');
     const [pip_size, setPipSize] = useState(2);
     const [prevLowestValue, setPrevLowestValue] = useState<string | number>('');
+    // Refs
     const martingaleValueRef = useRef(martingaleValue);
+    const isTradeActiveRef = useRef(isTradeActive);
+    const current_contractids = useRef<string[]>([]);
 
     const { ui } = useStore();
     const DBotStores = useDBotStore();
@@ -80,10 +83,6 @@ const ApolloAnalysisPage = observer(() => {
     useEffect(() => {
         startApi();
     }, []);
-
-    useEffect(() => {
-        martingaleValueRef.current = martingaleValue;
-    }, [martingaleValue]);
 
     useEffect(() => {
         if (prev_symbol !== active_symbol) {
@@ -164,6 +163,7 @@ const ApolloAnalysisPage = observer(() => {
             const subscription = api_base.api.onMessage().subscribe(({ data }: { data: any }) => {
                 if (data.msg_type === 'proposal_open_contract') {
                     const { proposal_open_contract } = data;
+                    
                     if (
                         proposal_open_contract.contract_type === 'DIGITOVER' ||
                         proposal_open_contract.contract_type === 'DIGITUNDER'
@@ -175,10 +175,13 @@ const ApolloAnalysisPage = observer(() => {
                             } else {
                                 setOneClickAmount(oneClickDefaultAmount);
                             }
-                            setIsTradeActive(false);
-                        } else {
-                            setIsTradeActive(true);
-                        }
+                            if(isTradeActiveRef.current && !current_contractids.current.includes(proposal_open_contract.contract_id)){
+                                isTradeActiveRef.current = false
+                                setIsTradeActive(false);
+                                current_contractids.current.push(proposal_open_contract.contract_id);
+                            }
+                            
+                        } 
                     }
                     updateResultsCompletedContract(proposal_open_contract);
                 }
@@ -296,6 +299,7 @@ const ApolloAnalysisPage = observer(() => {
     };
     const handleMartingaleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
+        martingaleValueRef.current = newValue === '' ? '' : Number(newValue) 
         setMartingaleValue(newValue === '' ? '' : Number(newValue));
     };
     const handlePercentageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -405,7 +409,7 @@ const ApolloAnalysisPage = observer(() => {
                                     <small>martingale</small>
                                     <input
                                         type='number'
-                                        value={martingaleValue}
+                                        value={martingaleValueRef.current}
                                         onChange={handleMartingaleInputChange}
                                     />
                                 </div>
@@ -433,6 +437,8 @@ const ApolloAnalysisPage = observer(() => {
                         isTradeActive={isTradeActive}
                         percentageValue={percentageValue}
                         overUnderContract={overUnderContract}
+                        setIsTradeActive={setIsTradeActive}
+                        isTradeActiveRef={isTradeActiveRef}
                     />
                 </div>
                 <div className='line_chart card2'>

@@ -31,9 +31,11 @@ interface OverUnderProps {
     active_symbol: string;
     oneClickDuration: number;
     oneClickAmount: string | number;
-    isTradeActive: boolean;
+    isTradeActive: boolean
     percentageValue: string | number;
     overUnderContract: string;
+    isTradeActiveRef: React.MutableRefObject<boolean>
+    setIsTradeActive: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const OverUnderBarChart = ({
@@ -48,6 +50,8 @@ const OverUnderBarChart = ({
     isTradeActive,
     percentageValue,
     overUnderContract,
+    setIsTradeActive,
+    isTradeActiveRef
 }:OverUnderProps) => {
     const [overPercentage, underPercentage] = calculatePercentage(
         overUnderList,
@@ -58,6 +62,9 @@ const OverUnderBarChart = ({
     useEffect(() => {
         const buy_contract = (prediction:string) => {
             if (isOverUnderOneClickActive && !isTradeActive) {
+                isTradeActiveRef.current = true
+                setIsTradeActive(true);
+                console.log('IS trade active status:',isTradeActive);
                 api_base.api.send({
                     buy: '1',
                     price: oneClickAmount,
@@ -73,6 +80,7 @@ const OverUnderBarChart = ({
                         barrier: prediction,
                     },
                 });
+                
             }
         };
 
