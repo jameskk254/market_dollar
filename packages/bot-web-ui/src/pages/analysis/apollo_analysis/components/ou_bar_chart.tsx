@@ -84,10 +84,19 @@ const OverUnderBarChart = ({
             }
         };
 
-        if (typeof percentageValue !== 'string' && overPercentage > percentageValue) {
-            const prediction = overUnderContract === 'DIGITOVER' ? overValue.toString() : underValue.toString();
-            buy_contract(prediction);
+        if(overUnderContract === 'DIGITOVER'){
+            if (typeof percentageValue !== 'string' && overPercentage > percentageValue) {
+                const prediction = overUnderContract === 'DIGITOVER' ? overValue.toString() : underValue.toString();
+                buy_contract(prediction);
+            }
+        }else{
+            if (typeof percentageValue !== 'string' && underPercentage > percentageValue) {
+                const prediction = overUnderContract === 'DIGITOVER' ? overValue.toString() : underValue.toString();
+                buy_contract(prediction);
+            }
         }
+
+        
     }, [overPercentage, underPercentage,isTradeActive,overUnderList]);
 
     const data = [
