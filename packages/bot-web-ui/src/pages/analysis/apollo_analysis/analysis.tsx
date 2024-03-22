@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { BsExclamationCircle } from 'react-icons/bs';
 import ApolloLineChart from './components/line_chart';
 import MyResponsivePie from './components/pie_chart';
@@ -164,27 +164,31 @@ const ApolloAnalysisPage = observer(() => {
             const subscription = api_base.api.onMessage().subscribe(({ data }: { data: any }) => {
                 if (data.msg_type === 'proposal_open_contract') {
                     const { proposal_open_contract } = data;
-                    
+
                     if (
                         proposal_open_contract.contract_type === 'DIGITOVER' ||
                         proposal_open_contract.contract_type === 'DIGITUNDER'
                     ) {
                         if (proposal_open_contract.is_sold) {
                             if (proposal_open_contract.status === 'lost') {
-                                totalLostAmount.current += Math.abs(proposal_open_contract.profit)
-                                const newStake =  totalLostAmount.current * parseFloat(martingaleValueRef.current);
-                                setOneClickAmount(parseFloat(newStake.toFixed(2)));
+                                if (!current_contractids.current.includes(proposal_open_contract.contract_id)) {
+                                    totalLostAmount.current += Math.abs(proposal_open_contract.profit);
+                                    const newStake = totalLostAmount.current * parseFloat(martingaleValueRef.current);
+                                    setOneClickAmount(parseFloat(newStake.toFixed(2)));
+                                }
                             } else {
                                 totalLostAmount.current = 0;
                                 setOneClickAmount(oneClickDefaultAmount);
                             }
-                            if(isTradeActiveRef.current && !current_contractids.current.includes(proposal_open_contract.contract_id)){
-                                isTradeActiveRef.current = false
+                            if (
+                                isTradeActiveRef.current &&
+                                !current_contractids.current.includes(proposal_open_contract.contract_id)
+                            ) {
+                                isTradeActiveRef.current = false;
                                 setIsTradeActive(false);
                                 current_contractids.current.push(proposal_open_contract.contract_id);
                             }
-                            
-                        } 
+                        }
                     }
                     updateResultsCompletedContract(proposal_open_contract);
                 }
@@ -302,7 +306,7 @@ const ApolloAnalysisPage = observer(() => {
     };
     const handleMartingaleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
-        martingaleValueRef.current = newValue === '' ? '' : Number(newValue) 
+        martingaleValueRef.current = newValue === '' ? '' : Number(newValue);
         setMartingaleValue(newValue === '' ? '' : Number(newValue));
     };
     const handlePercentageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
