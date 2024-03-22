@@ -72,6 +72,7 @@ const ApolloAnalysisPage = observer(() => {
     const martingaleValueRef = useRef(martingaleValue);
     const isTradeActiveRef = useRef(isTradeActive);
     const current_contractids = useRef<string[]>([]);
+    const totalLostAmount = useRef(0);
 
     const { ui } = useStore();
     const DBotStores = useDBotStore();
@@ -170,9 +171,11 @@ const ApolloAnalysisPage = observer(() => {
                     ) {
                         if (proposal_open_contract.is_sold) {
                             if (proposal_open_contract.status === 'lost') {
-                                const newStake = Math.abs(proposal_open_contract.profit) * parseFloat(martingaleValueRef.current);
+                                totalLostAmount.current = Math.abs(proposal_open_contract.profit)
+                                const newStake =  totalLostAmount.current * parseFloat(martingaleValueRef.current);
                                 setOneClickAmount(parseFloat(newStake.toFixed(2)));
                             } else {
+                                totalLostAmount.current = 0;
                                 setOneClickAmount(oneClickDefaultAmount);
                             }
                             if(isTradeActiveRef.current && !current_contractids.current.includes(proposal_open_contract.contract_id)){
