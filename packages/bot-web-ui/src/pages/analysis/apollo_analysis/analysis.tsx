@@ -171,7 +171,7 @@ const ApolloAnalysisPage = observer(() => {
                     ) {
                         if (proposal_open_contract.is_sold) {
                             if (proposal_open_contract.status === 'lost') {
-                                totalLostAmount.current = Math.abs(proposal_open_contract.profit)
+                                totalLostAmount.current += Math.abs(proposal_open_contract.profit)
                                 const newStake =  totalLostAmount.current * parseFloat(martingaleValueRef.current);
                                 setOneClickAmount(parseFloat(newStake.toFixed(2)));
                             } else {
