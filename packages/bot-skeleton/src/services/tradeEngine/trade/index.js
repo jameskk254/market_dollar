@@ -73,6 +73,7 @@ export default class TradeEngine extends Balance(Purchase(Sell(OpenContract(Prop
             vh_contract: {},
             proposals: [],
             vh_proposals: [],
+            subscribed_contracts: []
 
         };
         this.store = createStore(rootReducer, applyMiddleware(thunk));

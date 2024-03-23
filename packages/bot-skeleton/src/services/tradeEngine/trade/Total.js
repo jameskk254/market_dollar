@@ -39,6 +39,8 @@ export default Engine =>
         updateTotals(contract) {
             const { sell_price: sellPrice, buy_price: buyPrice, currency } = contract;
 
+            if (config.vh_variables.is_enabled) return;
+
             const profit = getRoundedNumber(Number(sellPrice) - Number(buyPrice), currency);
 
             const win = profit > 0;
@@ -48,6 +50,14 @@ export default Engine =>
             accountStat.totalWins += win ? 1 : 0;
 
             accountStat.totalLosses += !win ? 1 : 0;
+
+            this.sessionProfit = getRoundedNumber(Number(this.sessionProfit) + Number(profit), currency);
+
+            accountStat.totalProfit = getRoundedNumber(Number(accountStat.totalProfit) + Number(profit), currency);
+
+            accountStat.totalStake = getRoundedNumber(Number(accountStat.totalStake) + Number(buyPrice), currency);
+
+            accountStat.totalPayout = getRoundedNumber(Number(accountStat.totalPayout) + Number(sellPrice), currency);
 
             if (config.vh_variables.vh_official) {
                 if (win) {
@@ -65,17 +75,10 @@ export default Engine =>
                         if (isRunning || isRunning1) {
                             calculateLostStatus(profit, parseFloat(accountStat.totalProfit));
                         }
+                        
                     }
                 }
             }
-
-            this.sessionProfit = getRoundedNumber(Number(this.sessionProfit) + Number(profit), currency);
-
-            accountStat.totalProfit = getRoundedNumber(Number(accountStat.totalProfit) + Number(profit), currency);
-
-            accountStat.totalStake = getRoundedNumber(Number(accountStat.totalStake) + Number(buyPrice), currency);
-
-            accountStat.totalPayout = getRoundedNumber(Number(accountStat.totalPayout) + Number(sellPrice), currency);
 
             info({
                 profit,

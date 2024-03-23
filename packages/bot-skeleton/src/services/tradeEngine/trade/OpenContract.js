@@ -96,15 +96,6 @@ export default Engine =>
                     } else {
                         this.store.dispatch(openContractReceived());
                     }
-                } else if (data.msg_type === 'buy') {
-                    if (typeof data.buy.contract_id !== 'undefined') {
-                        const contract_id = data.buy.contract_id;
-                        api_base2.api.send({
-                            proposal_open_contract: 1,
-                            contract_id: contract_id,
-                            subscribe: 1,
-                        });
-                    }
                 }
             });
             api_base2.pushSubscription(subscription);

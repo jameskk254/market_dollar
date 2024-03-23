@@ -64,7 +64,6 @@ const OverUnderBarChart = ({
             if (isOverUnderOneClickActive && !isTradeActive) {
                 isTradeActiveRef.current = true
                 setIsTradeActive(true);
-                console.log('IS trade active status:',isTradeActive);
                 api_base.api.send({
                     buy: '1',
                     price: oneClickAmount,
