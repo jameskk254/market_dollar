@@ -62,7 +62,6 @@ const ApolloAnalysisPage = observer(() => {
     const [overUnderContract, setOverUnderContract] = useState('DIGITOVER');
     const [oneClickDuration, setOneClickDuration] = useState(1);
     const [oneClickAmount, setOneClickAmount] = useState<number | string>(0.5);
-    const [oneClickDefaultAmount, setOneClickDefaultAmount] = useState<number | string>(0.5);
     const [accountCurrency, setAccountCurrency] = useState('');
     const [active_symbol, setActiveSymbol] = useState('R_100');
     const [prev_symbol, setPrevSymbol] = useState('R_100');
@@ -73,6 +72,7 @@ const ApolloAnalysisPage = observer(() => {
     const isTradeActiveRef = useRef(isTradeActive);
     const current_contractids = useRef<string[]>([]);
     const totalLostAmount = useRef(0);
+    const oneClickDefaultAmount = useRef<string | number>(0.5)
 
     const { ui } = useStore();
     const DBotStores = useDBotStore();
@@ -178,7 +178,7 @@ const ApolloAnalysisPage = observer(() => {
                                 }
                             } else {
                                 totalLostAmount.current = 0;
-                                setOneClickAmount(oneClickDefaultAmount);
+                                setOneClickAmount(oneClickDefaultAmount.current);
                             }
                             if (
                                 isTradeActiveRef.current &&
@@ -320,7 +320,7 @@ const ApolloAnalysisPage = observer(() => {
     const handleOneClickAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
         setOneClickAmount(newValue === '' ? '' : Number(newValue));
-        setOneClickDefaultAmount(newValue === '' ? '' : Number(newValue));
+        oneClickDefaultAmount.current = newValue === '' ? '' : Number(newValue)
     };
 
     const handleContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
