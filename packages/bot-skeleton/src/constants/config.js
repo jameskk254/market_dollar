@@ -37,6 +37,7 @@ export const config = {
         mart_total_lost: 0,
         allow_martingale: false,
         mart_stake: 0,
+        total_loss: 0,
     },
     analysis_vars: {
         tick_list: [],
