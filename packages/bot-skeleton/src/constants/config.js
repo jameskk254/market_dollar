@@ -47,6 +47,11 @@ export const config = {
         symbol_list: [],
         subscribed: false
     },
+    touch_notouch_vars: {
+        barrier_offset: 0,
+        barrier_offset_active: false,
+        official_offseter: false,
+    },
     lists: {
         PAYOUTTYPE: [
             // [localize('Payout'), 'payout'],
@@ -84,6 +89,10 @@ export const config = {
             [localize('blue'), 'info'],
             [localize('yellow'), 'warn'],
             [localize('red'), 'error'],
+        ],
+        BARRIER_OFFSETER_STATUS: [
+            [localize('disable'), 'disable'],
+            [localize('enable'), 'enable'],
         ],
         NOTIFICATION_SOUND: [
             [localize('Silent'), 'silent'],

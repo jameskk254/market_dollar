@@ -8,14 +8,15 @@ import './total_profit';
 import './total_runs';
 import './useless_block';
 import './console';
-import './apollo_blocks/apollo_notify'
-import './apollo_blocks/vh_settings'
-import './apollo_blocks/virtual_hook/martingale_factor'
-import './apollo_blocks/virtual_hook/virtual_acc_token'
-import './apollo_blocks/virtual_hook/max_steps'
-import './apollo_blocks/virtual_hook/min_trades'
-import './apollo_blocks/virtual_hook/take_profit'
-import './apollo_blocks/virtual_hook/stop_loss'
-import './apollo_blocks/virtual_hook/enable_vh'
-import './apollo_blocks/virtual_hook/enable_mar'
-
+import './apollo_blocks/apollo_notify';
+import './apollo_blocks/vh_settings';
+import './apollo_blocks/barrier_changer/barrier_changer';
+import './apollo_blocks/barrier_changer/enable_barrier_changer';
+import './apollo_blocks/virtual_hook/martingale_factor';
+import './apollo_blocks/virtual_hook/virtual_acc_token';
+import './apollo_blocks/virtual_hook/max_steps';
+import './apollo_blocks/virtual_hook/min_trades';
+import './apollo_blocks/virtual_hook/take_profit';
+import './apollo_blocks/virtual_hook/stop_loss';
+import './apollo_blocks/virtual_hook/enable_vh';
+import './apollo_blocks/virtual_hook/enable_mar';

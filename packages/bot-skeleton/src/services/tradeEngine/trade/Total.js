@@ -59,6 +59,14 @@ export default Engine =>
 
             accountStat.totalPayout = getRoundedNumber(Number(accountStat.totalPayout) + Number(sellPrice), currency);
 
+            if (config.touch_notouch_vars.official_offseter) {
+                if (win) {
+                    config.touch_notouch_vars.barrier_offset_active = false;
+                } else {
+                    config.touch_notouch_vars.barrier_offset_active = !config.touch_notouch_vars.barrier_offset_active;
+                }
+            }
+
             if (config.vh_variables.vh_official) {
                 if (win) {
                     if (config.vh_variables.is_enabled) {
@@ -75,7 +83,6 @@ export default Engine =>
                         if (isRunning || isRunning1) {
                             calculateLostStatus(profit, parseFloat(accountStat.totalProfit));
                         }
-                        
                     }
                 }
             }
@@ -151,7 +158,7 @@ export default Engine =>
         }
 
         getAccountStat() {
-            this.accountInfo = api_base.account_info
+            this.accountInfo = api_base.account_info;
             const { loginid: accountID } = this.accountInfo;
 
             if (!(accountID in globalStat)) {

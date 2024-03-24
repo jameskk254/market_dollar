@@ -128,7 +128,16 @@ export const tradeOptionToBuy = (contract_type, trade_option) => {
     if (!['TICKLOW', 'TICKHIGH'].includes(contract_type) && trade_option.prediction !== undefined) {
         buy.parameters.barrier = trade_option.prediction;
     } else if (trade_option.barrierOffset !== undefined) {
-        buy.parameters.barrier = trade_option.barrierOffset;
+        // Configured barrier for touch/notouch changer offseter blocky
+        if (buy.parameters.contract_type === 'NOTOUCH' || buy.parameters.contract_type === 'ONETOUCH') {
+            if (config.touch_notouch_vars.barrier_offset_active) {
+                buy.parameters.barrier = config.touch_notouch_vars.barrier_offset;
+            } else {
+                buy.parameters.barrier = trade_option.barrierOffset;
+            }
+        } else {
+            buy.parameters.barrier = trade_option.barrierOffset;
+        }
     }
     if (trade_option.secondBarrierOffset !== undefined) {
         buy.parameters.barrier2 = trade_option.secondBarrierOffset;

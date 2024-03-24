@@ -832,6 +832,21 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                         </Shadow>
                     </Value>
                 </Block>
+
+                <Block type='enable_barrier_changer'>
+                    <Field name='NOTIFICATION_TYPE'>disable</Field>
+                </Block>
+
+                <Block type='barrier_changer'>
+                    <Field name='VAR' variabletype=''>
+                        text
+                    </Field>
+                    <Value name='TEXT'>
+                        <Shadow type='text'>
+                            <Field name='TEXT'>abc</Field>
+                        </Shadow>
+                    </Value>
+                </Block>
             </Category>
         </Category>
 
