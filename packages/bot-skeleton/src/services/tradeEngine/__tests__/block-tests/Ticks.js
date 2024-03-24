@@ -39,7 +39,7 @@ describe('Ticks Analysis', () => {
             `
       watch('before');
       ta()
-      Bot.purchase('CALL')
+      Bot.apollo_purchase('CALL')
       while (watch('during')) {
         ta()
       }

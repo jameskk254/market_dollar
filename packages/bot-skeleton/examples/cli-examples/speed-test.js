@@ -21,7 +21,7 @@ while (true) {
 
   watch('before');
 
-  Bot.purchase('CALL');
+  Bot.apollo_purchase('CALL');
 
   console.log('Purchased:', 'CALL');
 

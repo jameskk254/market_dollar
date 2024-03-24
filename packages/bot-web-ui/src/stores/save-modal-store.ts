@@ -7,6 +7,7 @@ import {
     save,
     save_types,
     saveWorkspaceToRecent,
+    updateApolloXML,
 } from '@deriv/bot-skeleton';
 import { localize } from '@deriv/translations';
 import { MAX_STRATEGIES } from 'Constants/bot-contents';
@@ -146,6 +147,9 @@ export default class SaveModalStore implements ISaveModalStore {
             xml = Blockly?.Xml?.textToDom(main_strategy.xml);
         }
         xml?.setAttribute('is_dbot', 'true');
+        if(xml){
+            xml = updateApolloXML(xml);
+        }
         xml?.setAttribute('collection', save_as_collection ? 'true' : 'false');
 
         if (is_local) {

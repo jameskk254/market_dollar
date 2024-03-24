@@ -10,7 +10,7 @@ describe('Before Purchase Blocks', () => {
       watch('before');
       result.payout = Bot.getPayout('CALL');
       result.askPrice = Bot.getAskPrice('CALL');
-      Bot.purchase('CALL');
+      Bot.apollo_purchase('CALL');
     `
         ).then(v => {
             result = v;

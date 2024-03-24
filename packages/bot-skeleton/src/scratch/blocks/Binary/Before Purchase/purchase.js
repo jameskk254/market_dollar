@@ -1,7 +1,7 @@
 import { localize } from '@deriv/translations';
 import { getContractTypeOptions } from '../../../shared';
 
-Blockly.Blocks.purchase = {
+Blockly.Blocks.apollo_purchase = {
     init() {
         this.jsonInit(this.definition());
 
@@ -77,9 +77,9 @@ Blockly.Blocks.purchase = {
     restricted_parents: ['before_purchase'],
 };
 
-Blockly.JavaScript.purchase = block => {
+Blockly.JavaScript.apollo_purchase = block => {
     const purchaseList = block.getFieldValue('PURCHASE_LIST');
 
-    const code = `Bot.purchase('${purchaseList}');\n`;
+    const code = `Bot.apollo_purchase('${purchaseList}');\n`;
     return code;
 };

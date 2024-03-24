@@ -31,9 +31,9 @@ Blockly.Blocks.ask_price = {
             ),
         };
     },
-    onchange: Blockly.Blocks.purchase.onchange,
-    populatePurchaseList: Blockly.Blocks.purchase.populatePurchaseList,
-    enforceLimitations: Blockly.Blocks.purchase.enforceLimitations,
+    onchange: Blockly.Blocks.apollo_purchase.onchange,
+    populatePurchaseList: Blockly.Blocks.apollo_purchase.populatePurchaseList,
+    enforceLimitations: Blockly.Blocks.apollo_purchase.enforceLimitations,
 };
 
 Blockly.JavaScript.ask_price = block => {

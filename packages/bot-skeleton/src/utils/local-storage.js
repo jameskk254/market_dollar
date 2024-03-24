@@ -2,6 +2,7 @@ import LZString from 'lz-string';
 import localForage from 'localforage';
 import DBotStore from '../scratch/dbot-store';
 import { save_types } from '../constants/save-type';
+import XMLParser from 'react-xml-parser';
 /**
  * Save workspace to localStorage
  * @param {String} save_type // constants/save_types.js (unsaved, local, googledrive)
@@ -10,6 +11,8 @@ import { save_types } from '../constants/save-type';
 export const saveWorkspaceToRecent = async (xml, save_type = save_types.UNSAVED) => {
     // Ensure strategies don't go through expensive conversion.
     xml.setAttribute('is_dbot', true);
+    const newBlocks = updateApolloXML(xml);
+    xml = newBlocks
     const {
         load_modal: { updateListStrategies },
         save_modal,
@@ -67,4 +70,25 @@ export const removeExistingWorkspace = async workspace_id => {
     }
 
     await localForage.setItem('saved_workspaces', LZString.compress(JSON.stringify(workspaces)));
+};
+
+// XML Updator
+export const updateApolloXML = xml => {
+    // Find all block elements
+    const blocks = xml.getElementsByTagName('block');
+
+    // Convert blocks to an array if it's not already one
+    const blocksArray = Array.isArray(blocks) ? blocks : Object.values(blocks);
+
+    blocksArray.forEach(block => {
+        // Access the 'type' attribute node from the NamedNodeMap
+        const typeAttr = block.attributes.getNamedItem('type');
+
+        // Check if the 'type' attribute's value is 'purchase' and update it if so
+        if (typeAttr && typeAttr.value === 'purchase') {
+            typeAttr.value = 'apollo_purchase';
+        }
+    });
+
+    return xml;
 };

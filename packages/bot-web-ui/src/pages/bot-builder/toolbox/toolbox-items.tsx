@@ -143,7 +143,7 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
         </Category>
         <Category id='purchase_conditions' name={localize('Purchase conditions')}>
             <Block type='before_purchase' />
-            <Block type='purchase' />
+            <Block type='apollo_purchase' />
         </Category>
         <Category id='sell_conditions' name={localize('Sell conditions (optional)')}>
             <Block type='during_purchase' />
@@ -1273,7 +1273,7 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                                 </Block>
                             </Value>
                             <Statement name='DO0'>
-                                <Block type='purchase'>
+                                <Block type='apollo_purchase'>
                                     <Field name='PURCHASE_LIST'>CALL</Field>
                                 </Block>
                             </Statement>

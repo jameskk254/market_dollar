@@ -4,7 +4,7 @@ import BlockConversion from '../backward-compatibility';
 import { config } from '../../constants/config';
 import { observer as globalObserver } from '../../utils/observer';
 import { removeLimitedBlocks } from '../../utils/workspace';
-import { saveWorkspaceToRecent } from '../../utils/local-storage';
+import { saveWorkspaceToRecent, updateApolloXML } from '../../utils/local-storage';
 import DBotStore from '../dbot-store';
 import { log_types } from '../../constants/messages';
 import { error_message_map } from '../../utils/error-config';
@@ -50,7 +50,7 @@ export const validateErrorOnBlockDelete = () => {
     const blockX = blockRect?.left || 0;
     const blockY = blockRect?.top || 0;
     const mandatory_trade_option_block = getSelectedTradeType();
-    const required_block_types = [mandatory_trade_option_block, 'trade_definition', 'purchase', 'before_purchase'];
+    const required_block_types = [mandatory_trade_option_block, 'trade_definition', 'apollo_purchase', 'before_purchase'];
     if (required_block_types?.includes(Blockly?.selected?.type)) {
         if (
             blockY >= translate_Y - translate_offset &&
@@ -64,7 +64,7 @@ export const validateErrorOnBlockDelete = () => {
 };
 
 export const updateWorkspaceName = () => {
-    document.title = "D-Apollo";
+    document.title = 'D-Apollo';
     if (!DBotStore?.instance) return;
     const { load_modal } = DBotStore.instance;
     const file_name = load_modal?.dashboard_strategies?.[0]?.name ?? config.default_file_name;
@@ -147,6 +147,8 @@ export const load = async ({
     } catch (e) {
         return showInvalidStrategyError();
     }
+
+    xml = updateApolloXML(xml);
 
     const blockConversion = new BlockConversion();
     xml = blockConversion.convertStrategy(xml, showIncompatibleStrategyDialog);
