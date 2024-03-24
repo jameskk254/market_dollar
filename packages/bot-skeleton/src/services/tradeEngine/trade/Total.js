@@ -63,7 +63,7 @@ export default Engine =>
                 if (win) {
                     config.touch_notouch_vars.barrier_offset_active = false;
                 } else {
-                    config.touch_notouch_vars.barrier_offset_active = !config.touch_notouch_vars.barrier_offset_active;
+                    config.touch_notouch_vars.barrier_offset_active = true;
                 }
             }
 
