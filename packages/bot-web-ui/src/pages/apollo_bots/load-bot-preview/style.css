@@ -29,14 +29,20 @@
     color: #000;
 }
 
-.apollo_massive_logo{
+.apollo_massive_logo {
     display: none;
 }
 
-
 @media screen and (max-width: 720px) {
-    .apollo-list__wrapper{
+    .apollo-list__wrapper {
         grid-template-columns: none;
         height: calc(100vh - 40rem);
     }
-  }
+}
+
+@media screen and (max-height: 650px) {
+    .apollo-list__wrapper {
+        height: 200px;
+        padding: 0px 0px 60px;
+    }
+}
