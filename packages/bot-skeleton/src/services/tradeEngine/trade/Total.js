@@ -37,6 +37,8 @@ export default Engine =>
         }
 
         updateTotals(contract) {
+            console.log('Changer', config.vh_variables.is_enabled);
+
             const { sell_price: sellPrice, buy_price: buyPrice, currency } = contract;
 
             if (config.vh_variables.is_enabled) return;

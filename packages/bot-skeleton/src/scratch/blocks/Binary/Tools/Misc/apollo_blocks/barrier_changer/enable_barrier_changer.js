@@ -47,8 +47,6 @@ Blockly.JavaScript.enable_barrier_changer = block => {
         config.touch_notouch_vars.official_offseter = false
     }
 
-    console.log('barrier_offset_active',config.touch_notouch_vars.official_offseter,'Barrier status',barrier_status)
-
     const code = ``;
     return code;
 };

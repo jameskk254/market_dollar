@@ -822,6 +822,10 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                         </Block>
                     </Statement>
                 </Block>
+
+                <Block type='enable_virtual_hook'>
+                    <Field name='NOTIFICATION_TYPE'>disable</Field>
+                </Block>
             </Category>
             <Category id='apollo_utility' name={localize('Apollo Utility')}>
                 <Block type='apollo_notify'>

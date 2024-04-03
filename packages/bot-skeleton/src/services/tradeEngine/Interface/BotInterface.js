@@ -1,5 +1,6 @@
 import { observer as globalObserver } from '../../../utils/observer';
 import { createDetails } from '../utils/helpers';
+import { config } from '../../../constants';
 
 const getBotInterface = tradeEngine => {
     const getDetail = i => createDetails(tradeEngine.data.contract)[i];
@@ -18,6 +19,13 @@ const getBotInterface = tradeEngine => {
         isResult: result => getDetail(10) === result,
         isTradeAgain: result => globalObserver.emit('bot.trade_again', result),
         readDetails: i => getDetail(i - 1),
+        enabaleVH: j => {
+            if (j == 'enable') {
+                config.vh_variables.is_enabled = true;
+            } else {
+                config.vh_variables.is_enabled = false;
+            }
+        },
     };
 };
 
