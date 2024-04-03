@@ -1,15 +1,57 @@
 import { ResponsivePie } from '@nivo/pie';
 import React from 'react';
+import { api_base } from '@deriv/bot-skeleton';
 
 type EvenOddPie = {
-    allDigitList:number[]
-}
-const MyResponsivePie = ({allDigitList}:EvenOddPie) => {
-    const calculateOddEvenPercentages = (numbers: number[]): { oddPercentage: number; evenPercentage: number } =>{
+    allDigitList: number[];
+    contract_type: string;
+    isEvenOddOneClickActive: boolean;
+    percentageValue: number | string;
+    oneClickAmount: number | string;
+    oneClickDuration: number;
+    active_symbol: string;
+    isTradeActive: boolean;
+    isTradeActiveRef: React.MutableRefObject<boolean>;
+    setIsTradeActive: React.Dispatch<React.SetStateAction<boolean>>;
+};
+const MyResponsivePie = ({
+    allDigitList,
+    contract_type,
+    isEvenOddOneClickActive,
+    percentageValue,
+    active_symbol,
+    isTradeActiveRef,
+    oneClickAmount,
+    oneClickDuration,
+    isTradeActive,
+    setIsTradeActive,
+}: EvenOddPie) => {
+    const buy_contract = () => {
+        if (isEvenOddOneClickActive && !isTradeActive) {
+            isTradeActiveRef.current = true;
+            setIsTradeActive(true);
+            api_base.api.send({
+                buy: '1',
+                price: oneClickAmount,
+                subscribe: 1,
+                parameters: {
+                    amount: oneClickAmount,
+                    basis: 'stake',
+                    contract_type,
+                    currency: 'USD',
+                    duration: oneClickDuration,
+                    duration_unit: 't',
+                    symbol: active_symbol,
+                },
+            });
+        }
+    };
+
+    const calculateOddEvenPercentages = (numbers: number[]): { oddPercentage: number; evenPercentage: number } => {
         let oddCount: number = 0;
         let evenCount: number = 0;
         const totalNumbers: number = numbers.length;
-    
+
         // Count the occurrences of odd and even numbers
         numbers.forEach((number: number) => {
             if (number % 2 === 0) {
@@ -18,20 +60,31 @@ const MyResponsivePie = ({allDigitList}:EvenOddPie) => {
                 oddCount++;
             }
         });
-    
+
         // Calculate the percentage appearance of odd and even numbers
         const oddPercentage: number = (oddCount / totalNumbers) * 100;
         const evenPercentage: number = (evenCount / totalNumbers) * 100;
-    
+
         return {
             oddPercentage: +oddPercentage.toFixed(2),
-            evenPercentage: +evenPercentage.toFixed(2)
+            evenPercentage: +evenPercentage.toFixed(2),
         };
-    }
+    };
 
     let percentages: { oddPercentage: number; evenPercentage: number } = calculateOddEvenPercentages(allDigitList);
-
-
+    if (
+        contract_type === 'DIGITEVEN' &&
+        typeof percentageValue === 'number' &&
+        percentages.oddPercentage >= percentageValue
+    ) {
+        buy_contract();
+    } else if (
+        contract_type === 'DIGITODD' &&
+        typeof percentageValue === 'number' &&
+        percentages.evenPercentage >= percentageValue
+    ) {
+        buy_contract();
+    }
 
     const pie_data = [
         {

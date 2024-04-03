@@ -20,6 +20,11 @@ type LineChartProps = {
     value: number;
 };
 
+type DigitDiffStatsProp = {
+    value: number;
+    appearence: number;
+};
+
 type SymbolData = {
     allow_forward_starting: number;
     display_name: string;
@@ -56,10 +61,12 @@ const ApolloAnalysisPage = observer(() => {
     const [isOneClickActive, setIsOneClickActive] = useState(false);
     const [isAutoClickerActive, setIsAutoClickerActive] = useState(false);
     const [isRiseFallOneClickActive, setIsRiseFallOneClickActive] = useState(false);
+    const [isEvenOddOneClickActive, setIsEvenOddOneClickActive] = useState(false);
     const [isOverUnderOneClickActive, setIsOverUnderOneClickActive] = useState(false);
     const [isTradeActive, setIsTradeActive] = useState(false);
     const [oneClickContract, setOneClickContract] = useState('DIGITDIFF');
     const [overUnderContract, setOverUnderContract] = useState('DIGITOVER');
+    const [evenOddContract, setEvenOddContract] = useState('DIGITEVEN');
     const [oneClickDuration, setOneClickDuration] = useState(1);
     const [oneClickAmount, setOneClickAmount] = useState<number | string>(0.5);
     const [accountCurrency, setAccountCurrency] = useState('');
@@ -72,7 +79,10 @@ const ApolloAnalysisPage = observer(() => {
     const isTradeActiveRef = useRef(isTradeActive);
     const current_contractids = useRef<string[]>([]);
     const totalLostAmount = useRef(0);
-    const oneClickDefaultAmount = useRef<string | number>(0.5)
+    const oneClickDefaultAmount = useRef<string | number>(0.5);
+    const contractTradeTypes = useRef<string[]>(['DIGITODD', 'DIGITEVEN', 'DIGITOVER', 'DIGITUNDER', 'DIGITDIFF']);
+    const digitDiffHigh = useRef<DigitDiffStatsProp>({ appearence: 0, value: 0 });
+    const digitDiffLow = useRef<DigitDiffStatsProp>({ appearence: 0, value: 0 });
 
     const { ui } = useStore();
     const DBotStores = useDBotStore();
@@ -164,16 +174,19 @@ const ApolloAnalysisPage = observer(() => {
             const subscription = api_base.api.onMessage().subscribe(({ data }: { data: any }) => {
                 if (data.msg_type === 'proposal_open_contract') {
                     const { proposal_open_contract } = data;
+                    const contract = proposal_open_contract.contract_type;
 
-                    if (
-                        proposal_open_contract.contract_type === 'DIGITOVER' ||
-                        proposal_open_contract.contract_type === 'DIGITUNDER'
-                    ) {
+                    if (contractTradeTypes.current.includes(contract)) {
                         if (proposal_open_contract.is_sold) {
                             if (proposal_open_contract.status === 'lost') {
                                 if (!current_contractids.current.includes(proposal_open_contract.contract_id)) {
                                     totalLostAmount.current += Math.abs(proposal_open_contract.profit);
-                                    const newStake = totalLostAmount.current * parseFloat(martingaleValueRef.current);
+                                    let newStake;
+                                    if (contract === 'DIGITDIFF') {
+                                        newStake = totalLostAmount.current * 12.5;
+                                    } else {
+                                        newStake = totalLostAmount.current * parseFloat(martingaleValueRef.current);
+                                    }
                                     setOneClickAmount(parseFloat(newStake.toFixed(2)));
                                 }
                             } else {
@@ -320,7 +333,7 @@ const ApolloAnalysisPage = observer(() => {
     const handleOneClickAmountInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
         setOneClickAmount(newValue === '' ? '' : Number(newValue));
-        oneClickDefaultAmount.current = newValue === '' ? '' : Number(newValue)
+        oneClickDefaultAmount.current = newValue === '' ? '' : Number(newValue);
     };
 
     const handleContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -330,6 +343,10 @@ const ApolloAnalysisPage = observer(() => {
     const handleOverUnderContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
         setOverUnderContract(selectedValue);
+    };
+    const handleEvenOddContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = event.target.value;
+        setEvenOddContract(selectedValue);
     };
 
     const handleDurationSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -346,6 +363,9 @@ const ApolloAnalysisPage = observer(() => {
 
     const handleIsRiseFallOneClick = () => {
         setIsRiseFallOneClickActive(!isRiseFallOneClickActive);
+    };
+    const handleIsEvenOddOneClick = () => {
+        setIsEvenOddOneClickActive(!isEvenOddOneClickActive);
     };
     const handleIsOverUnderOneClick = () => {
         setIsOverUnderOneClickActive(!isOverUnderOneClickActive);
@@ -488,8 +508,48 @@ const ApolloAnalysisPage = observer(() => {
             {/* Bottom Cards */}
             <div className='pie_diff'>
                 <div className='pie card1'>
-                    <h2 className='analysis_title'>Even/Odd</h2>
-                    <MyResponsivePie allDigitList={getLastDigitList()} />
+                    <div className='odd_even_info'>
+                        <h2 className='analysis_title'>Even/Odd</h2>
+                        <div className='odd_even_settings'>
+                            <input
+                                type='checkbox'
+                                checked={isEvenOddOneClickActive}
+                                onChange={handleIsEvenOddOneClick}
+                            />
+                            <select name='ct_types' id='contract_types' onChange={handleEvenOddContractSelect}>
+                                <option value='DIGITEVEN'>Even</option>
+                                <option value='DIGITODD'>Odd</option>
+                            </select>
+                            <div className='martingale'>
+                                <small>martingale</small>
+                                <input
+                                    type='number'
+                                    value={martingaleValueRef.current}
+                                    onChange={handleMartingaleInputChange}
+                                />
+                            </div>
+                            <div className='percentage_value'>
+                                <small>% value</small>
+                                <input type='number' value={percentageValue} onChange={handlePercentageInputChange} />
+                            </div>
+                        </div>
+                        <div className='tick_stake'>{selectTickList()}</div>
+                    </div>
+
+                    <div className='pie_container'>
+                        <MyResponsivePie
+                            allDigitList={getLastDigitList()}
+                            contract_type={evenOddContract}
+                            isEvenOddOneClickActive={isEvenOddOneClickActive}
+                            percentageValue={percentageValue}
+                            active_symbol={active_symbol}
+                            isTradeActive={isTradeActive}
+                            isTradeActiveRef={isTradeActiveRef}
+                            oneClickAmount={oneClickAmount}
+                            oneClickDuration={oneClickDuration}
+                            setIsTradeActive={setIsTradeActive}
+                        />
+                    </div>
                 </div>
                 <div className='digit_diff card3'>
                     <div className='title_oc_trader'>
@@ -519,6 +579,11 @@ const ApolloAnalysisPage = observer(() => {
                         stake_amount={oneClickAmount}
                         prevLowestValue={prevLowestValue}
                         isAutoClickerActive={isAutoClickerActive}
+                        digitDiffHigh={digitDiffHigh}
+                        digitDiffLow={digitDiffLow}
+                        isTradeActive={isTradeActive}
+                        isTradeActiveRef={isTradeActiveRef}
+                        setIsTradeActive={setIsTradeActive}
                         setPrevLowestValue={setPrevLowestValue}
                     />
                 </div>

@@ -14,6 +14,12 @@
     border: none;
 }
 
+@media screen and (min-width: 1270px) and (max-width: 1280px) {
+    .main_analysis{
+        width: 100%;
+    }
+}
+
 @media (max-width: 720px) {
     .main_analysis{
         width:100%;

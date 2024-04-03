@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
 import { api_base } from '@deriv/bot-skeleton';
+
+type DigitDiffStatsProp = {
+    value: number;
+    appearence: number;
+};
+
 type DiffersBallType = {
     lastDigitList: number[];
     active_last: number;
@@ -10,6 +16,11 @@ type DiffersBallType = {
     stake_amount: number | string;
     isAutoClickerActive: boolean;
     prevLowestValue: string | number;
+    digitDiffHigh: React.MutableRefObject<DigitDiffStatsProp>;
+    digitDiffLow: React.MutableRefObject<DigitDiffStatsProp>;
+    isTradeActive: boolean;
+    isTradeActiveRef: React.MutableRefObject<boolean>;
+    setIsTradeActive: React.Dispatch<React.SetStateAction<boolean>>;
     setPrevLowestValue: React.Dispatch<React.SetStateAction<string | number>>;
 };
 
@@ -21,12 +32,38 @@ const DiffersBalls = ({
     isOneClickActive,
     active_symbol,
     stake_amount,
-    prevLowestValue,
     isAutoClickerActive,
-    setPrevLowestValue,
+    digitDiffHigh,
+    digitDiffLow,
+    isTradeActive,
+    isTradeActiveRef,
+    setIsTradeActive
+
 }: DiffersBallType) => {
     const buy_contract = (prediction: string) => {
         if (isOneClickActive) {
+            api_base.api.send({
+                buy: '1',
+                price: stake_amount,
+                subscribe: 1,
+                parameters: {
+                    amount: stake_amount,
+                    basis: 'stake',
+                    contract_type,
+                    currency: 'USD',
+                    duration,
+                    duration_unit: 't',
+                    symbol: active_symbol,
+                    barrier: prediction,
+                },
+            });
+        }
+    };
+
+    const buy_contract2 = (prediction: string) => {
+        if (isOneClickActive && isAutoClickerActive && !isTradeActive) {
+            isTradeActiveRef.current = true;
+            setIsTradeActive(true);
             api_base.api.send({
                 buy: '1',
                 price: stake_amount,
@@ -114,6 +151,34 @@ const DiffersBalls = ({
             }
         }
 
+        const calculateAppearance = () => {
+            if (parseFloat(minKey) === digitDiffLow.current.value) {
+                digitDiffLow.current.appearence++;
+            } else {
+                digitDiffLow.current.value = parseFloat(minKey);
+                digitDiffLow.current.appearence = 0;
+            }
+
+            if (parseFloat(maxKey) === digitDiffHigh.current.value) {
+                digitDiffHigh.current.appearence++;
+            } else {
+                digitDiffHigh.current.value = parseFloat(minKey);
+                digitDiffHigh.current.appearence = 0;
+            }
+
+            if(digitDiffLow.current.appearence === 2){
+                buy_contract2(minKey);
+                digitDiffLow.current.appearence = 0;
+                digitDiffHigh.current.appearence = 0;
+            }else if(digitDiffHigh.current.appearence === 2){
+                buy_contract2(maxKey); 
+                digitDiffHigh.current.appearence = 0;
+                digitDiffLow.current.appearence = 0;
+            }
+        };
+
+        calculateAppearance();
+
         progressBalls.forEach(ball => {
             ball.classList.remove('top');
             ball.classList.remove('less');
@@ -126,14 +191,14 @@ const DiffersBalls = ({
             }
         });
 
-        if (prevLowestValue === '') {
-            setPrevLowestValue(parseFloat(minKey));
-        } else if (prevLowestValue !== parseFloat(minKey)) {
-            setPrevLowestValue(parseFloat(minKey));
-            if (isAutoClickerActive && parseFloat(minKey) !== active_last) {
-                buy_contract(minKey);
-            }
-        }
+        // if (prevLowestValue === '') {
+        //     setPrevLowestValue(parseFloat(minKey));
+        // } else if (prevLowestValue !== parseFloat(minKey)) {
+        //     setPrevLowestValue(parseFloat(minKey));
+        //     if (isAutoClickerActive && parseFloat(minKey) !== active_last) {
+        //         buy_contract(minKey);
+        //     }
+        // }
 
         return { maxKey, minKey };
     };
