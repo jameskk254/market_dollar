@@ -47,6 +47,27 @@ const MyResponsivePie = ({
         }
     };
 
+    const buy_contract2 = (contract_type: string) => {
+        if (isEvenOddOneClickActive && !isTradeActive) {
+            isTradeActiveRef.current = true;
+            setIsTradeActive(true);
+            api_base.api.send({
+                buy: '1',
+                price: oneClickAmount,
+                subscribe: 1,
+                parameters: {
+                    amount: oneClickAmount,
+                    basis: 'stake',
+                    contract_type: contract_type,
+                    currency: 'USD',
+                    duration: oneClickDuration,
+                    duration_unit: 't',
+                    symbol: active_symbol,
+                },
+            });
+        }
+    };
+
     const calculateOddEvenPercentages = (numbers: number[]): { oddPercentage: number; evenPercentage: number } => {
         let oddCount: number = 0;
         let evenCount: number = 0;
@@ -84,6 +105,18 @@ const MyResponsivePie = ({
         percentages.evenPercentage >= percentageValue
     ) {
         buy_contract();
+    } else if (
+        contract_type === 'BOTH' &&
+        typeof percentageValue === 'number' &&
+        percentages.evenPercentage >= percentageValue
+    ) {
+        buy_contract2('DIGITODD');
+    } else if (
+        contract_type === 'BOTH' &&
+        typeof percentageValue === 'number' &&
+        percentages.oddPercentage >= percentageValue
+    ) {
+        buy_contract2('DIGITEVEN');
     }
 
     const pie_data = [

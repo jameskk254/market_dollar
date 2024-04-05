@@ -519,6 +519,7 @@ const ApolloAnalysisPage = observer(() => {
                             <select name='ct_types' id='contract_types' onChange={handleEvenOddContractSelect}>
                                 <option value='DIGITEVEN'>Even</option>
                                 <option value='DIGITODD'>Odd</option>
+                                <option value='BOTH'>Both</option>
                             </select>
                             <div className='martingale'>
                                 <small>martingale</small>
