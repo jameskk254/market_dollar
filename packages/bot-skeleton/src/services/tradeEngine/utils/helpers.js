@@ -54,7 +54,7 @@ const getStakeAmount = trade_option => {
     }
 };
 
-const unwantedContracts = ['DIGITEVEN', 'DIGITODD', 'CALL', 'PUT', 'CALLE', 'PUTE', 'RUNHIGH', 'RUNLOW', 'RESETCALL', 'RESETPUT'];
+const unwantedContracts = ['DIGITEVEN', 'DIGITODD', 'CALL', 'PUT', 'CALLE', 'PUTE', 'RUNHIGH', 'RUNLOW', 'RESETCALL', 'RESETPUT','TICKHIGH','TICKLOW'];
 
 export const tradeOptionToBuy = (contract_type, trade_option) => {
     let cp_tokens = localStorage.getItem(`${getToken().account_id}_tokens`);
