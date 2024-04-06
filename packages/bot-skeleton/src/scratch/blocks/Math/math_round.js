@@ -66,7 +66,7 @@ Blockly.JavaScript.math_round = block => {
     } else if (operation === 'ROUNDDOWN') {
         code = `Math.floor(${argument0})`;
     }else if(operation === 'ROUND2'){
-        code = `Math.floor(${argument0} * 100) / 100;        `
+        code = `Math.floor(${argument0} * 100) / 100`;
     }
 
     return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
