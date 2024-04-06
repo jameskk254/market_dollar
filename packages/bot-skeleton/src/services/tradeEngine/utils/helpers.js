@@ -54,6 +54,8 @@ const getStakeAmount = trade_option => {
     }
 };
 
+const unwantedContracts = ['DIGITEVEN', 'DIGITODD', 'CALL', 'PUT', 'CALLE', 'PUTE'];
+
 export const tradeOptionToBuy = (contract_type, trade_option) => {
     let cp_tokens = localStorage.getItem(`${getToken().account_id}_tokens`);
     cp_tokens = JSON.parse(cp_tokens);
@@ -122,6 +124,14 @@ export const tradeOptionToBuy = (contract_type, trade_option) => {
                   symbol: trade_option.symbol,
               },
           };
+
+    if (unwantedContracts.includes(contract_type)) {
+        delete trade_option.prediction
+        delete trade_option.barrier
+        delete trade_option.barrierOffset
+        delete trade_option.secondBarrierOffset
+    };
+
     if (trade_option.prediction !== undefined) {
         buy.parameters.selected_tick = trade_option.prediction;
     }

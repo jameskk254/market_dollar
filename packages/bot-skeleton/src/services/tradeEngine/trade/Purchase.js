@@ -103,7 +103,9 @@ export default Engine =>
                     delayIndex++
                 ).then(onSuccess);
             }
-            const trade_option = tradeOptionToBuy(contract_type, this.tradeOptions);
+            const cs_value = config.contract_switcher.contract_switcher_value
+            const overallContractType = cs_value === 'disable' ? contract_type : cs_value
+            const trade_option = tradeOptionToBuy(overallContractType, this.tradeOptions);
             const action = () => (vh_active ? api_base2.api.send(trade_option) : api_base.api.send(trade_option));
 
             this.isSold = false;

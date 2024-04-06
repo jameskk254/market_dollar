@@ -14,6 +14,9 @@ export const resetVhVariables = () => {
 };
 
 export const config = {
+    contract_switcher: {
+        contract_switcher_value: 'disable'
+    },
     custom_variables: {
         isApolloBots: false,
     },

@@ -33,7 +33,9 @@ const getBotInterface = tradeEngine => {
             } else {
                 config.touch_notouch_vars.barrier_offset_active = false;
             }
-            console.log('offseterStatus', config.touch_notouch_vars.barrier_offset_active);
+        },
+        contractSwitcher: status => {
+            config.contract_switcher.contract_switcher_value = status
         },
     };
 };
