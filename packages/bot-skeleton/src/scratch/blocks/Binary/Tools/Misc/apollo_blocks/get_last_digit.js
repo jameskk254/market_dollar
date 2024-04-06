@@ -37,6 +37,6 @@ Blockly.Blocks.get_last_digit = {
 
 Blockly.JavaScript.get_last_digit = block => {
     const input_data = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_MEMBER) || '123';
-    const code = `Number(${input_data}.toString().split('').pop());`
+    const code = `Number(${input_data}.toString().split('').pop())`;
     return [code, Blockly.JavaScript.ORDER_MEMBER];
 };
