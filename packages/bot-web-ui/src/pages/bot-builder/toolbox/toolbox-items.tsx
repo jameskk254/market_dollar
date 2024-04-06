@@ -523,6 +523,7 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                         </Shadow>
                     </Value>
                 </Block>
+                <Block type='get_last_digit' />
                 <Block type='math_on_list' />
                 <Block type='math_round'>
                     <Field name='OP'>ROUND</Field>
