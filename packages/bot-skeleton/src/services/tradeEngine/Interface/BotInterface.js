@@ -19,12 +19,21 @@ const getBotInterface = tradeEngine => {
         isResult: result => getDetail(10) === result,
         isTradeAgain: result => globalObserver.emit('bot.trade_again', result),
         readDetails: i => getDetail(i - 1),
-        enabaleVH: j => {
-            if (j == 'enable') {
+        // === Custom Bot Functions ====
+        enabaleVH: status => {
+            if (status == 'enable') {
                 config.vh_variables.is_enabled = true;
             } else {
                 config.vh_variables.is_enabled = false;
             }
+        },
+        enableBarrierChanger: status => {
+            if (status == 'enable') {
+                config.touch_notouch_vars.barrier_offset_active = true;
+            } else {
+                config.touch_notouch_vars.barrier_offset_active = false;
+            }
+            console.log('offseterStatus', config.touch_notouch_vars.barrier_offset_active);
         },
     };
 };

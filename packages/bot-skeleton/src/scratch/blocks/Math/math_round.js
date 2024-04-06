@@ -21,6 +21,7 @@ Blockly.Blocks.math_round = {
                         ['round', 'ROUND'],
                         ['round up', 'ROUNDUP'],
                         ['round down', 'ROUNDDOWN'],
+                        ['round 2 decimal', 'ROUND2']
                     ],
                 },
                 {
@@ -64,6 +65,8 @@ Blockly.JavaScript.math_round = block => {
         code = `Math.ceil(${argument0})`;
     } else if (operation === 'ROUNDDOWN') {
         code = `Math.floor(${argument0})`;
+    }else if(operation === 'ROUND2'){
+        code = `Math.floor(${argument0} * 100) / 100;        `
     }
 
     return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];

@@ -41,12 +41,6 @@ Blockly.Blocks.enable_barrier_changer = {
 
 Blockly.JavaScript.enable_barrier_changer = block => {
     const barrier_status = block.getFieldValue('BARRIER_ACTIVE_TYPE');
-    if(barrier_status === 'enable'){
-        config.touch_notouch_vars.official_offseter = true
-    }else{
-        config.touch_notouch_vars.official_offseter = false
-    }
-
-    const code = ``;
+    const code = `Bot.enableBarrierChanger('${barrier_status}')`;
     return code;
 };

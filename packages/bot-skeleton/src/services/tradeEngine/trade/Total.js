@@ -59,14 +59,6 @@ export default Engine =>
 
             accountStat.totalPayout = getRoundedNumber(Number(accountStat.totalPayout) + Number(sellPrice), currency);
 
-            if (config.touch_notouch_vars.official_offseter) {
-                if (win) {
-                    config.touch_notouch_vars.barrier_offset_active = false;
-                } else {
-                    config.touch_notouch_vars.barrier_offset_active = true;
-                }
-            }
-
             if (config.vh_variables.vh_official) {
                 if (win) {
                     if (config.vh_variables.is_enabled) {
