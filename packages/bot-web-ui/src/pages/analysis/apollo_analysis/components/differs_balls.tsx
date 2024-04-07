@@ -152,29 +152,32 @@ const DiffersBalls = ({
         }
 
         const calculateAppearance = () => {
-            if (parseFloat(minKey) === digitDiffLow.current.value) {
+            if (active_last === digitDiffLow.current.value) {
                 digitDiffLow.current.appearence++;
             } else {
                 digitDiffLow.current.value = parseFloat(minKey);
                 digitDiffLow.current.appearence = 0;
             }
 
-            if (parseFloat(maxKey) === digitDiffHigh.current.value) {
+            if (active_last === digitDiffHigh.current.value) {
                 digitDiffHigh.current.appearence++;
             } else {
-                digitDiffHigh.current.value = parseFloat(minKey);
+                digitDiffHigh.current.value = parseFloat(maxKey);
                 digitDiffHigh.current.appearence = 0;
             }
 
             if(digitDiffLow.current.appearence === 2){
-                buy_contract2(minKey);
+                buy_contract2(digitDiffLow.current.value.toString());
                 digitDiffLow.current.appearence = 0;
                 digitDiffHigh.current.appearence = 0;
             }else if(digitDiffHigh.current.appearence === 2){
-                buy_contract2(maxKey); 
+                buy_contract2(digitDiffHigh.current.value.toString()); 
                 digitDiffHigh.current.appearence = 0;
                 digitDiffLow.current.appearence = 0;
             }
+
+            console.log('Min value',digitDiffLow.current.value,'Min Appearance', digitDiffLow.current.appearence, "LD:",active_last)
+            console.log('Max value',digitDiffHigh.current.value,'Max Appearance', digitDiffHigh.current.appearence)
         };
 
         calculateAppearance();
