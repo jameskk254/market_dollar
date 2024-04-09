@@ -13,12 +13,11 @@ import {
     deleteItemFromStorage,
     config,
     retrieveCopyTradingTokens,
-    getToken
+    getToken,
 } from '@deriv/bot-skeleton';
 import { Dialog } from '@deriv/components';
 import { localize, Localize } from '@deriv/translations';
 import './style.css';
-
 
 const CopyTrader = observer(() => {
     const store = useStore();
@@ -39,12 +38,11 @@ const CopyTrader = observer(() => {
         getSavedTokens();
     }, []);
     React.useEffect(() => {
-            getSavedTokens();
-    
+        getSavedTokens();
     }, [is_dark_mode_on]);
 
     const getSavedTokens = async () => {
-    retrieveListItem().then(list_item => {
+        retrieveListItem().then(list_item => {
             const login_id = getToken().account_id!;
             if (login_id.includes('VRTC')) {
                 setTokenType('Demo Tokens');
@@ -71,11 +69,11 @@ const CopyTrader = observer(() => {
     };
 
     const addToken = async () => {
-        if(getToken().account_id){
+        if (getToken().account_id) {
             try {
                 const newToken = tokenInputValue.trim();
                 const response = await updateCopyTradingTokens(tokenInputValue.trim());
-    
+
                 if (response === 'VRTC' || response === 'CR') {
                     saveListItemToStorage(newToken);
                     tokens.unshift(newToken);
@@ -95,11 +93,12 @@ const CopyTrader = observer(() => {
                 // This block will run regardless of the try/catch outcome
                 setTokenInputValue('');
             }
-        }else{
-            setErrorMessage(localize("It seems you haven't logged in, please login in and try adding the token again."));
+        } else {
+            setErrorMessage(
+                localize("It seems you haven't logged in, please login in and try adding the token again.")
+            );
             setShouldShowError(true);
         }
-        
     };
 
     const deleteToken = (token: string) => {
@@ -136,6 +135,10 @@ const CopyTrader = observer(() => {
         }
         setSyncing(false);
     };
+    const createTokenClick = ()=>{
+        const url = 'https://app.deriv.com/account/api-token'
+        window.open(url, '_blank');
+    }
     return (
         <div className='main_copy'>
             {shouldShowError && (
@@ -170,10 +173,13 @@ const CopyTrader = observer(() => {
                     </div>
                 </div>
             </div>
+            <div className='create_token_btn'>
+                <button onClick={() => createTokenClick()}>CREATE TOKEN</button>
+            </div>
             <div className='tokens-container'>
                 <ul className='tokens-list'>
                     {tokens.length > 0 ? (
-                        tokens.map((token) => (
+                        tokens.map(token => (
                             <li
                                 key={token}
                                 className={`token ${animatingIds.includes(token) ? 'fall' : ''}`}

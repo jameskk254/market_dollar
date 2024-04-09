@@ -80,7 +80,21 @@
     color: #000;
 }
 
-.enable_sync button:hover {
+.create_token_btn {
+    margin-top: 10px;
+}
+
+.create_token_btn button {
+    padding: 6px;
+    font-size: 14px;
+    border-radius: 2px;
+    color: #000;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.enable_sync button:hover,
+.create_token_btn button:hover {
     background: #00a79e;
 }
 
@@ -159,6 +173,12 @@
 
 .token_info.dark_active {
     color: #fff;
+}
+
+@media (height < 620px) {
+    .main_copy {
+        height: 120vh;
+    }
 }
 
 /* Mobile Responsiveness */
