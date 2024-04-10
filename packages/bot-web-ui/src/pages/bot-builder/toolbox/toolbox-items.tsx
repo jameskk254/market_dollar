@@ -842,6 +842,10 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                     <Field name='CONTRACT_CHANGER'>disable</Field>
                 </Block>
 
+                <Block type='custom_prediction_setter'>
+                    <Field name='PREDICTION_ACTIVE_TYPE'>0</Field>
+                </Block>
+
                 <Block type='enable_barrier_changer'>
                     <Field name='NOTIFICATION_TYPE'>disable</Field>
                 </Block>

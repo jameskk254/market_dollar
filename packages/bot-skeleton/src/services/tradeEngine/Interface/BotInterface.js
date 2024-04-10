@@ -37,6 +37,10 @@ const getBotInterface = tradeEngine => {
         contractSwitcher: status => {
             config.contract_switcher.contract_switcher_value = status
         },
+        predictionSetter: status => {
+            config.pred_setter.allow_pred_setter = true
+            config.pred_setter.prediction = status
+        }
     };
 };
 

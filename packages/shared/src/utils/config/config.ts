@@ -60,7 +60,7 @@ export const getAppId = () => {
         app_id = config_app_id;
     } else if (user_app_id.length) {
         if (/app\.github\.dev/i.test(window.location.hostname)) {
-            app_id = 51877;
+            app_id = 52759;
         } else if (/d-apollo-sgi9\.vercel\.app/i.test(window.location.hostname)) {
             app_id = 53209;
         } else {

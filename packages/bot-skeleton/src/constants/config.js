@@ -14,8 +14,12 @@ export const resetVhVariables = () => {
 };
 
 export const config = {
+    pred_setter: {
+        prediction: '0',
+        allow_pred_setter: false,
+    },
     contract_switcher: {
-        contract_switcher_value: 'disable'
+        contract_switcher_value: 'disable',
     },
     custom_variables: {
         isApolloBots: false,
@@ -48,7 +52,7 @@ export const config = {
         last_digit: 0,
         current_tick: '...',
         symbol_list: [],
-        subscribed: false
+        subscribed: false,
     },
     touch_notouch_vars: {
         barrier_offset: 0,
@@ -96,6 +100,18 @@ export const config = {
         BARRIER_OFFSETER_STATUS: [
             [localize('disable'), 'disable'],
             [localize('enable'), 'enable'],
+        ],
+        PREDICTION_ITEMS: [
+            ['0', '0'],
+            ['1', '1'],
+            ['2', '2'],
+            ['3', '3'],
+            ['4', '4'],
+            ['5', '5'],
+            ['6', '6'],
+            ['7', '7'],
+            ['8', '8'],
+            ['9', '9'],
         ],
         NOTIFICATION_SOUND: [
             [localize('Silent'), 'silent'],
