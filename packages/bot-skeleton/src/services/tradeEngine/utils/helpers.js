@@ -152,6 +152,13 @@ export const tradeOptionToBuy = (contract_type, trade_option) => {
     if (trade_option.prediction !== undefined) {
         buy.parameters.selected_tick = trade_option.prediction;
     }
+
+    if (buy.parameters.contract_type === 'NOTOUCH' || buy.parameters.contract_type === 'ONETOUCH') {
+        if (trade_option.barrierOffset === undefined) {
+            trade_option.prediction = config.touch_notouch_vars.barrier_offset;
+        }
+    }
+
     if (!['TICKLOW', 'TICKHIGH'].includes(contract_type) && trade_option.prediction !== undefined) {
         buy.parameters.barrier = trade_option.prediction;
     } else if (trade_option.barrierOffset !== undefined) {

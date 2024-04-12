@@ -47,12 +47,6 @@ Blockly.Blocks.barrier_changer = {
 
 Blockly.JavaScript.barrier_changer = block => {
     const value = Blockly.JavaScript.valueToCode(block, 'TEXT', Blockly.JavaScript.ORDER_NONE) || "''";
-    const cleanedString = removeExtraQuotes(value);
-    config.touch_notouch_vars.barrier_offset = cleanedString;
-    const code = ``;
+    const code = `Bot.updateBarrierOffseter(${value})`;
     return code;
 };
-
-function removeExtraQuotes(str) {
-    return str.replace(/^'|"|'$/g, '');
-  }
