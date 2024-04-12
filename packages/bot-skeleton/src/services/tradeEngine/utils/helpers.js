@@ -67,6 +67,8 @@ const unwantedContracts = [
     'RESETPUT',
     'TICKHIGH',
     'TICKLOW',
+    'ASIANU',
+    'ASIAND'
 ];
 
 export const tradeOptionToBuy = (contract_type, trade_option) => {
