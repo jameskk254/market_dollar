@@ -1,0 +1,20 @@
+.switch_charts {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    right: 20px;
+    top: 8px;
+    z-index: 100;
+}
+
+
+.deriv_charts,
+.binary_charts {
+    color: #fff;
+    background: rgb(128, 128, 128);
+    text-align: center;
+    padding: 8px;
+    border-radius: 3px;
+    cursor: pointer;
+}

@@ -4,7 +4,7 @@ import { updateWorkspaceName } from '@deriv/bot-skeleton';
 import dbot from '@deriv/bot-skeleton/src/scratch/dbot';
 import { initTrashCan } from '@deriv/bot-skeleton/src/scratch/hooks/trashcan';
 import { api_base } from '@deriv/bot-skeleton/src/services/api/api-base';
-import { DesktopWrapper, Dialog, MobileWrapper, Tabs } from '@deriv/components';
+import { DesktopWrapper, Dialog, MobileWrapper, Tabs, UILoader } from '@deriv/components';
 import { observer, useStore } from '@deriv/stores';
 import { Localize, localize } from '@deriv/translations';
 import { Analytics } from '@deriv-com/analytics';
@@ -21,7 +21,17 @@ import AnalysisPage from '../analysis';
 import RunStrategy from '../dashboard/run-strategy';
 import Tutorial from '../tutorials';
 import { tour_list } from '../tutorials/dbot-tours/utils';
-import { getUrlBase } from '@deriv/shared';
+import Loadable from 'react-loadable';
+import { getUrlBase, moduleLoader } from '@deriv/shared';
+import { TCoreStores } from '@deriv/stores/types';
+import { TWebSocket } from 'Types';
+import { BrowserRouter as Router } from 'react-router-dom';
+
+
+type Apptypes = {
+    root_store: TCoreStores;
+    WS: TWebSocket;
+};
 
 const AppWrapper = observer(() => {
     const { dashboard, load_modal, run_panel, quick_strategy, summary_card } = useDBotStore();
@@ -35,6 +45,14 @@ const AppWrapper = observer(() => {
         setActiveTour,
         setTourDialogVisibility,
     } = dashboard;
+    const RootStore = useStore();
+    const passthrough: Apptypes = {
+        
+            root_store: RootStore,
+            WS: api_base,
+        
+    };
+
     const { onEntered, dashboard_strategies } = load_modal;
     const { is_dialog_open, is_drawer_open, dialog_options, onCancelButtonClick, onCloseDialog, onOkButtonClick } =
         run_panel;
@@ -45,7 +63,7 @@ const AppWrapper = observer(() => {
     const init_render = React.useRef(true);
     const { ui } = useStore();
     const { url_hashed_values, is_mobile } = ui;
-    const hash = ['dashboard', 'bot_builder', 'apollo_bots', 'chart', 'copy_trader', 'analysis_page','tutorial'];
+    const hash = ['dashboard', 'bot_builder', 'apollo_bots', 'chart', 'copy_trader', 'analysis_page', 'tutorial'];
 
     let tab_value: number | string = active_tab;
     const GetHashedValue = (tab: number) => {
@@ -136,6 +154,16 @@ const AppWrapper = observer(() => {
         [active_tab]
     );
 
+    const Error = Loadable({
+        loader: () => import(/* webpackChunkName: "error-component" */ '@deriv/trader'),
+        loading: UILoader,
+        render(loaded, props) {
+            
+            const Component = loaded.default;
+            return <Component passthrough={props} />;
+        },
+    });
+
     return (
         <React.Fragment>
             <div className='main'>
@@ -181,15 +209,15 @@ const AppWrapper = observer(() => {
                                     ? 'id-charts--disabled'
                                     : 'id-charts'
                             }
-                        >
-                            <Chart />
+                        >   
+                            
+                            <Router>
+                            <Error {...passthrough} />
+                            </Router>
+                            {/* <Chart show_digits_stats={true}/> */}
                         </div>
 
-                        <div
-                            icon='IcClient'
-                            label={<Localize i18n_default_text='Copy Trader' />}
-                            id={'id-copy-trader'}
-                        >
+                        <div icon='IcClient' label={<Localize i18n_default_text='Copy Trader' />} id={'id-copy-trader'}>
                             <CopyTrader />
                         </div>
 

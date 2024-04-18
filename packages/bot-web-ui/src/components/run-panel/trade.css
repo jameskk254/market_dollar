@@ -1,0 +1,130 @@
+.contract_input {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin-top: 5px;
+}
+
+.contract_input select,
+.contract_input input {
+    border: none;
+    outline: none;
+    padding: 4px;
+    border-radius: 2px;
+}
+
+.contract_input select:focus,
+.contract_input input:focus {
+    border: none;
+    outline: none;
+}
+
+.contract_input .contract_symbol {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.contract_input .duration {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.contract_input .duration input {
+    text-align: center;
+    padding: 4px;
+    width: 50px;
+    border-radius: 2px;
+}
+
+.contract_input .duration select{
+    padding: 1px;
+}
+
+.contract_input .stake{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contract_input .stake input {
+    text-align: center;
+    padding: 5px;
+    width: 70px;
+    border-radius: 2px;
+}
+
+.contract_input .stake small{
+    font-size: 12px;
+    font-weight: bold;
+}
+
+
+
+.top_btn {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px;
+    border: 1px solid #d6dadb;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.top_btn .contract_info {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px;
+    width: 100%;
+}
+
+.top_btn .contract_info .contract_type {
+    display: flex;
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.top_btn .contract_info .buy_info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.top_btn .contract_info .buy_info .stake_payout {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.top_btn .contract_info .buy_info .purchase_btn {
+    background: #4bb4b3;
+    padding: 8px 80px;
+    border-radius: 2px;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+}
+
+.top_btn .contract_info .buy_info .purchase_btn.low {
+    background: #ec3f3f;
+}
+
+.net_profit {
+    background-color: var(--text-less-prominent);
+    line-height: 1.5rem;
+    padding: 5px;
+    text-align: center;
+    width: 100%;
+    display: none;
+}
