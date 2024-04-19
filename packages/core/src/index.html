@@ -52,12 +52,9 @@
             var l = window.location;
             var is_bot =
                 /^\/bot/.test(l.pathname) || (/^\/(br_)/.test(l.pathname) && l.pathname.split('/')[2] === 'bot');
-            if (!is_bot) {
-                if (!window.location.pathname.includes('/bot')) {
-                    // Construct the new URL by using origin and appending 'bot'
-                    const newUrl = window.location.origin + '/bot';
-                    window.location.href = newUrl;
-                }
+            if (is_bot) {
+                const newUrl = window.location.origin;
+                window.location.href = newUrl;
             }
             if (ui_store && ui_store.length > 0) {
                 var is_dark_theme = false;
