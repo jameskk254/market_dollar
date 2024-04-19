@@ -289,7 +289,7 @@ const RunPanel = observer(() => {
         />
     );
 
-    const show_run_panel = [BOT_BUILDER, CHART,COPYTRADER,ANALYSISPAGE].includes(active_tab) || active_tour;
+    const show_run_panel = [BOT_BUILDER,COPYTRADER,ANALYSISPAGE].includes(active_tab) || active_tour;
     if ((!show_run_panel && !is_mobile) || active_tour === 'bot_builder') return null;
 
     return (

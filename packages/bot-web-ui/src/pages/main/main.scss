@@ -45,6 +45,7 @@
             &__list {
                 background: var(--general-section-1);
                 justify-content: start;
+                z-index: 2;
 
                 @include mobile {
                     overflow-x: auto;

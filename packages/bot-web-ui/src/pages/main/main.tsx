@@ -22,11 +22,11 @@ import RunStrategy from '../dashboard/run-strategy';
 import Tutorial from '../tutorials';
 import { tour_list } from '../tutorials/dbot-tours/utils';
 import Loadable from 'react-loadable';
-import { getUrlBase, moduleLoader } from '@deriv/shared';
+import { getUrlBase, moduleLoader, useWS } from '@deriv/shared';
 import { TCoreStores } from '@deriv/stores/types';
 import { TWebSocket } from 'Types';
 import { BrowserRouter as Router } from 'react-router-dom';
-
+import './style.css';
 
 type Apptypes = {
     root_store: TCoreStores;
@@ -46,11 +46,10 @@ const AppWrapper = observer(() => {
         setTourDialogVisibility,
     } = dashboard;
     const RootStore = useStore();
+    const WS = useWS() as TWebSocket;
     const passthrough: Apptypes = {
-        
-            root_store: RootStore,
-            WS: api_base,
-        
+        root_store: RootStore,
+        WS: WS,
     };
 
     const { onEntered, dashboard_strategies } = load_modal;
@@ -59,7 +58,7 @@ const AppWrapper = observer(() => {
     const { is_open } = quick_strategy;
     const { cancel_button_text, ok_button_text, title, message } = dialog_options as { [key: string]: string };
     const { clear } = summary_card;
-    const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
+    const { DASHBOARD, BOT_BUILDER, CHART } = DBOT_TABS;
     const init_render = React.useRef(true);
     const { ui } = useStore();
     const { url_hashed_values, is_mobile } = ui;
@@ -158,7 +157,6 @@ const AppWrapper = observer(() => {
         loader: () => import(/* webpackChunkName: "error-component" */ '@deriv/trader'),
         loading: UILoader,
         render(loaded, props) {
-            
             const Component = loaded.default;
             return <Component passthrough={props} />;
         },
@@ -209,10 +207,9 @@ const AppWrapper = observer(() => {
                                     ? 'id-charts--disabled'
                                     : 'id-charts'
                             }
-                        >   
-                            
+                        >
                             <Router>
-                            <Error {...passthrough} />
+                                <Error {...passthrough} />
                             </Router>
                             {/* <Chart show_digits_stats={true}/> */}
                         </div>
@@ -243,13 +240,14 @@ const AppWrapper = observer(() => {
             </div>
             <DesktopWrapper>
                 <div className='main__run-strategy-wrapper'>
-                    <RunStrategy />
-                    <RunPanel />
+                    {active_tab !== CHART && <RunStrategy />}
+                    {active_tab !== CHART && <RunPanel />}
                 </div>
                 <ChartModal />
                 <TradingViewModal />
             </DesktopWrapper>
-            <MobileWrapper>{!is_open && <RunPanel />}</MobileWrapper>
+            {active_tab !== CHART && <MobileWrapper>{!is_open && <RunPanel />}</MobileWrapper>}
+
             <Dialog
                 cancel_button_text={cancel_button_text || localize('Cancel')}
                 className='dc-dialog__wrapper--fixed'
