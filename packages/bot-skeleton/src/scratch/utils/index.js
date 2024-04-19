@@ -75,7 +75,7 @@ const subPageValue = () => {
     return analysisPage;
 };
 
-export const updateWorkspaceName = () => {
+export const updateWorkspaceName = (active_tab) => {
     document.title = 'D-Apollo';
     if (!DBotStore?.instance) return;
     const { load_modal } = DBotStore.instance;
@@ -83,6 +83,10 @@ export const updateWorkspaceName = () => {
 
     if(subPageValue() === 'analysis_page'){
         document.title += ` - ${subPageValue()}`;
+        return;
+    }
+    if(active_tab == 3){
+        document.title += ` - ATrader`;
         return;
     }
 

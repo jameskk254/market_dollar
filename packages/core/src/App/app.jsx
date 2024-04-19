@@ -95,17 +95,9 @@ const AppWithoutTranslation = ({ root_store }) => {
             {is_translation_loaded ? (
                 <Router basename={has_base ? `/${base}` : null}>
                     <StoreProvider store={root_store}>
-                        <BreakpointProvider>
                             <APIProvider>
-                                <POIProvider>
-                                    <StoreProvider store={root_store}>
-                                        <ExchangeRatesProvider>
-                                            <AppContent passthrough={platform_passthrough} />
-                                        </ExchangeRatesProvider>
-                                    </StoreProvider>
-                                </POIProvider>
+                            <AppContent passthrough={platform_passthrough} />
                             </APIProvider>
-                        </BreakpointProvider>
                     </StoreProvider>
                 </Router>
             ) : (

@@ -12,7 +12,6 @@ import TradingViewModal from 'Components/trading-view-chart/trading-view-modal';
 import { DBOT_TABS, TAB_IDS } from 'Constants/bot-contents';
 import { useDBotStore } from 'Stores/useDBotStore';
 import RunPanel from '../../components/run-panel';
-import Chart from '../chart';
 import ChartModal from '../chart/chart-modal';
 import Dashboard from '../dashboard';
 import ApolloBots from '../apollo_bots';
@@ -22,7 +21,7 @@ import RunStrategy from '../dashboard/run-strategy';
 import Tutorial from '../tutorials';
 import { tour_list } from '../tutorials/dbot-tours/utils';
 import Loadable from 'react-loadable';
-import { getUrlBase, moduleLoader, useWS } from '@deriv/shared';
+import {  useWS } from '@deriv/shared';
 import { TCoreStores } from '@deriv/stores/types';
 import { TWebSocket } from 'Types';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -130,7 +129,7 @@ const AppWrapper = observer(() => {
             // Needed to pass this to the Callback Queue as on tab changes
             // document title getting override by 'Bot | Deriv' only
             timer = setTimeout(() => {
-                updateWorkspaceName();
+                updateWorkspaceName(active_tab);
             });
         }
         return () => {
@@ -153,7 +152,7 @@ const AppWrapper = observer(() => {
         [active_tab]
     );
 
-    const Error = Loadable({
+    const Trader = Loadable({
         loader: () => import(/* webpackChunkName: "error-component" */ '@deriv/trader'),
         loading: UILoader,
         render(loaded, props) {
@@ -201,7 +200,7 @@ const AppWrapper = observer(() => {
 
                         <div
                             icon='IcChartsTabDbot'
-                            label={<Localize i18n_default_text='Charts' />}
+                            label={<Localize i18n_default_text='A-Trader' />}
                             id={
                                 is_chart_modal_visible || is_trading_view_modal_visible
                                     ? 'id-charts--disabled'
@@ -209,7 +208,7 @@ const AppWrapper = observer(() => {
                             }
                         >
                             <Router>
-                                <Error {...passthrough} />
+                                <Trader {...passthrough} />
                             </Router>
                             {/* <Chart show_digits_stats={true}/> */}
                         </div>
