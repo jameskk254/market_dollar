@@ -14,7 +14,7 @@ const useLandingCompany = () => {
     const modified_landing_company = useMemo(() => {
         if (!data?.landing_company) return;
 
-        return { ...data.landing_company };
+        return { };
     }, [data?.landing_company]);
 
     return {

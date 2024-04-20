@@ -6,7 +6,6 @@ import { usePaymentAgentList } from '@deriv/hooks';
 import { FormSubmitButton, Icon, Loading, Text, ThemedScrollbars } from '@deriv/components';
 import { localize } from '@deriv/translations';
 import { isMobile, reorderCurrencies, routes } from '@deriv/shared';
-import { CurrencyRadioButtonGroup, CurrencyRadioButton } from '@deriv/account';
 import AddCryptoCurrency from './add-crypto-currency.jsx';
 import CurrencyProvider from './choose-currency';
 import { observer, useStore } from '@deriv/stores';
@@ -77,25 +76,7 @@ const AddCurrency = observer(({ onSubmit, hasNoAvailableCrypto, is_add_crypto, i
                 {is_loading ? (
                     <Loading is_fullscreen={false} />
                 ) : (
-                    <CurrencyRadioButtonGroup
-                        id='crypto_currency'
-                        className='currency-selector__radio-group currency-selector__radio-group--with-margin'
-                        item_count={getReorderedCurrencies.fiat.length}
-                    >
-                        {getReorderedCurrencies.fiat.map(currency => (
-                            <Field
-                                key={currency.value}
-                                component={CurrencyRadioButton}
-                                name='currency'
-                                id={currency.value}
-                                label={currency.name}
-                                icon={currency.icon}
-                                second_line_label={currency.second_line_label}
-                                onClick={currency.onClick}
-                                selected={has_fiat}
-                            />
-                        ))}
-                    </CurrencyRadioButtonGroup>
+                    <></>
                 )}
             </div>
         );
@@ -113,25 +94,7 @@ const AddCurrency = observer(({ onSubmit, hasNoAvailableCrypto, is_add_crypto, i
                 {is_loading ? (
                     <Loading is_fullscreen={false} />
                 ) : (
-                    <CurrencyRadioButtonGroup
-                        id='crypto_currency'
-                        className='currency-selector__radio-group currency-selector__radio-group--with-margin'
-                        item_count={getReorderedCurrencies.crypto.length}
-                    >
-                        {getReorderedCurrencies.crypto.map(currency => (
-                            <Field
-                                key={currency.value}
-                                component={CurrencyRadioButton}
-                                name='currency'
-                                id={currency.value}
-                                label={currency.name}
-                                icon={currency.icon}
-                                second_line_label={currency.second_line_label}
-                                onClick={currency.onClick}
-                                selected={deposit_target === routes.cashier_pa ? !currency.has_payment_agent : false}
-                            />
-                        ))}
-                    </CurrencyRadioButtonGroup>
+                   <></>
                 )}
             </div>
         );

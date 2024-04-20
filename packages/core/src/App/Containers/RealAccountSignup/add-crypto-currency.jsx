@@ -5,7 +5,6 @@ import { FormSubmitButton, Icon, Text, ThemedScrollbars } from '@deriv/component
 import { localize, Localize } from '@deriv/translations';
 import { observer, useStore } from '@deriv/stores';
 import { isMobile, reorderCurrencies, website_name } from '@deriv/shared';
-import { CurrencyRadioButtonGroup, CurrencyRadioButton } from '@deriv/account';
 import './currency-selector.scss';
 
 const messages = () => [
@@ -74,26 +73,7 @@ const AddCryptoCurrency = observer(
                         {canAddFiat() && (
                             <React.Fragment>
                                 <ThemedScrollbars>
-                                    <CurrencyRadioButtonGroup
-                                        id='fiat_currency'
-                                        is_fiat
-                                        className='currency-selector__radio-group currency-selector__radio-group--with-margin'
-                                        value={values.currency}
-                                        error={errors.currency}
-                                        touched={touched.currency}
-                                        is_title_enabled={canAddFiat()}
-                                        item_count={getReorderedFiatCurrencies().length}
-                                    >
-                                        {getReorderedFiatCurrencies().map(currency => (
-                                            <Field
-                                                key={currency.value}
-                                                component={CurrencyRadioButton}
-                                                name='currency'
-                                                id={currency.value}
-                                                label={currency.name}
-                                            />
-                                        ))}
-                                    </CurrencyRadioButtonGroup>
+                                <></>
                                 </ThemedScrollbars>
                             </React.Fragment>
                         )}
@@ -128,48 +108,11 @@ const AddCryptoCurrency = observer(
                         {!should_show_fiat_only &&
                             (available_crypto_currencies.length !== 0 ? (
                                 <ThemedScrollbars>
-                                    <CurrencyRadioButtonGroup
-                                        id='crypto_currency'
-                                        className='currency-selector__radio-group currency-selector__radio-group--with-margin'
-                                        label={localize('Cryptocurrencies')}
-                                        value={values.currency}
-                                        error={errors.currency}
-                                        touched={touched.currency}
-                                        is_title_enabled={canAddFiat()}
-                                        item_count={getReorderedCryptoCurrencies().length}
-                                    >
-                                        {getReorderedCryptoCurrencies().map(currency => (
-                                            <Field
-                                                key={currency.value}
-                                                component={CurrencyRadioButton}
-                                                name='currency'
-                                                id={currency.value}
-                                                label={currency.name}
-                                                selected={canAddCrypto(currency)}
-                                            />
-                                        ))}
-                                    </CurrencyRadioButtonGroup>
+                                    <></>
                                 </ThemedScrollbars>
                             ) : (
                                 <ThemedScrollbars>
-                                    <CurrencyRadioButtonGroup
-                                        id='crypto_currency'
-                                        className='currency-selector__radio-group currency-selector__radio-group--with-margin'
-                                        label={localize('Cryptocurrencies')}
-                                        is_title_enabled={canAddFiat()}
-                                        item_count={getReorderedCryptoCurrencies().length}
-                                    >
-                                        {getReorderedCryptoCurrencies().map(currency => (
-                                            <Field
-                                                key={currency.value}
-                                                component={CurrencyRadioButton}
-                                                name='currency'
-                                                id={currency.value}
-                                                label={currency.name}
-                                                selected
-                                            />
-                                        ))}
-                                    </CurrencyRadioButtonGroup>
+                                    <></>
                                 </ThemedScrollbars>
                             ))}
                         <FormSubmitButton

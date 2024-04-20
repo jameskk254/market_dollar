@@ -5,7 +5,6 @@ import { FormSubmitButton, Text } from '@deriv/components';
 import { isMobile, reorderCurrencies } from '@deriv/shared';
 import { observer, useStore } from '@deriv/stores';
 import { localize, Localize } from '@deriv/translations';
-import { CurrencyRadioButtonGroup, CurrencyRadioButton } from '@deriv/account';
 import './currency-selector.scss';
 
 const FIAT_CURRENCY_TYPE = 'fiat';
@@ -82,27 +81,7 @@ const ChangeAccountCurrency = observer(
                                 </Text>
                             </div>
                         )}
-                        <CurrencyRadioButtonGroup
-                            id='fiat'
-                            label={localize('Cryptocurrencies')}
-                            className='currency-selector__radio-group currency-selector__radio-group--with-margin'
-                            value={values.fiat}
-                            error={errors.fiat}
-                            touched={touched.fiat}
-                            is_title_enabled={false}
-                            item_count={getReorderedCurrencies().length}
-                        >
-                            {getReorderedCurrencies().map(currency => (
-                                <Field
-                                    key={currency.value}
-                                    component={CurrencyRadioButton}
-                                    name='fiat'
-                                    id={currency.value}
-                                    label={currency.name}
-                                    selected={currency.value === client_currency}
-                                />
-                            ))}
-                        </CurrencyRadioButtonGroup>
+                        <></>
                         <FormSubmitButton
                             className='change-currency__button'
                             is_disabled={isSubmitting || !values.fiat}

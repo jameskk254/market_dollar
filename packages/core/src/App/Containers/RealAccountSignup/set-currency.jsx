@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
 import { localize } from '@deriv/translations';
-import { currencySelectorConfig } from '@deriv/account';
 import { website_name, generateValidationFunction } from '@deriv/shared';
 import { Text } from '@deriv/components';
 import CurrencySelector from '@deriv/account/src/Components/currency-selector';
@@ -86,7 +85,7 @@ const SetCurrency = observer(({ setLoading, onSuccessSetAccountCurrency, onError
                 value={form_value}
                 form_error={form_error}
                 set_currency
-                validate={generateValidationFunction(landing_company_shortcode, currencySelectorConfig)}
+                validate={generateValidationFunction(landing_company_shortcode, 'currencySelectorConfig')}
                 {...props}
             />
         </div>

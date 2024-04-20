@@ -5,7 +5,6 @@ import { useFetch } from '@deriv/api';
  */
 const useStatesList = (country: string) => {
     const { data, ...rest } = useFetch('states_list', {
-        // @ts-expect-error The `states_list` type from `@deriv/api-types` is not correct.
         // The type should be `string`, but it's an alias to string type.
         payload: { states_list: country },
     });

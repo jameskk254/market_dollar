@@ -4,7 +4,6 @@ import { FormSubmitButton, Loading, Text, ThemedScrollbars } from '@deriv/compon
 import { usePaymentAgentList } from '@deriv/hooks';
 import { localize } from '@deriv/translations';
 import { reorderCurrencies, routes } from '@deriv/shared';
-import { CurrencyRadioButtonGroup, CurrencyRadioButton } from '@deriv/account';
 import CurrencyProvider from './choose-currency';
 import { observer, useStore } from '@deriv/stores';
 import './currency-selector.scss';
@@ -137,29 +136,7 @@ const ChooseCurrency = observer(() => {
                         {is_loading ? (
                             <Loading is_fullscreen={false} className='currency-list__loading-wrapper' />
                         ) : (
-                            <CurrencyRadioButtonGroup
-                                id='crypto_currency'
-                                className='currency-selector__radio-group currency-selector__radio-group--with-margin'
-                                item_count={getReorderedCryptoCurrencies.length}
-                            >
-                                {getReorderedCryptoCurrencies.map(currency => (
-                                    <Field
-                                        key={currency.value}
-                                        component={CurrencyRadioButton}
-                                        name='currency'
-                                        id={currency.value}
-                                        label={currency.name}
-                                        icon={currency.icon}
-                                        second_line_label={currency.second_line_label}
-                                        onClick={currency.onClick}
-                                        selected={
-                                            currency.is_disabled || deposit_target === routes.cashier_pa
-                                                ? !currency.has_payment_agent
-                                                : false
-                                        }
-                                    />
-                                ))}
-                            </CurrencyRadioButtonGroup>
+                           <></>
                         )}
                     </ThemedScrollbars>
                     <FormSubmitButton

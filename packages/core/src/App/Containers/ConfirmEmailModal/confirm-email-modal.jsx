@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button, Modal, Text } from '@deriv/components';
 import { localize, Localize } from '@deriv/translations';
-import { SentEmailModal } from '@deriv/account';
 import { WS } from 'Services';
 import PropTypes from 'prop-types';
 
@@ -45,14 +44,7 @@ export const ConfirmEmailModal = ({
 
     if (is_send_email_modal_open) {
         return (
-            <SentEmailModal
-                is_open={is_send_email_modal_open}
-                onClose={() => setIsSendEmailModalOpen(false)}
-                identifier_title={'Change_Email'}
-                onClickSendEmail={resendEmail}
-                has_live_chat={true}
-                is_modal_when_mobile={true}
-            />
+        <></>
         );
     }
     return (

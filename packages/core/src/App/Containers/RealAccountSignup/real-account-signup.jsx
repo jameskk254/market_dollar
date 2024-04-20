@@ -2,7 +2,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import classNames from 'classnames';
-import { RiskToleranceWarningModal, TestWarningModal } from '@deriv/account';
 import { Button, DesktopWrapper, MobileDialog, MobileWrapper, Modal, Text, UILoader } from '@deriv/components';
 import { ContentFlag, WS, moduleLoader, routes } from '@deriv/shared';
 import { Localize, localize } from '@deriv/translations';
@@ -570,64 +569,15 @@ const RealAccountSignup = observer(({ history, state_index, is_trading_experienc
 
     if (assessment_decline) {
         return (
-            <RiskToleranceWarningModal
-                show_risk_modal={assessment_decline}
-                title={risk_warning_title}
-                handleAcceptRisk={handleRiskAcceptance}
-                body_content={
-                    <Localize
-                        i18n_default_text='CFDs and other financial instruments come with a high risk of losing money rapidly due to leverage. You should consider whether you understand how CFDs and other financial instruments work and whether you can afford to take the risk of losing your money. <0/><0/>
-                        As you have declined our previous warning, you would need to wait 24 hours before you can proceed further.'
-                        components={[<br key={0} />]}
-                    />
-                }
-            />
+<></>
         );
     } else if (is_trading_assessment_for_new_user_enabled && should_show_risk_warning_modal) {
         return (
-            <RiskToleranceWarningModal
-                show_risk_modal={should_show_risk_warning_modal}
-                title={risk_warning_title}
-                handleAcceptRisk={handleRiskAcceptance}
-                body_content={
-                    <Localize
-                        i18n_default_text='CFDs and other financial instruments come with a high risk of losing money rapidly due to leverage. You should consider whether you understand how CFDs and other financial instruments work and whether you can afford to take the high risk of losing your money. <0/><0/> To continue, kindly note that you would need to wait 24 hours before you can proceed further.'
-                        components={[<br key={0} />]}
-                    />
-                }
-            />
+            <></>
         );
     } else if (should_show_appropriateness_warning_modal) {
         return (
-            <TestWarningModal
-                show_risk_modal={should_show_appropriateness_warning_modal}
-                body_content={
-                    <Text as='p' size='xs'>
-                        <Localize
-                            i18n_default_text='In providing our services to you, we are required to ask you for some information to assess if a given product or service is appropriate for you and whether you have the experience and knowledge to understand the risks involved.<0/><0/>'
-                            components={[<br key={0} />]}
-                        />
-                        <Localize
-                            i18n_default_text='On the basis of the information provided in relation to your knowledge and experience, we consider that the investments available via this website are not appropriate for you.<0/><0/>'
-                            components={[<br key={0} />]}
-                        />
-                        <Localize i18n_default_text='By clicking ‘Accept’ and proceeding with the account opening, you should note that you may be exposing yourself to risks. These risks, which may be significant, include the risk of losing the entire sum invested, and you may not have the knowledge and experience to properly assess or mitigate them.' />
-                    </Text>
-                }
-                footer_content={
-                    <React.Fragment>
-                        <Button type='button' large text={localize('Decline')} secondary onClick={handleOnDecline} />
-                        <Button
-                            type='button'
-                            large
-                            text={localize('Accept')}
-                            primary
-                            onClick={handleOnAccept}
-                            is_loading={is_loading}
-                        />
-                    </React.Fragment>
-                }
-            />
+            <></>
         );
     }
 

@@ -6,8 +6,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { Analytics } from '@deriv-com/analytics';
 import { BreakpointProvider } from '@deriv/quill-design';
 import { APIProvider } from '@deriv/api';
-import { CashierStore } from '@deriv/cashier';
-import { CFDStore } from '@deriv/cfd';
 import {
     POIProvider,
     initFormErrorMessages,
@@ -29,17 +27,8 @@ const AppWithoutTranslation = ({ root_store }) => {
     const base = l.pathname.split('/')[1];
     const has_base = /^\/(br_)/.test(l.pathname);
     const [is_translation_loaded] = useOnLoadTranslation();
-    const initCashierStore = () => {
-        root_store.modules.attachModule('cashier', new CashierStore(root_store, WS));
-        root_store.modules.cashier.general_store.init();
-    };
-    const initCFDStore = () => {
-        root_store.modules.attachModule('cfd', new CFDStore({ root_store, WS }));
-    };
 
     React.useEffect(() => {
-        initCashierStore();
-        initCFDStore();
         const loadSmartchartsStyles = () => {
             import('@deriv/deriv-charts/dist/smartcharts.css');
         };
@@ -95,9 +84,9 @@ const AppWithoutTranslation = ({ root_store }) => {
             {is_translation_loaded ? (
                 <Router basename={has_base ? `/${base}` : null}>
                     <StoreProvider store={root_store}>
-                            <APIProvider>
+                        <APIProvider>
                             <AppContent passthrough={platform_passthrough} />
-                            </APIProvider>
+                        </APIProvider>
                     </StoreProvider>
                 </Router>
             ) : (
