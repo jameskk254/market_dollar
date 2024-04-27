@@ -16,7 +16,7 @@ const TradeHeaderExtensions = observer(({ store }: TradeHeaderExtensionsProps) =
     const { populateHeaderExtensions } = ui;
     const { onMount: onMountPositions } = portfolio;
     const { is_logged_in, is_populating_account_list } = client;
-    const { onMountCommon: onMountCashier, setAccountSwitchListener } = modules.cashier.general_store;
+    // const { onMountCommon: onMountCashier, setAccountSwitchListener } = modules.cashier.general_store;
 
     const show_positions_toggle = location.pathname !== routes.mt5;
     const show_component = is_logged_in && show_positions_toggle;
@@ -40,8 +40,8 @@ const TradeHeaderExtensions = observer(({ store }: TradeHeaderExtensionsProps) =
                 if (is_logged_in) {
                     await WS.wait('authorize');
                     onMountPositions();
-                    onMountCashier(true);
-                    setAccountSwitchListener();
+                    // onMountCashier(true);
+                    // setAccountSwitchListener();
                 }
             }
 
@@ -54,11 +54,11 @@ const TradeHeaderExtensions = observer(({ store }: TradeHeaderExtensionsProps) =
 
         return () => populateHeaderExtensions(null);
     }, [
-        onMountCashier,
+        // onMountCashier,
         onMountPositions,
         populateHeaderfunction,
         populateHeaderExtensions,
-        setAccountSwitchListener,
+        // setAccountSwitchListener,
         store,
         show_positions_toggle,
     ]);
