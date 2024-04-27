@@ -106,6 +106,16 @@ export default Engine =>
             return accountStat.totalRuns;
         }
 
+        getTotalWins() {
+            const accountStat = this.getAccountStat();
+            return accountStat.totalWins;
+        }
+
+        getTotalLosts() {
+            const accountStat = this.getAccountStat();
+            return accountStat.totalLosses;
+        }
+
         getTotalProfit(toString, currency) {
             const accountStat = this.getAccountStat();
 

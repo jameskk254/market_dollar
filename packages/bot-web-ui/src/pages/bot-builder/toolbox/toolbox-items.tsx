@@ -402,6 +402,8 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                 <Block type='balance' />
                 <Block type='total_profit' />
                 <Block type='total_runs' />
+                <Block type='total_wins' />
+                <Block type='total_lost' />
             </Category>
         </Category>
 

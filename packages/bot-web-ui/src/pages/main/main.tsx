@@ -21,10 +21,11 @@ import RunStrategy from '../dashboard/run-strategy';
 import Tutorial from '../tutorials';
 import { tour_list } from '../tutorials/dbot-tours/utils';
 import Loadable from 'react-loadable';
-import {  useWS } from '@deriv/shared';
+import { useWS } from '@deriv/shared';
 import { TCoreStores } from '@deriv/stores/types';
 import { TWebSocket } from 'Types';
 import { BrowserRouter as Router } from 'react-router-dom';
+import ReactGA from 'react-ga4';
 import './style.css';
 
 type Apptypes = {
@@ -85,6 +86,11 @@ const AppWrapper = observer(() => {
     React.useEffect(() => {
         window.addEventListener('focus', checkAndHandleConnection);
         // eslint-disable-next-line react-hooks/exhaustive-deps
+        const path = window.location.pathname;
+        const title = document.title;
+
+        // Send pageview with dynamic path and title
+        ReactGA.send({ hitType: 'pageview', page: path, title: title });
     }, []);
 
     React.useEffect(() => {

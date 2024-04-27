@@ -20,7 +20,10 @@ import { CFD_TEXT } from '../Constants/cfd-text';
 import { FORM_ERROR_MESSAGES } from '../Constants/form-error-messages';
 import AppContent from './AppContent';
 import initHotjar from '../Utils/Hotjar';
+import ReactGA from 'react-ga4';
 import 'Sass/app.scss';
+
+ReactGA.initialize('G-N2C6TM8LFY');
 
 const AppWithoutTranslation = ({ root_store }) => {
     const l = window.location;
