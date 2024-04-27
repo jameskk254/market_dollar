@@ -324,7 +324,6 @@ export default class NotificationStore extends BaseStore {
         } = this.root_store.client;
         const { upgradable_daily_limits } = this.p2p_advertiser_info || {};
         const { max_daily_buy, max_daily_sell } = upgradable_daily_limits || {};
-        const { is_10k_withdrawal_limit_reached } = this.root_store.modules.cashier.withdraw;
         const { current_language, selected_contract_type } = this.root_store.common;
         const malta_account = landing_company_shortcode === 'maltainvest';
         const cr_account = landing_company_shortcode === 'svg';
@@ -430,10 +429,8 @@ export default class NotificationStore extends BaseStore {
                     ASK_UK_FUNDS_PROTECTION,
                 } = cashier_validation ? getCashierValidations(cashier_validation) : {};
 
-                const needs_poa =
-                    is_10k_withdrawal_limit_reached &&
-                    (needs_verification.includes('document') || document?.status !== 'verified');
-                const needs_poi = is_10k_withdrawal_limit_reached && identity?.status !== 'verified';
+                const needs_poa = ''
+                const needs_poi = '';
                 const needs_poinc =
                     needs_verification.includes('income') && ['rejected', 'none'].includes(income?.status);
                 const poinc_upload_limited = needs_verification.includes('income') && income?.status === 'locked';
