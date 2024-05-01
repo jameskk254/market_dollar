@@ -27,6 +27,9 @@ const getBotInterface = tradeEngine => {
                 config.vh_variables.is_enabled = false;
             }
         },
+        getVHStatus: ()=>{
+            return config.vh_variables.is_enabled
+        },
         enableBarrierChanger: status => {
             if (status == 'enable') {
                 config.touch_notouch_vars.barrier_offset_active = true;

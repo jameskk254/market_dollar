@@ -68,51 +68,36 @@ const unwantedContracts = [
     'TICKHIGH',
     'TICKLOW',
     'ASIANU',
-    'ASIAND'
+    'ASIAND',
 ];
 
 export const tradeOptionToBuy = (contract_type, trade_option) => {
     let cp_tokens = localStorage.getItem(`${getToken().account_id}_tokens`);
     cp_tokens = JSON.parse(cp_tokens);
     const vh_active = config.vh_variables.is_enabled;
+    const isCPActive = config.copy_trading.is_active;
 
-    const buy = !config.copy_trading.is_active
-        ? vh_active
-            ? {
-                  buy: '1',
-                  subscribe: 1,
-                  price: getStakeAmount(trade_option),
-                  parameters: {
-                      amount: getStakeAmount(trade_option),
-                      basis: trade_option.basis,
-                      contract_type,
-                      currency: trade_option.currency,
-                      duration: trade_option.duration,
-                      duration_unit: trade_option.duration_unit,
-                      multiplier: trade_option.multiplier,
-                      symbol: trade_option.symbol,
-                  },
-              }
-            : {
-                  buy: '1',
-                  price: getStakeAmount(trade_option),
-                  parameters: {
-                      amount: getStakeAmount(trade_option),
-                      basis: trade_option.basis,
-                      contract_type,
-                      currency: trade_option.currency,
-                      duration: trade_option.duration,
-                      duration_unit: trade_option.duration_unit,
-                      multiplier: trade_option.multiplier,
-                      symbol: trade_option.symbol,
-                  },
-              }
-        : vh_active
+    const buy = vh_active
+        ? {
+              buy: '1',
+              subscribe: 1,
+              price: getStakeAmount(trade_option),
+              parameters: {
+                  amount: getStakeAmount(trade_option),
+                  basis: trade_option.basis,
+                  contract_type,
+                  currency: trade_option.currency,
+                  duration: trade_option.duration,
+                  duration_unit: trade_option.duration_unit,
+                  multiplier: trade_option.multiplier,
+                  symbol: trade_option.symbol,
+              },
+          }
+        : isCPActive
         ? {
               buy_contract_for_multiple_accounts: '1',
               tokens: [getToken().token, ...cp_tokens],
               price: getStakeAmount(trade_option),
-              subscribe: 1,
               parameters: {
                   amount: getStakeAmount(trade_option),
                   basis: trade_option.basis,
@@ -125,8 +110,7 @@ export const tradeOptionToBuy = (contract_type, trade_option) => {
               },
           }
         : {
-              buy_contract_for_multiple_accounts: '1',
-              tokens: [getToken().token, ...cp_tokens],
+              buy: '1',
               price: getStakeAmount(trade_option),
               parameters: {
                   amount: getStakeAmount(trade_option),

@@ -15,6 +15,7 @@ import './apollo_blocks/get_last_digit';
 import './apollo_blocks/prediction_setter';
 import './apollo_blocks/total_lost';
 import './apollo_blocks/total_wins';
+import './apollo_blocks/vh_status';
 import './apollo_blocks/barrier_changer/barrier_changer';
 import './apollo_blocks/barrier_changer/enable_barrier_changer';
 import './apollo_blocks/virtual_hook/martingale_factor';
