@@ -42,7 +42,7 @@ const useMT5AccountsList = () => {
                 /** The platform of the account */
                 platform: 'mt5' as const,
                 /** Converted balance from the exchange rate */
-                converted_balance: getExchangeRate(fiat_account, account.currency ?? 'USD') * balance,
+                // converted_balance: getExchangeRate(fiat_account, account.currency ?? 'USD') * balance,
             };
         });
     }, [authorize_data?.preferred_language, fiat_account, getConfig, getExchangeRate, mt5_accounts?.mt5_login_list]);

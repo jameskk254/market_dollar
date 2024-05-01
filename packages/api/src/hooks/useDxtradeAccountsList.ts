@@ -37,7 +37,7 @@ const useDxtradeAccountsList = () => {
                     /** The platform of the account */
                     platform: 'dxtrade' as const,
                     /** Converted balance from the exchange rate */
-                    converted_balance: getExchangeRate(fiat_account, account.currency ?? 'USD') * balance,
+                    // converted_balance: getExchangeRate(fiat_account, account.currency ?? 'USD') * balance,
                 };
             }),
         [

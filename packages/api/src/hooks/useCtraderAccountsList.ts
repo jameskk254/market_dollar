@@ -39,7 +39,7 @@ const useCtraderAccountsList = () => {
                         preferred_language: authorize_data?.preferred_language,
                     }),
                     /** Converted balance from the exchange rate */
-                    converted_balance: getExchangeRate(fiat_account, account.currency ?? 'USD') * balance,
+                    // converted_balance: getExchangeRate(fiat_account, account.currency ?? 'USD') * balance,
                 };
             }),
         [
