@@ -523,7 +523,6 @@
 /* Responsive (Mobile) */
 @media (max-width: 720px) {
     .main_app .top_bar {
-        gap: 0px;
         justify-content: center;
         display: flex;
         flex-direction: column;
