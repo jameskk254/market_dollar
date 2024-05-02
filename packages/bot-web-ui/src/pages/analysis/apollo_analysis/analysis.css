@@ -76,6 +76,28 @@
     cursor: pointer;
 }
 
+.main_app .top_bar .bot_options {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.main_app .top_bar .bot_options .tp,
+.main_app .top_bar .bot_options .sl,
+.main_app .top_bar .bot_options .active_inactive {
+    display: flex;
+    gap: 2rem;
+}
+
+.main_app .top_bar .bot_options .tp input,.main_app .top_bar .bot_options .sl input{
+    font-size: 12px;
+    text-align: center;
+    border: none;
+    font-weight: 800;
+    border-radius: 2px;
+}
+
 .main_app .rf_ou {
     display: flex;
     align-items: center;
@@ -337,7 +359,7 @@
     gap: 2px;
 }
 
-.main_app .pie_diff .pie .odd_even_info .tick_stake{
+.main_app .pie_diff .pie .odd_even_info .tick_stake {
     display: flex;
     gap: 2px;
 }
@@ -503,9 +525,9 @@
     .main_app .top_bar {
         gap: 0px;
         justify-content: center;
-    }
-    .main_app .top_bar .guide {
-        display: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
     }
 
     .main_app .symbol_price {

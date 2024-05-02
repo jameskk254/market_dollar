@@ -6,10 +6,6 @@ const AnalysisPage = () => {
     return (
         <div className='main_analysis'>
             <ApolloAnalysisPage />
-            {/* <iframe
-                className='analysis-iframe'
-                src='https://api.binarytool.site/'
-            ></iframe> */}
         </div>
     );
 };

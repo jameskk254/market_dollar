@@ -38,7 +38,6 @@ const DiffersBalls = ({
     isTradeActive,
     isTradeActiveRef,
     setIsTradeActive
-
 }: DiffersBallType) => {
     const buy_contract = (prediction: string) => {
         if (isOneClickActive) {
@@ -175,9 +174,6 @@ const DiffersBalls = ({
                 digitDiffHigh.current.appearence = 0;
                 digitDiffLow.current.appearence = 0;
             }
-
-            console.log('Min value',digitDiffLow.current.value,'Min Appearance', digitDiffLow.current.appearence, "LD:",active_last)
-            console.log('Max value',digitDiffHigh.current.value,'Max Appearance', digitDiffHigh.current.appearence)
         };
 
         calculateAppearance();

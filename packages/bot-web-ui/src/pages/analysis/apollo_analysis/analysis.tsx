@@ -7,9 +7,11 @@ import { observer, useStore } from '@deriv/stores';
 import DiffersBalls from './components/differs_balls';
 import { api_base4, api_base } from '@deriv/bot-skeleton';
 import { IoSyncCircleOutline } from 'react-icons/io5';
+import { MdOutlineSettings } from "react-icons/md";
 import RiseFallBarChart from './components/rf_bar_chart';
 import { useDBotStore } from 'Stores/useDBotStore';
 import './analysis.css';
+import BotSettings from './components/bot_settings';
 
 function sleep(milliseconds: any) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -74,6 +76,7 @@ const ApolloAnalysisPage = observer(() => {
     const [prev_symbol, setPrevSymbol] = useState('R_100');
     const [pip_size, setPipSize] = useState(2);
     const [prevLowestValue, setPrevLowestValue] = useState<string | number>('');
+    const [showBotSettings, setShowBotSettings] = useState<boolean>(false);
     // Refs
     const martingaleValueRef = useRef(martingaleValue);
     const isTradeActiveRef = useRef(isTradeActive);
@@ -83,6 +86,10 @@ const ApolloAnalysisPage = observer(() => {
     const contractTradeTypes = useRef<string[]>(['DIGITODD', 'DIGITEVEN', 'DIGITOVER', 'DIGITUNDER', 'DIGITDIFF']);
     const digitDiffHigh = useRef<DigitDiffStatsProp>({ appearence: 0, value: 0 });
     const digitDiffLow = useRef<DigitDiffStatsProp>({ appearence: 0, value: 0 });
+    const take_profit = useRef<number>(2);
+    const stop_loss = useRef<number>(2);
+    const total_profit = useRef<number>(0);
+    const enable_tp_sl = useRef<boolean>(false);
 
     const { ui } = useStore();
     const DBotStores = useDBotStore();
@@ -178,6 +185,16 @@ const ApolloAnalysisPage = observer(() => {
 
                     if (contractTradeTypes.current.includes(contract)) {
                         if (proposal_open_contract.is_sold) {
+                            // Take profit and stopLoss check
+                            if (enable_tp_sl) {
+                                total_profit.current += proposal_open_contract.profit;
+                                if (total_profit.current >= take_profit.current) {
+                                    stopAnalysisBot();
+                                } else if (total_profit.current <= -take_profit.current) {
+                                    stopAnalysisBot();
+                                }
+                            }
+
                             if (proposal_open_contract.status === 'lost') {
                                 if (!current_contractids.current.includes(proposal_open_contract.contract_id)) {
                                     totalLostAmount.current += Math.abs(proposal_open_contract.profit);
@@ -210,6 +227,16 @@ const ApolloAnalysisPage = observer(() => {
             api_base.pushSubscription(subscription);
         }
         setAccountCurrency(api_base.account_info.currency);
+    };
+
+    const stopAnalysisBot = () => {
+        setIsRiseFallOneClickActive(false);
+        setIsOverUnderOneClickActive(false);
+        setIsEvenOddOneClickActive(false);
+        setIsOneClickActive(false);
+        totalLostAmount.current = 0;
+        total_profit.current = 0;
+        setOneClickAmount(oneClickDefaultAmount.current);
     };
 
     const selectTickList = () => {
@@ -395,9 +422,18 @@ const ApolloAnalysisPage = observer(() => {
                         <h3>{currentTick.toString()}</h3>
                     </div>
                 </div>
-                <div className='guide'>
-                    <BsExclamationCircle />
+                <div className='guide' onClick={() => setShowBotSettings(!showBotSettings)}>
+                    <MdOutlineSettings />
                 </div>
+                {showBotSettings && (
+                    <BotSettings
+                        enable_tp_sl={enable_tp_sl}
+                        setShowBotSettings={setShowBotSettings}
+                        showBotSettings={showBotSettings}
+                        stop_loss={stop_loss}
+                        take_profit={take_profit}
+                    />
+                )}
             </div>
             {/* Middle Cards */}
             <div className='rf_ou'>
