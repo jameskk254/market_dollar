@@ -7,7 +7,13 @@ interface BotSettingsSType {
     stop_loss: React.MutableRefObject<number>;
     enable_tp_sl: React.MutableRefObject<boolean>;
     showBotSettings: boolean;
+    takeProfitValue: string | number;
+    stopLossValue: string | number;
+    enableSlTpValue: boolean
+    setTakeProfitValue: React.Dispatch<React.SetStateAction<string | number>>
+    setStopLossValue: React.Dispatch<React.SetStateAction<string | number>>
     setShowBotSettings: React.Dispatch<React.SetStateAction<boolean>>;
+    setEnableSlTpValue: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const BotSettings = ({
@@ -15,7 +21,13 @@ const BotSettings = ({
     showBotSettings,
     stop_loss,
     take_profit,
+    takeProfitValue,
+    stopLossValue,
+    enableSlTpValue,
     setShowBotSettings,
+    setTakeProfitValue,
+    setStopLossValue,
+    setEnableSlTpValue
 }: BotSettingsSType) => {
     const onClickClose = () => {
         setShowBotSettings(!showBotSettings);
@@ -23,15 +35,18 @@ const BotSettings = ({
 
     const handleTpChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
-        take_profit.current = Number(newValue);
+        setTakeProfitValue(newValue === '' ? '' : Number(newValue));
+        take_profit.current = newValue!== '' ? Number(newValue) : 0;
     };
 
     const handleSlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
-        stop_loss.current = Number(newValue);
+        setStopLossValue(newValue === '' ? '' : Number(newValue));
+        stop_loss.current = newValue!== '' ? Number(newValue) : 0;
     };
 
     const handleIsActiveInActive = () => {
+        setEnableSlTpValue(!enableSlTpValue);
         enable_tp_sl.current = !enable_tp_sl.current;
     };
     return (
@@ -66,7 +81,7 @@ const BotSettings = ({
                             {localize('Take Profit:')}
                         </Text>
                     </label>
-                    <input type='number' value={take_profit.current} id='take_profit' onChange={handleTpChange} />
+                    <input type='text' value={takeProfitValue} id='take_profit' onChange={handleTpChange} />
                 </div>
                 <div className='sl'>
                     <label htmlFor='stop_loss'>
@@ -74,7 +89,7 @@ const BotSettings = ({
                             {localize('Stop Loss:')}
                         </Text>
                     </label>
-                    <input type='number' value={stop_loss.current} id='stop_loss' onChange={handleSlChange} />
+                    <input type='text' value={stopLossValue} id='stop_loss' onChange={handleSlChange} />
                 </div>
                 <div className='active_inactive'>
                     <label htmlFor='enable_tp_sl'>
@@ -84,7 +99,7 @@ const BotSettings = ({
                     </label>
                     <input
                         type='checkbox'
-                        checked={enable_tp_sl.current}
+                        checked={enableSlTpValue}
                         id='enable_tp_sl'
                         onChange={handleIsActiveInActive}
                     />

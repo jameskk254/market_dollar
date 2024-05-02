@@ -7,7 +7,7 @@ import { observer, useStore } from '@deriv/stores';
 import DiffersBalls from './components/differs_balls';
 import { api_base4, api_base } from '@deriv/bot-skeleton';
 import { IoSyncCircleOutline } from 'react-icons/io5';
-import { MdOutlineSettings } from "react-icons/md";
+import { MdOutlineSettings } from 'react-icons/md';
 import RiseFallBarChart from './components/rf_bar_chart';
 import { useDBotStore } from 'Stores/useDBotStore';
 import './analysis.css';
@@ -77,6 +77,9 @@ const ApolloAnalysisPage = observer(() => {
     const [pip_size, setPipSize] = useState(2);
     const [prevLowestValue, setPrevLowestValue] = useState<string | number>('');
     const [showBotSettings, setShowBotSettings] = useState<boolean>(false);
+    const [takeProfitValue, setTakeProfitValue] = useState<string | number>(2);
+    const [stopLossValue, setStopLossValue] = useState<string | number>(2);
+    const [enableSlTpValue, setEnableSlTpValue] = useState<boolean>(false);
     // Refs
     const martingaleValueRef = useRef(martingaleValue);
     const isTradeActiveRef = useRef(isTradeActive);
@@ -186,11 +189,14 @@ const ApolloAnalysisPage = observer(() => {
                     if (contractTradeTypes.current.includes(contract)) {
                         if (proposal_open_contract.is_sold) {
                             // Take profit and stopLoss check
-                            if (enable_tp_sl.current) {
+                            if (
+                                !current_contractids.current.includes(proposal_open_contract.contract_id) &&
+                                enable_tp_sl.current
+                            ) {
                                 total_profit.current += proposal_open_contract.profit;
                                 if (total_profit.current >= take_profit.current) {
                                     stopAnalysisBot();
-                                } else if (total_profit.current <= -take_profit.current) {
+                                } else if (total_profit.current <= -stop_loss.current) {
                                     stopAnalysisBot();
                                 }
                             }
@@ -432,6 +438,12 @@ const ApolloAnalysisPage = observer(() => {
                         showBotSettings={showBotSettings}
                         stop_loss={stop_loss}
                         take_profit={take_profit}
+                        setStopLossValue={setStopLossValue}
+                        setTakeProfitValue={setTakeProfitValue}
+                        stopLossValue={stopLossValue}
+                        takeProfitValue={takeProfitValue}
+                        enableSlTpValue={enableSlTpValue}
+                        setEnableSlTpValue={setEnableSlTpValue}
                     />
                 )}
             </div>
