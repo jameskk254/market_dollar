@@ -37,7 +37,7 @@ const DiffersBalls = ({
     digitDiffLow,
     isTradeActive,
     isTradeActiveRef,
-    setIsTradeActive
+    setIsTradeActive,
 }: DiffersBallType) => {
     const buy_contract = (prediction: string) => {
         if (isOneClickActive) {
@@ -79,6 +79,25 @@ const DiffersBalls = ({
                 },
             });
         }
+    };
+
+    const strat101 = () => {
+        let frequency = new Array(10).fill(0);
+        lastDigitList.forEach(number => {
+            frequency[number]++;
+        });
+
+        let leastFrequentValue = Math.min(...frequency);
+        let leastFrequentDigits:number[] = [];
+
+        frequency.forEach((count, digit) => {
+            if (count === leastFrequentValue) {
+                leastFrequentDigits.push(digit);
+            }
+        });
+
+        let prediction = leastFrequentDigits[0]
+        buy_contract2(prediction.toString());
     };
 
     const calculatePercentageAppearance = (numbers: number[]): Record<string, number> => {
@@ -165,18 +184,18 @@ const DiffersBalls = ({
                 digitDiffHigh.current.appearence = 0;
             }
 
-            if(digitDiffLow.current.appearence === 2){
+            if (digitDiffLow.current.appearence === 2) {
                 buy_contract2(digitDiffLow.current.value.toString());
                 digitDiffLow.current.appearence = 0;
                 digitDiffHigh.current.appearence = 0;
-            }else if(digitDiffHigh.current.appearence === 2){
-                buy_contract2(digitDiffHigh.current.value.toString()); 
+            } else if (digitDiffHigh.current.appearence === 2) {
+                buy_contract2(digitDiffHigh.current.value.toString());
                 digitDiffHigh.current.appearence = 0;
                 digitDiffLow.current.appearence = 0;
             }
         };
 
-        calculateAppearance();
+        strat101();
 
         progressBalls.forEach(ball => {
             ball.classList.remove('top');
