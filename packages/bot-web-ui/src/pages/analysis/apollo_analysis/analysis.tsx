@@ -186,7 +186,7 @@ const ApolloAnalysisPage = observer(() => {
                     if (contractTradeTypes.current.includes(contract)) {
                         if (proposal_open_contract.is_sold) {
                             // Take profit and stopLoss check
-                            if (enable_tp_sl) {
+                            if (enable_tp_sl.current) {
                                 total_profit.current += proposal_open_contract.profit;
                                 if (total_profit.current >= take_profit.current) {
                                     stopAnalysisBot();
