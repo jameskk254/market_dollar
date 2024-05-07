@@ -90,7 +90,8 @@
     gap: 2rem;
 }
 
-.main_app .top_bar .bot_options .tp input,.main_app .top_bar .bot_options .sl input{
+.main_app .top_bar .bot_options .tp input,
+.main_app .top_bar .bot_options .sl input {
     font-size: 12px;
     text-align: center;
     border: none;
@@ -142,7 +143,7 @@
 .main_app .over_under_options .digit_inputs .over_digit input,
 .main_app .over_under_options .digit_inputs .under_digit input {
     padding: 3%;
-    width: 70px;
+    width: 50px;
     text-align: center;
 }
 
@@ -157,6 +158,12 @@
     display: flex;
     align-items: center;
     gap: 4px;
+}
+
+.main_app .over_under_options .over_oct_container .over_under_settings .ct_types_ou {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .main_app .over_under_options .over_oct_container .over_oct input {
@@ -437,6 +444,28 @@
     padding: 12px 10px;
     text-align: center;
     border-radius: 2px;
+}
+
+.main_app .pie_diff .digit_diff .title_oc_trader .oneclick_trader .diff_options {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.main_app .pie_diff .digit_diff .custom_prediction {
+    height: 24px !important;
+    width: 38px !important;
+    text-align: center;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.main_app .pie_diff .digit_diff .custom_buy_btn {
+    border: none;
+    padding: 4px 10px;
+    background: #00a79e;
+    border-radius: 2px;
+    cursor: pointer;
 }
 
 /* ========== DIFFERSBALLS CSS =============== */

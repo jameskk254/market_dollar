@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList, Cell } from 'recharts';
 import { api_base } from '@deriv/bot-skeleton';
 
-const renderCustomizedLabel = (props:any) => {
+const renderCustomizedLabel = (props: any) => {
     const { x, y, width, value } = props;
     return (
         <text x={x + width + 5} y={y + 10} fill='#666' textAnchor='start' fontSize={12}>
@@ -11,7 +11,7 @@ const renderCustomizedLabel = (props:any) => {
     );
 };
 
-const calculatePercentage = (arr:any[], over:number, under:number) => {
+const calculatePercentage = (arr: any[], over: number, under: number) => {
     const totalCount = arr.length;
     const overCount = arr.filter(item => item > over).length;
     const underCount = arr.filter(item => item < under).length;
@@ -31,11 +31,12 @@ interface OverUnderProps {
     active_symbol: string;
     oneClickDuration: number;
     oneClickAmount: string | number;
-    isTradeActive: boolean
+    isTradeActive: boolean;
     percentageValue: string | number;
     overUnderContract: string;
-    isTradeActiveRef: React.MutableRefObject<boolean>
-    setIsTradeActive: React.Dispatch<React.SetStateAction<boolean>>
+    overUnderDirection: string;
+    isTradeActiveRef: React.MutableRefObject<boolean>;
+    setIsTradeActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const OverUnderBarChart = ({
@@ -50,19 +51,30 @@ const OverUnderBarChart = ({
     isTradeActive,
     percentageValue,
     overUnderContract,
+    overUnderDirection,
     setIsTradeActive,
-    isTradeActiveRef
-}:OverUnderProps) => {
-    const [overPercentage, underPercentage] = calculatePercentage(
-        overUnderList,
-        Number(overValue),
-        Number(underValue)
-    );
+    isTradeActiveRef,
+}: OverUnderProps) => {
+    const [overPercentage, underPercentage] = calculatePercentage(overUnderList, Number(overValue), Number(underValue));
+
+    const getContractType = () => {
+        if (overUnderDirection === 'SAME') {
+            return overUnderContract;
+        }
+
+        if (overUnderDirection === 'OPPOSITE') {
+            if (overUnderContract === 'DIGITOVER') {
+                return 'DIGITUNDER';
+            } else if (overUnderContract === 'DIGITUNDER') {
+                return 'DIGITOVER';
+            }
+        }
+    };
 
     useEffect(() => {
-        const buy_contract = (prediction:string) => {
+        const buy_contract = (prediction: string) => {
             if (isOverUnderOneClickActive && !isTradeActive) {
-                isTradeActiveRef.current = true
+                isTradeActiveRef.current = true;
                 setIsTradeActive(true);
                 api_base.api.send({
                     buy: '1',
@@ -71,7 +83,7 @@ const OverUnderBarChart = ({
                     parameters: {
                         amount: oneClickAmount,
                         basis: 'stake',
-                        contract_type: overUnderContract,
+                        contract_type: getContractType(),
                         currency: 'USD',
                         duration: oneClickDuration,
                         duration_unit: 't',
@@ -79,7 +91,6 @@ const OverUnderBarChart = ({
                         barrier: prediction,
                     },
                 });
-                
             }
         };
 
@@ -94,9 +105,7 @@ const OverUnderBarChart = ({
                 buy_contract(prediction);
             }
         }
-
-        
-    }, [overPercentage, underPercentage,isTradeActive,overUnderList]);
+    }, [overPercentage, underPercentage, isTradeActive, overUnderList]);
 
     const data = [
         {

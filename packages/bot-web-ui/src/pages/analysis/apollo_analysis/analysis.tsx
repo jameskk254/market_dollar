@@ -67,10 +67,13 @@ const ApolloAnalysisPage = observer(() => {
     const [isOverUnderOneClickActive, setIsOverUnderOneClickActive] = useState(false);
     const [isTradeActive, setIsTradeActive] = useState(false);
     const [oneClickContract, setOneClickContract] = useState('DIGITDIFF');
+    const [tradingDiffType, setTradingDiffType] = useState('AUTO');
     const [overUnderContract, setOverUnderContract] = useState('DIGITOVER');
+    const [overUnderDirection, setOverUnderDirection] = useState('SAME');
     const [evenOddContract, setEvenOddContract] = useState('DIGITEVEN');
     const [oneClickDuration, setOneClickDuration] = useState(1);
     const [oneClickAmount, setOneClickAmount] = useState<number | string>(0.5);
+    const [customPrediction, setCustomPrediction] = useState<number | string>(0);
     const [accountCurrency, setAccountCurrency] = useState('');
     const [active_symbol, setActiveSymbol] = useState('R_100');
     const [prev_symbol, setPrevSymbol] = useState('R_100');
@@ -286,6 +289,24 @@ const ApolloAnalysisPage = observer(() => {
         }
     };
 
+    const buy_contract_differs = (contract_type: string) => {
+        api_base.api.send({
+            buy: '1',
+            price: oneClickAmount,
+            subscribe: 1,
+            parameters: {
+                amount: oneClickAmount,
+                basis: 'stake',
+                contract_type,
+                currency: 'USD',
+                duration: oneClickDuration,
+                duration_unit: 't',
+                symbol: active_symbol,
+                barrier: customPrediction,
+            },
+        });
+    };
+
     // =========================
     const removeFirstElement = () => {
         setAllLastDigitList(prevList => prevList.slice(1));
@@ -368,14 +389,28 @@ const ApolloAnalysisPage = observer(() => {
         setOneClickAmount(newValue === '' ? '' : Number(newValue));
         oneClickDefaultAmount.current = newValue === '' ? '' : Number(newValue);
     };
+    const handleCustomPredictionInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value;
+        setCustomPrediction(newValue === '' ? '' : Number(newValue));
+    };
 
     const handleContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
         setOneClickContract(selectedValue);
     };
+
+    const handleTradingDiffType = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = event.target.value;
+        setTradingDiffType(selectedValue);
+    };
+
     const handleOverUnderContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
         setOverUnderContract(selectedValue);
+    };
+    const handleOverUnderDirectionSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = event.target.value;
+        setOverUnderDirection(selectedValue);
     };
     const handleEvenOddContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
@@ -476,10 +511,20 @@ const ApolloAnalysisPage = observer(() => {
                                 {selectTickList()}
                             </div>
                             <div className='over_under_settings'>
-                                <select name='ct_types' id='contract_types' onChange={handleOverUnderContractSelect}>
-                                    <option value='DIGITOVER'>Over</option>
-                                    <option value='DIGITUNDER'>Under</option>
-                                </select>
+                                <div className='ct_types_ou'>
+                                    <select
+                                        name='ct_types'
+                                        id='contract_types'
+                                        onChange={handleOverUnderContractSelect}
+                                    >
+                                        <option value='DIGITOVER'>Over</option>
+                                        <option value='DIGITUNDER'>Under</option>
+                                    </select>
+                                    <select name='tt_options' id='tt_options' onChange={handleOverUnderDirectionSelect}>
+                                        <option value='SAME'>Same</option>
+                                        <option value='OPPOSITE'>Opposite</option>
+                                    </select>
+                                </div>
                                 <div className='martingale'>
                                     <small>martingale</small>
                                     <input
@@ -512,6 +557,7 @@ const ApolloAnalysisPage = observer(() => {
                         isTradeActive={isTradeActive}
                         percentageValue={percentageValue}
                         overUnderContract={overUnderContract}
+                        overUnderDirection={overUnderDirection}
                         setIsTradeActive={setIsTradeActive}
                         isTradeActiveRef={isTradeActiveRef}
                     />
@@ -603,18 +649,44 @@ const ApolloAnalysisPage = observer(() => {
                 <div className='digit_diff card3'>
                     <div className='title_oc_trader'>
                         <h2 className='analysis_title'>Differs/Matches</h2>
-                        {oneClickContract === 'DIGITDIFF' && (
-                            <div className='auto_clicker'>
-                                <input type='checkbox' checked={isAutoClickerActive} onChange={handleIsAutoClicker} />
-                                <h4>Auto Clicker</h4>
-                            </div>
+                        {tradingDiffType === 'MANUAL' ? (
+                            <button className='custom_buy_btn' onClick={() => buy_contract_differs(oneClickContract)}>
+                                Buy
+                            </button>
+                        ) : (
+                            oneClickContract === 'DIGITDIFF' && (
+                                <div className='auto_clicker'>
+                                    <input
+                                        type='checkbox'
+                                        checked={isAutoClickerActive}
+                                        onChange={handleIsAutoClicker}
+                                    />
+                                    <h4>Auto Clicker</h4>
+                                </div>
+                            )
                         )}
                         <div className='oneclick_trader'>
-                            <input type='checkbox' checked={isOneClickActive} onChange={handleIsOneClick} />
-                            <select name='ct_types' id='contract_types' onChange={handleContractSelect}>
-                                <option value='DIGITDIFF'>Differs</option>
-                                <option value='DIGITMATCH'>Matches</option>
-                            </select>
+                            {tradingDiffType !== 'MANUAL' && (
+                                <input type='checkbox' checked={isOneClickActive} onChange={handleIsOneClick} />
+                            )}
+                            <div className='diff_options'>
+                                <select name='ct_types' id='contract_types' onChange={handleContractSelect}>
+                                    <option value='DIGITDIFF'>Differs</option>
+                                    <option value='DIGITMATCH'>Matches</option>
+                                </select>
+                                <select name='td_options' id='trading_options' onChange={handleTradingDiffType}>
+                                    <option value='AUTO'>Auto</option>
+                                    <option value='MANUAL'>Manual</option>
+                                </select>
+                            </div>
+                            {tradingDiffType === 'MANUAL' && (
+                                <input
+                                    className='custom_prediction'
+                                    type='number'
+                                    value={customPrediction}
+                                    onChange={handleCustomPredictionInputChange}
+                                />
+                            )}
                             {selectTickList()}
                         </div>
                     </div>
