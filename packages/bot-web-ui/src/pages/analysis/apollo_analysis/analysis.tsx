@@ -706,6 +706,7 @@ const ApolloAnalysisPage = observer(() => {
                         isTradeActiveRef={isTradeActiveRef}
                         setIsTradeActive={setIsTradeActive}
                         setPrevLowestValue={setPrevLowestValue}
+                        tradingDiffType={tradingDiffType}
                     />
                 </div>
             </div>

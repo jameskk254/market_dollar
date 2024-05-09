@@ -19,6 +19,7 @@ type DiffersBallType = {
     digitDiffHigh: React.MutableRefObject<DigitDiffStatsProp>;
     digitDiffLow: React.MutableRefObject<DigitDiffStatsProp>;
     isTradeActive: boolean;
+    tradingDiffType: string;
     isTradeActiveRef: React.MutableRefObject<boolean>;
     setIsTradeActive: React.Dispatch<React.SetStateAction<boolean>>;
     setPrevLowestValue: React.Dispatch<React.SetStateAction<string | number>>;
@@ -37,6 +38,7 @@ const DiffersBalls = ({
     digitDiffLow,
     isTradeActive,
     isTradeActiveRef,
+    tradingDiffType,
     setIsTradeActive,
 }: DiffersBallType) => {
     const buy_contract = (prediction: string) => {
@@ -60,7 +62,7 @@ const DiffersBalls = ({
     };
 
     const buy_contract2 = (prediction: string) => {
-        if (isOneClickActive && isAutoClickerActive && !isTradeActive) {
+        if (isOneClickActive && isAutoClickerActive && !isTradeActive && tradingDiffType !== 'MANUAL') {
             isTradeActiveRef.current = true;
             setIsTradeActive(true);
             api_base.api.send({
@@ -88,7 +90,7 @@ const DiffersBalls = ({
         });
 
         let leastFrequentValue = Math.min(...frequency);
-        let leastFrequentDigits:number[] = [];
+        let leastFrequentDigits: number[] = [];
 
         frequency.forEach((count, digit) => {
             if (count === leastFrequentValue) {
@@ -96,7 +98,7 @@ const DiffersBalls = ({
             }
         });
 
-        let prediction = leastFrequentDigits[0]
+        let prediction = leastFrequentDigits[0];
         buy_contract2(prediction.toString());
     };
 
