@@ -14,6 +14,10 @@ export const resetVhVariables = () => {
 };
 
 export const config = {
+    show_notifications: {
+        show_tp: false,
+        show_sl: false,
+    },
     pred_setter: {
         prediction: '0',
         allow_pred_setter: false,

@@ -52,6 +52,12 @@ const getBotInterface = tradeEngine => {
             const cleanedString = removeExtraQuotes(status);
             config.touch_notouch_vars.barrier_offset = cleanedString;
         },
+        showTP: ()=>{
+            config.show_notifications.show_tp = true;
+        },
+        showSL: ()=>{
+            config.show_notifications.show_sl = true;
+        }
     };
 };
 

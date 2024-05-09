@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import { useRemoteConfig } from '@deriv/api';
 import { observer, useStore } from '@deriv/stores';
@@ -13,6 +13,9 @@ import SaveModal from '../dashboard/load-bot-preview/save-modal';
 import BotBuilderTourHandler from '../tutorials/dbot-tours/bot-builder-tour';
 import QuickStrategy1 from './quick-strategy';
 import WorkspaceWrapper from './workspace-wrapper';
+import TakeProfitDialog from './notifications/tp_dialog';
+import StopLossDialog from './notifications/sl_dialog';
+import { config } from '@deriv/bot-skeleton';
 
 const BotBuilder = observer(() => {
     const { ui } = useStore();
@@ -21,6 +24,8 @@ const BotBuilder = observer(() => {
     const { is_open } = quick_strategy;
     const { is_running } = run_panel;
     const is_blockly_listener_registered = React.useRef(false);
+    const [showTPDialog, setShowTPDialog] = React.useState(config.show_notifications.show_tp);
+    const [showSLDialog, setShowSLDialog] = React.useState(config.show_notifications.show_sl);
     const { is_mobile } = ui;
     const { onMount, onUnmount } = app;
     const el_ref = React.useRef<HTMLInputElement | null>(null);
@@ -53,6 +58,11 @@ const BotBuilder = observer(() => {
         onMount();
         return () => onUnmount();
     }, [onMount, onUnmount]);
+
+    React.useEffect(() => {
+        setShowSLDialog(config.show_notifications.show_sl);
+        setShowTPDialog(config.show_notifications.show_tp);
+    }, [config.show_notifications.show_tp, config.show_notifications.show_sl]);
 
     React.useEffect(() => {
         const workspace = window.Blockly?.derivWorkspace;
@@ -107,6 +117,8 @@ const BotBuilder = observer(() => {
             <LoadModal />
             <SaveModal />
             {is_open && <QuickStrategy1 />}
+            {showTPDialog && <TakeProfitDialog setShowTPDialog={setShowTPDialog} />}
+            {showSLDialog && <StopLossDialog setShowSLDialog={setShowSLDialog} />}
         </>
     );
 });

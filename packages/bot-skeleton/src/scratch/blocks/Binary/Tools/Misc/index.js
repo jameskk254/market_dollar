@@ -26,3 +26,5 @@ import './apollo_blocks/virtual_hook/take_profit';
 import './apollo_blocks/virtual_hook/stop_loss';
 import './apollo_blocks/virtual_hook/enable_vh';
 import './apollo_blocks/virtual_hook/enable_mar';
+import './apollo_blocks/tp_sl/tp_block';
+import './apollo_blocks/tp_sl/sl_block';
