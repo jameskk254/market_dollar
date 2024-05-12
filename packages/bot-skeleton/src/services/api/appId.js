@@ -28,3 +28,12 @@ export const getToken = () => {
         account_id: active_loginid || undefined,
     };
 };
+
+export const getLiveAccToken = active_loginid => {
+    const client_accounts = JSON.parse(localStorage.getItem('client.accounts')) || undefined;
+    const active_account = (client_accounts && client_accounts[active_loginid]) || {};
+    return {
+        token: active_account?.token || undefined,
+        account_id: active_loginid || undefined,
+    };
+};

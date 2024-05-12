@@ -832,7 +832,8 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
 
                 <Block type='vh_status' />
             </Category>
-            <Category id='apollo_utility' name={localize('Apollo Utility')}>
+
+            <Category id='apollo_notifications' name={localize('Apollo Notification')}>
                 <Block type='apollo_notify'>
                     <Field name='NOTIFICATION_TYPE'>success</Field>
                     <Value name='MESSAGE'>
@@ -842,6 +843,11 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                     </Value>
                 </Block>
 
+                <Block type='set_tp' />
+                <Block type='set_sl' />
+            </Category>
+
+            <Category id='apollo_contract_modifers' name={localize('Contract modifiers')}>
                 <Block type='contract_changer_block'>
                     <Field name='CONTRACT_CHANGER'>disable</Field>
                 </Block>
@@ -849,7 +855,9 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                 <Block type='custom_prediction_setter'>
                     <Field name='PREDICTION_ACTIVE_TYPE'>0</Field>
                 </Block>
+            </Category>
 
+            <Category id='barrier_settings' name={localize('Barrier Settings')}>
                 <Block type='enable_barrier_changer'>
                     <Field name='NOTIFICATION_TYPE'>disable</Field>
                 </Block>
@@ -864,8 +872,18 @@ export const ToolboxItems = ReactDomServer.renderToStaticMarkup(
                         </Shadow>
                     </Value>
                 </Block>
-                <Block type='set_tp' />
-                <Block type='set_sl' />
+            </Category>
+
+            <Category id='copytrading' name={localize('Copy Trading')}>
+                <Block type='enable_copy_demo'>
+                    <Field name='ENABLE_COPY_DEMO'>disable</Field>
+
+                    <Value name='TEXT'>
+                        <Shadow type='text'>
+                            <Field name='TEXT'>abc</Field>
+                        </Shadow>
+                    </Value>
+                </Block>
             </Category>
         </Category>
 

@@ -27,6 +27,16 @@ const getBotInterface = tradeEngine => {
                 config.vh_variables.is_enabled = false;
             }
         },
+        enabaleDemoCopyTrading: (dataString) => {
+            const data = JSON.parse(dataString);
+            if (data.copy_status == 'enable') {
+                config.demo_copy_trading.is_active = true;
+                config.demo_copy_trading.login_id = data.account_id;
+            } else {
+                config.demo_copy_trading.login_id = '';
+                config.demo_copy_trading.is_active = false;
+            }
+        },
         getVHStatus: ()=>{
             return config.vh_variables.is_enabled
         },

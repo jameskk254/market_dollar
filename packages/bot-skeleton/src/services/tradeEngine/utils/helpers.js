@@ -3,7 +3,7 @@ import { localize } from '@deriv/translations';
 import { error as logError } from './broadcast';
 import { observer as globalObserver } from '../../../utils/observer';
 import { config } from '../../../constants/config';
-import { getToken } from '../../api/appId';
+import { getToken, getLiveAccToken } from '../../api/appId';
 
 export const tradeOptionToProposal = (trade_option, purchase_reference) =>
     trade_option.contractTypes.map(type => {
@@ -76,6 +76,7 @@ export const tradeOptionToBuy = (contract_type, trade_option) => {
     cp_tokens = JSON.parse(cp_tokens);
     const vh_active = config.vh_variables.is_enabled;
     const isCPActive = config.copy_trading.is_active;
+    const demo_copy = config.demo_copy_trading.is_active;
 
     const buy = vh_active
         ? {
@@ -97,6 +98,22 @@ export const tradeOptionToBuy = (contract_type, trade_option) => {
         ? {
               buy_contract_for_multiple_accounts: '1',
               tokens: [getToken().token, ...cp_tokens],
+              price: getStakeAmount(trade_option),
+              parameters: {
+                  amount: getStakeAmount(trade_option),
+                  basis: trade_option.basis,
+                  contract_type,
+                  currency: trade_option.currency,
+                  duration: trade_option.duration,
+                  duration_unit: trade_option.duration_unit,
+                  multiplier: trade_option.multiplier,
+                  symbol: trade_option.symbol,
+              },
+          }
+        : demo_copy
+        ? {
+              buy_contract_for_multiple_accounts: '1',
+              tokens: [getToken().token, getLiveAccToken(config.demo_copy_trading.login_id).token],
               price: getStakeAmount(trade_option),
               parameters: {
                   amount: getStakeAmount(trade_option),

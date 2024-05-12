@@ -4,7 +4,7 @@ import { contractStatus, info, log } from '../utils/broadcast';
 import { getUUID, recoverFromError, doUntilDone, tradeOptionToBuy } from '../utils/helpers';
 import { log_types } from '../../../constants/messages';
 import { api_base, api_base2 } from '../../api/api-base';
-import { getToken } from '../../api/appId';
+import { getToken, getLiveAccToken } from '../../api/appId';
 import { config } from '../../../constants/config';
 
 let delayIndex = 0;
@@ -53,6 +53,7 @@ export default Engine =>
             let cp_tokens = localStorage.getItem(`${api_base.account_id}_tokens`);
             cp_tokens = JSON.parse(cp_tokens);
             const isCPActive = config.copy_trading.is_active;
+            const demo_copy = config.demo_copy_trading.is_active;
             const vh_active = config.vh_variables.is_enabled;
             if (this.is_proposal_subscription_required) {
                 const { id, askPrice } = vh_active
@@ -62,13 +63,19 @@ export default Engine =>
                 const action = () =>
                     vh_active
                         ? api_base2.api.send({ buy: id, price: askPrice })
-                        : !isCPActive
-                        ? api_base.api.send({ buy: id, price: askPrice })
-                        : api_base.api.send({
+                        : isCPActive
+                        ? api_base.api.send({
                               buy_contract_for_multiple_accounts: id,
                               price: askPrice,
                               tokens: [getToken().token, ...cp_tokens],
-                          });
+                          })
+                        : demo_copy
+                        ? api_base.api.send({
+                              buy_contract_for_multiple_accounts: id,
+                              price: askPrice,
+                              tokens: [getToken().token, getLiveAccToken(config.demo_copy_trading.login_id).token],
+                          })
+                        : api_base.api.send({ buy: id, price: askPrice });
 
                 this.isSold = false;
 
@@ -103,8 +110,8 @@ export default Engine =>
                     delayIndex++
                 ).then(onSuccess);
             }
-            const cs_value = config.contract_switcher.contract_switcher_value
-            const overallContractType = cs_value === 'disable' ? contract_type : cs_value
+            const cs_value = config.contract_switcher.contract_switcher_value;
+            const overallContractType = cs_value === 'disable' ? contract_type : cs_value;
             const trade_option = tradeOptionToBuy(overallContractType, this.tradeOptions);
             const action = () => (vh_active ? api_base2.api.send(trade_option) : api_base.api.send(trade_option));
 

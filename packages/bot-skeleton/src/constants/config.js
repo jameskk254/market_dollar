@@ -31,6 +31,10 @@ export const config = {
     copy_trading: {
         is_active: false,
     },
+    demo_copy_trading: {
+        is_active: false,
+        login_id: '',
+    },
     vh_variables: {
         vh_official: false,
         martingale: 1,
@@ -102,6 +106,10 @@ export const config = {
             [localize('red'), 'error'],
         ],
         BARRIER_OFFSETER_STATUS: [
+            [localize('disable'), 'disable'],
+            [localize('enable'), 'enable'],
+        ],
+        DEMO_COPIER_STATUS: [
             [localize('disable'), 'disable'],
             [localize('enable'), 'enable'],
         ],
