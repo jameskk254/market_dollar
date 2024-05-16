@@ -27,6 +27,14 @@ const getBotInterface = tradeEngine => {
                 config.vh_variables.is_enabled = false;
             }
         },
+        enabaleTotalLost: status => {
+            if (status == 'enable') {
+                config.vh_variables.enable_total_lost = true;
+            } else {
+                config.vh_variables.enable_total_lost = false;
+            }
+        },
+        
         enabaleDemoCopyTrading: (dataString) => {
             const data = JSON.parse(dataString);
             if (data.copy_status == 'enable') {

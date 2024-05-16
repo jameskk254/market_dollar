@@ -1,6 +1,6 @@
 import { ResponsivePie } from '@nivo/pie';
 import React from 'react';
-import { api_base } from '@deriv/bot-skeleton';
+import { api_base, getLiveAccToken, getToken } from '@deriv/bot-skeleton';
 
 type EvenOddPie = {
     allDigitList: number[];
@@ -12,6 +12,8 @@ type EvenOddPie = {
     active_symbol: string;
     isTradeActive: boolean;
     isTradeActiveRef: React.MutableRefObject<boolean>;
+    liveAccCR: string;
+    enableCopyDemo: boolean;
     setIsTradeActive: React.Dispatch<React.SetStateAction<boolean>>;
 };
 const MyResponsivePie = ({
@@ -24,26 +26,43 @@ const MyResponsivePie = ({
     oneClickAmount,
     oneClickDuration,
     isTradeActive,
+    enableCopyDemo,
+    liveAccCR,
     setIsTradeActive,
 }: EvenOddPie) => {
     const buy_contract = () => {
         if (isEvenOddOneClickActive && !isTradeActive) {
             isTradeActiveRef.current = true;
             setIsTradeActive(true);
-            api_base.api.send({
-                buy: '1',
-                price: oneClickAmount,
-                subscribe: 1,
-                parameters: {
-                    amount: oneClickAmount,
-                    basis: 'stake',
-                    contract_type,
-                    currency: 'USD',
-                    duration: oneClickDuration,
-                    duration_unit: 't',
-                    symbol: active_symbol,
-                },
-            });
+            !enableCopyDemo
+                ? api_base.api.send({
+                      buy: '1',
+                      price: oneClickAmount,
+                      subscribe: 1,
+                      parameters: {
+                          amount: oneClickAmount,
+                          basis: 'stake',
+                          contract_type,
+                          currency: 'USD',
+                          duration: oneClickDuration,
+                          duration_unit: 't',
+                          symbol: active_symbol,
+                      },
+                  })
+                : api_base.api.send({
+                      buy_contract_for_multiple_accounts: '1',
+                      tokens: [getToken().token, getLiveAccToken(liveAccCR).token],
+                      price: oneClickAmount,
+                      parameters: {
+                          amount: oneClickAmount,
+                          basis: 'stake',
+                          contract_type,
+                          currency: 'USD',
+                          duration: oneClickDuration,
+                          duration_unit: 't',
+                          symbol: active_symbol,
+                      },
+                  });
         }
     };
 
@@ -51,20 +70,35 @@ const MyResponsivePie = ({
         if (isEvenOddOneClickActive && !isTradeActive) {
             isTradeActiveRef.current = true;
             setIsTradeActive(true);
-            api_base.api.send({
-                buy: '1',
-                price: oneClickAmount,
-                subscribe: 1,
-                parameters: {
-                    amount: oneClickAmount,
-                    basis: 'stake',
-                    contract_type: contract_type,
-                    currency: 'USD',
-                    duration: oneClickDuration,
-                    duration_unit: 't',
-                    symbol: active_symbol,
-                },
-            });
+            !enableCopyDemo
+                ? api_base.api.send({
+                      buy: '1',
+                      price: oneClickAmount,
+                      subscribe: 1,
+                      parameters: {
+                          amount: oneClickAmount,
+                          basis: 'stake',
+                          contract_type: contract_type,
+                          currency: 'USD',
+                          duration: oneClickDuration,
+                          duration_unit: 't',
+                          symbol: active_symbol,
+                      },
+                  })
+                : api_base.api.send({
+                      buy_contract_for_multiple_accounts: '1',
+                      tokens: [getToken().token, getLiveAccToken(liveAccCR).token],
+                      price: oneClickAmount,
+                      parameters: {
+                          amount: oneClickAmount,
+                          basis: 'stake',
+                          contract_type,
+                          currency: 'USD',
+                          duration: oneClickDuration,
+                          duration_unit: 't',
+                          symbol: active_symbol,
+                      },
+                  });
         }
     };
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { api_base } from '@deriv/bot-skeleton';
+import { api_base, getLiveAccToken, getToken } from '@deriv/bot-skeleton';
 
 type DigitDiffStatsProp = {
     value: number;
@@ -20,7 +20,9 @@ type DiffersBallType = {
     digitDiffLow: React.MutableRefObject<DigitDiffStatsProp>;
     isTradeActive: boolean;
     tradingDiffType: string;
+    enableCopyDemo: boolean;
     isTradeActiveRef: React.MutableRefObject<boolean>;
+    liveAccCR: string;
     setIsTradeActive: React.Dispatch<React.SetStateAction<boolean>>;
     setPrevLowestValue: React.Dispatch<React.SetStateAction<string | number>>;
 };
@@ -39,25 +41,43 @@ const DiffersBalls = ({
     isTradeActive,
     isTradeActiveRef,
     tradingDiffType,
+    enableCopyDemo,
+    liveAccCR,
     setIsTradeActive,
 }: DiffersBallType) => {
     const buy_contract = (prediction: string) => {
         if (isOneClickActive) {
-            api_base.api.send({
-                buy: '1',
-                price: stake_amount,
-                subscribe: 1,
-                parameters: {
-                    amount: stake_amount,
-                    basis: 'stake',
-                    contract_type,
-                    currency: 'USD',
-                    duration,
-                    duration_unit: 't',
-                    symbol: active_symbol,
-                    barrier: prediction,
-                },
-            });
+            !enableCopyDemo
+                ? api_base.api.send({
+                      buy: '1',
+                      price: stake_amount,
+                      subscribe: 1,
+                      parameters: {
+                          amount: stake_amount,
+                          basis: 'stake',
+                          contract_type,
+                          currency: 'USD',
+                          duration,
+                          duration_unit: 't',
+                          symbol: active_symbol,
+                          barrier: prediction,
+                      },
+                  })
+                : api_base.api.send({
+                      buy_contract_for_multiple_accounts: '1',
+                      tokens: [getToken().token, getLiveAccToken(liveAccCR).token],
+                      price: stake_amount,
+                      parameters: {
+                          amount: stake_amount,
+                          basis: 'stake',
+                          contract_type,
+                          currency: 'USD',
+                          duration,
+                          duration_unit: 't',
+                          symbol: active_symbol,
+                          barrier: prediction,
+                      },
+                  });
         }
     };
 
@@ -65,21 +85,37 @@ const DiffersBalls = ({
         if (isOneClickActive && isAutoClickerActive && !isTradeActive && tradingDiffType !== 'MANUAL') {
             isTradeActiveRef.current = true;
             setIsTradeActive(true);
-            api_base.api.send({
-                buy: '1',
-                price: stake_amount,
-                subscribe: 1,
-                parameters: {
-                    amount: stake_amount,
-                    basis: 'stake',
-                    contract_type,
-                    currency: 'USD',
-                    duration,
-                    duration_unit: 't',
-                    symbol: active_symbol,
-                    barrier: prediction,
-                },
-            });
+            !enableCopyDemo
+                ? api_base.api.send({
+                      buy: '1',
+                      price: stake_amount,
+                      subscribe: 1,
+                      parameters: {
+                          amount: stake_amount,
+                          basis: 'stake',
+                          contract_type,
+                          currency: 'USD',
+                          duration,
+                          duration_unit: 't',
+                          symbol: active_symbol,
+                          barrier: prediction,
+                      },
+                  })
+                : api_base.api.send({
+                      buy_contract_for_multiple_accounts: '1',
+                      tokens: [getToken().token, getLiveAccToken(liveAccCR).token],
+                      price: stake_amount,
+                      parameters: {
+                          amount: stake_amount,
+                          basis: 'stake',
+                          contract_type,
+                          currency: 'USD',
+                          duration,
+                          duration_unit: 't',
+                          symbol: active_symbol,
+                          barrier: prediction,
+                      },
+                  });
         }
     };
 

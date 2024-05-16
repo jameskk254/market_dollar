@@ -5,7 +5,7 @@ import MyResponsivePie from './components/pie_chart';
 import OverUnderBarChart from './components/ou_bar_chart';
 import { observer, useStore } from '@deriv/stores';
 import DiffersBalls from './components/differs_balls';
-import { api_base4, api_base } from '@deriv/bot-skeleton';
+import { api_base4, api_base, getToken, getLiveAccToken } from '@deriv/bot-skeleton';
 import { IoSyncCircleOutline } from 'react-icons/io5';
 import { MdOutlineSettings } from 'react-icons/md';
 import RiseFallBarChart from './components/rf_bar_chart';
@@ -83,6 +83,10 @@ const ApolloAnalysisPage = observer(() => {
     const [takeProfitValue, setTakeProfitValue] = useState<string | number>(2);
     const [stopLossValue, setStopLossValue] = useState<string | number>(2);
     const [enableSlTpValue, setEnableSlTpValue] = useState<boolean>(false);
+    const [enableCopyDemo, setCopyDemo] = useState<boolean>(false);
+    const [liveAccCR, setLiveAccCr] = useState<string>('');
+    const [overUnderManual, setOverUnderManual] = useState<boolean>(false);
+
     // Refs
     const martingaleValueRef = useRef(martingaleValue);
     const isTradeActiveRef = useRef(isTradeActive);
@@ -96,6 +100,7 @@ const ApolloAnalysisPage = observer(() => {
     const stop_loss = useRef<number>(2);
     const total_profit = useRef<number>(0);
     const enable_tp_sl = useRef<boolean>(false);
+    const enable_demo_copy = useRef<boolean>(false);
 
     const { ui } = useStore();
     const DBotStores = useDBotStore();
@@ -270,41 +275,80 @@ const ApolloAnalysisPage = observer(() => {
         );
     };
 
-    const buy_contract = (contract_type: string, isTradeActive: boolean) => {
-        if (isTradeActive) {
-            api_base.api.send({
-                buy: '1',
-                price: oneClickAmount,
-                subscribe: 1,
-                parameters: {
-                    amount: oneClickAmount,
-                    basis: 'stake',
-                    contract_type,
-                    currency: 'USD',
-                    duration: oneClickDuration,
-                    duration_unit: 't',
-                    symbol: active_symbol,
-                },
-            });
+    const getOverUnderValue = () => {
+        if (overUnderContract === 'DIGITOVER') {
+            return overValue;
+        } else if (overUnderContract === 'DIGITUNDER') {
+            return underValue;
         }
     };
 
-    const buy_contract_differs = (contract_type: string) => {
-        api_base.api.send({
-            buy: '1',
-            price: oneClickAmount,
-            subscribe: 1,
-            parameters: {
-                amount: oneClickAmount,
-                basis: 'stake',
-                contract_type,
-                currency: 'USD',
-                duration: oneClickDuration,
-                duration_unit: 't',
-                symbol: active_symbol,
-                barrier: customPrediction,
-            },
-        });
+    const buy_contract = (contract_type: string, isTradeActive: boolean) => {
+        if (isTradeActive) {
+            !enableCopyDemo
+                ? api_base.api.send({
+                      buy: '1',
+                      price: oneClickAmount,
+                      subscribe: 1,
+                      parameters: {
+                          amount: oneClickAmount,
+                          basis: 'stake',
+                          contract_type,
+                          currency: accountCurrency,
+                          duration: oneClickDuration,
+                          duration_unit: 't',
+                          symbol: active_symbol,
+                      },
+                  })
+                : api_base.api.send({
+                      buy_contract_for_multiple_accounts: '1',
+                      tokens: [getToken().token, getLiveAccToken(liveAccCR).token],
+                      price: oneClickAmount,
+                      parameters: {
+                          amount: oneClickAmount,
+                          basis: 'stake',
+                          contract_type,
+                          currency: accountCurrency,
+                          duration: oneClickDuration,
+                          duration_unit: 't',
+                          symbol: active_symbol,
+                      },
+                  });
+        }
+    };
+
+    const buy_contract_differs = (contract_type: string, isOverUnder = false) => {
+        !enableCopyDemo
+            ? api_base.api.send({
+                  buy: '1',
+                  price: oneClickAmount,
+                  subscribe: 1,
+                  parameters: {
+                      amount: oneClickAmount,
+                      basis: 'stake',
+                      contract_type,
+                      currency: 'USD',
+                      duration: oneClickDuration,
+                      duration_unit: 't',
+                      symbol: active_symbol,
+                      barrier: isOverUnder ? getOverUnderValue() : customPrediction,
+                  },
+              })
+            : api_base.api.send({
+                  buy_contract_for_multiple_accounts: '1',
+                  tokens: [getToken().token, getLiveAccToken(liveAccCR).token],
+                  price: oneClickAmount,
+                  parameters: {
+                      amount: oneClickAmount,
+                      basis: 'stake',
+                      contract_type,
+                      currency: accountCurrency,
+                      duration: oneClickDuration,
+                      duration_unit: 't',
+                      symbol: active_symbol,
+                      barrier: isOverUnder ? getOverUnderValue() : customPrediction,
+                  },
+              });
     };
 
     // =========================
@@ -410,6 +454,11 @@ const ApolloAnalysisPage = observer(() => {
     };
     const handleOverUnderDirectionSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = event.target.value;
+        if (selectedValue === 'MANUAL') {
+            setOverUnderManual(true);
+        } else {
+            setOverUnderManual(false);
+        }
         setOverUnderDirection(selectedValue);
     };
     const handleEvenOddContractSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -479,6 +528,11 @@ const ApolloAnalysisPage = observer(() => {
                         takeProfitValue={takeProfitValue}
                         enableSlTpValue={enableSlTpValue}
                         setEnableSlTpValue={setEnableSlTpValue}
+                        enableCopyDemo={enableCopyDemo}
+                        setCopyDemo={setCopyDemo}
+                        enable_demo_copy={enable_demo_copy}
+                        liveAccCR={liveAccCR}
+                        setLiveAccCr={setLiveAccCr}
                     />
                 )}
             </div>
@@ -503,11 +557,21 @@ const ApolloAnalysisPage = observer(() => {
                         </div>
                         <div className='over_oct_container'>
                             <div className='over_oct'>
-                                <input
-                                    type='checkbox'
-                                    checked={isOverUnderOneClickActive}
-                                    onChange={handleIsOverUnderOneClick}
-                                />
+                                {overUnderManual ? (
+                                    <button
+                                        onClick={() => buy_contract_differs(overUnderContract, true)}
+                                        className='overunder_buy_btn'
+                                    >
+                                        Buy
+                                    </button>
+                                ) : (
+                                    <input
+                                        type='checkbox'
+                                        checked={isOverUnderOneClickActive}
+                                        onChange={handleIsOverUnderOneClick}
+                                    />
+                                )}
+
                                 {selectTickList()}
                             </div>
                             <div className='over_under_settings'>
@@ -523,6 +587,7 @@ const ApolloAnalysisPage = observer(() => {
                                     <select name='tt_options' id='tt_options' onChange={handleOverUnderDirectionSelect}>
                                         <option value='SAME'>Same</option>
                                         <option value='OPPOSITE'>Opposite</option>
+                                        <option value='MANUAL'>Manual</option>
                                     </select>
                                 </div>
                                 <div className='martingale'>
@@ -560,6 +625,8 @@ const ApolloAnalysisPage = observer(() => {
                         overUnderDirection={overUnderDirection}
                         setIsTradeActive={setIsTradeActive}
                         isTradeActiveRef={isTradeActiveRef}
+                        enableCopyDemo={enableCopyDemo}
+                        liveAccCR={liveAccCR}
                     />
                 </div>
                 <div className='line_chart card2'>
@@ -643,6 +710,8 @@ const ApolloAnalysisPage = observer(() => {
                             oneClickAmount={oneClickAmount}
                             oneClickDuration={oneClickDuration}
                             setIsTradeActive={setIsTradeActive}
+                            enableCopyDemo={enableCopyDemo}
+                            liveAccCR={liveAccCR}
                         />
                     </div>
                 </div>
@@ -707,6 +776,8 @@ const ApolloAnalysisPage = observer(() => {
                         setIsTradeActive={setIsTradeActive}
                         setPrevLowestValue={setPrevLowestValue}
                         tradingDiffType={tradingDiffType}
+                        enableCopyDemo={enableCopyDemo}
+                        liveAccCR={liveAccCR}
                     />
                 </div>
             </div>

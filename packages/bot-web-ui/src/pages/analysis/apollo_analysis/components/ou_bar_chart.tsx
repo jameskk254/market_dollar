@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList, Cell } from 'recharts';
-import { api_base } from '@deriv/bot-skeleton';
+import { api_base, getLiveAccToken, getToken } from '@deriv/bot-skeleton';
 
 const renderCustomizedLabel = (props: any) => {
     const { x, y, width, value } = props;
@@ -36,6 +36,8 @@ interface OverUnderProps {
     overUnderContract: string;
     overUnderDirection: string;
     isTradeActiveRef: React.MutableRefObject<boolean>;
+    liveAccCR: string;
+    enableCopyDemo: boolean;
     setIsTradeActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -52,8 +54,10 @@ const OverUnderBarChart = ({
     percentageValue,
     overUnderContract,
     overUnderDirection,
-    setIsTradeActive,
     isTradeActiveRef,
+    enableCopyDemo,
+    liveAccCR,
+    setIsTradeActive,
 }: OverUnderProps) => {
     const [overPercentage, underPercentage] = calculatePercentage(overUnderList, Number(overValue), Number(underValue));
 
@@ -76,30 +80,46 @@ const OverUnderBarChart = ({
             if (isOverUnderOneClickActive && !isTradeActive) {
                 isTradeActiveRef.current = true;
                 setIsTradeActive(true);
-                api_base.api.send({
-                    buy: '1',
-                    price: oneClickAmount,
-                    subscribe: 1,
-                    parameters: {
-                        amount: oneClickAmount,
-                        basis: 'stake',
-                        contract_type: getContractType(),
-                        currency: 'USD',
-                        duration: oneClickDuration,
-                        duration_unit: 't',
-                        symbol: active_symbol,
-                        barrier: prediction,
-                    },
-                });
+                !enableCopyDemo
+                    ? api_base.api.send({
+                          buy: '1',
+                          price: oneClickAmount,
+                          subscribe: 1,
+                          parameters: {
+                              amount: oneClickAmount,
+                              basis: 'stake',
+                              contract_type: getContractType(),
+                              currency: 'USD',
+                              duration: oneClickDuration,
+                              duration_unit: 't',
+                              symbol: active_symbol,
+                              barrier: prediction,
+                          },
+                      })
+                    : api_base.api.send({
+                          buy_contract_for_multiple_accounts: '1',
+                          tokens: [getToken().token, getLiveAccToken(liveAccCR).token],
+                          price: oneClickAmount,
+                          parameters: {
+                              amount: oneClickAmount,
+                              basis: 'stake',
+                              contract_type: getContractType(),
+                              currency: 'USD',
+                              duration: oneClickDuration,
+                              duration_unit: 't',
+                              symbol: active_symbol,
+                              barrier: prediction,
+                          },
+                      });
             }
         };
 
-        if(overUnderContract === 'DIGITOVER'){
+        if (overUnderContract === 'DIGITOVER') {
             if (typeof percentageValue !== 'string' && overPercentage > percentageValue) {
                 const prediction = overUnderContract === 'DIGITOVER' ? overValue.toString() : underValue.toString();
                 buy_contract(prediction);
             }
-        }else{
+        } else {
             if (typeof percentageValue !== 'string' && underPercentage > percentageValue) {
                 const prediction = overUnderContract === 'DIGITOVER' ? overValue.toString() : underValue.toString();
                 buy_contract(prediction);

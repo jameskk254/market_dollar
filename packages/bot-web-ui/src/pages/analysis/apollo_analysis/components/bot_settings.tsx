@@ -9,11 +9,17 @@ interface BotSettingsSType {
     showBotSettings: boolean;
     takeProfitValue: string | number;
     stopLossValue: string | number;
-    enableSlTpValue: boolean
-    setTakeProfitValue: React.Dispatch<React.SetStateAction<string | number>>
-    setStopLossValue: React.Dispatch<React.SetStateAction<string | number>>
+    liveAccCR: string;
+    enableSlTpValue: boolean;
+    enableCopyDemo: boolean;
+    enable_demo_copy: React.MutableRefObject<boolean>;
+
+    setTakeProfitValue: React.Dispatch<React.SetStateAction<string | number>>;
+    setStopLossValue: React.Dispatch<React.SetStateAction<string | number>>;
     setShowBotSettings: React.Dispatch<React.SetStateAction<boolean>>;
-    setEnableSlTpValue: React.Dispatch<React.SetStateAction<boolean>>
+    setEnableSlTpValue: React.Dispatch<React.SetStateAction<boolean>>;
+    setCopyDemo: React.Dispatch<React.SetStateAction<boolean>>;
+    setLiveAccCr: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const BotSettings = ({
@@ -24,10 +30,15 @@ const BotSettings = ({
     takeProfitValue,
     stopLossValue,
     enableSlTpValue,
+    enableCopyDemo,
+    enable_demo_copy,
+    liveAccCR,
     setShowBotSettings,
     setTakeProfitValue,
     setStopLossValue,
-    setEnableSlTpValue
+    setEnableSlTpValue,
+    setCopyDemo,
+    setLiveAccCr,
 }: BotSettingsSType) => {
     const onClickClose = () => {
         setShowBotSettings(!showBotSettings);
@@ -36,18 +47,28 @@ const BotSettings = ({
     const handleTpChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
         setTakeProfitValue(newValue === '' ? '' : Number(newValue));
-        take_profit.current = newValue!== '' ? Number(newValue) : 0;
+        take_profit.current = newValue !== '' ? Number(newValue) : 0;
     };
 
     const handleSlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
         setStopLossValue(newValue === '' ? '' : Number(newValue));
-        stop_loss.current = newValue!== '' ? Number(newValue) : 0;
+        stop_loss.current = newValue !== '' ? Number(newValue) : 0;
+    };
+
+    const handleLiveAccCrChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value;
+        setLiveAccCr(newValue);
     };
 
     const handleIsActiveInActive = () => {
         setEnableSlTpValue(!enableSlTpValue);
         enable_tp_sl.current = !enable_tp_sl.current;
+    };
+
+    const handleDemoCopy = () => {
+        setCopyDemo(!enableCopyDemo);
+        enable_demo_copy.current = !enable_demo_copy.current;
     };
     return (
         <Dialog
@@ -104,6 +125,25 @@ const BotSettings = ({
                         onChange={handleIsActiveInActive}
                     />
                 </div>
+                <div className='copy_demo_trades'>
+                    <label htmlFor='copy_demo'>
+                        <Text as='p' align='left' size='xs' color='prominent'>
+                            {localize('Copy Demo Status:')}
+                        </Text>
+                    </label>
+                    <input type='checkbox' checked={enableCopyDemo} id='copy_demo' onChange={handleDemoCopy} />
+                </div>
+
+                {enableCopyDemo && (
+                    <div className='account_cr'>
+                        <label htmlFor='acc_cr'>
+                            <Text as='p' align='left' size='xs' color='prominent'>
+                                {localize('CR ID:')}
+                            </Text>
+                        </label>
+                        <input type='text' value={liveAccCR} id='acc_cr' onChange={handleLiveAccCrChange} />
+                    </div>
+                )}
             </div>
         </Dialog>
     );

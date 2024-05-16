@@ -47,7 +47,8 @@ export const handleLostLiveStep = total_profit => {
 
 export const calculateMartingale = profit => {
     const current_lost = Math.abs(profit);
-    const newStake = current_lost * config.vh_variables.martingale;
+    config.vh_variables.total_loss += current_lost;
+    const newStake = config.vh_variables.total_loss * config.vh_variables.martingale;
     if (newStake < 0.35) {
         config.vh_variables.mart_stake = 0.35;
     } else {
@@ -70,14 +71,13 @@ export const calculateWonStatus = total_profit => {
 
 export const calculateLostStatus = (profit, total_profit) => {
     const sl = config.vh_variables.stop_loss * -1;
-    config.vh_variables.total_loss += Math.abs(profit);
     if (total_profit <= sl) {
         alert('Stop Loss Hitted!!');
         dbot.stopBot();
     } else if (config.vh_variables.allow_martingale === true) {
         config.vh_variables.is_martingale_active = true;
         if (config.vh_variables.martingale < 1) {
-            calculateMartingale(config.vh_variables.total_loss);
+            calculateMartingale(profit);
         } else {
             calculateMartingale(profit);
         }

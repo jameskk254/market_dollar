@@ -5,7 +5,7 @@ export { default as NetworkMonitor } from './network_monitor';
 export { default as ServerTime } from './server_time';
 export { default as TradingTimes } from './trading-times';
 export { api_base, api_base3,api_base4 } from './api-base';
-export {getToken} from './appId'
+export {getToken,getLiveAccToken} from './appId'
 export { removeCopyTradingTokens, updateCopyTradingTokens,retrieveCopyTradingTokens } from '../appwrite/appwrite_functions';
 export {
     newListTokens,

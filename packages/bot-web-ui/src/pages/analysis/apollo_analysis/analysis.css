@@ -85,7 +85,9 @@
 
 .main_app .top_bar .bot_options .tp,
 .main_app .top_bar .bot_options .sl,
-.main_app .top_bar .bot_options .active_inactive {
+.main_app .top_bar .bot_options .active_inactive,
+.main_app .top_bar .bot_options .copy_demo_trades,
+.main_app .top_bar .bot_options .account_cr {
     display: flex;
     gap: 2rem;
 }
@@ -96,6 +98,12 @@
     text-align: center;
     border: none;
     font-weight: 800;
+    border-radius: 2px;
+}
+
+.main_app .top_bar .bot_options .account_cr input {
+    font-size: 14px;
+    border: none;
     border-radius: 2px;
 }
 
@@ -158,6 +166,14 @@
     display: flex;
     align-items: center;
     gap: 4px;
+}
+
+.main_app .over_under_options .over_oct_container .over_oct .overunder_buy_btn{
+    padding: 0px 10px;
+    background: #008079;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
 }
 
 .main_app .over_under_options .over_oct_container .over_under_settings .ct_types_ou {
