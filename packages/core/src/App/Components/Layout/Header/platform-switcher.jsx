@@ -51,7 +51,7 @@ const PlatformSwitcher = ({
         is_close_drawer_fired_ref.current = true;
     };
 
-    const telegramUrl = 'https://t.me/deriv_apollo';
+    const telegramUrl = 'https://t.me/dollarhub1';
 
     const openUrlInNewTab = (url) =>{
         window.open(url, '_blank');
@@ -63,13 +63,13 @@ const PlatformSwitcher = ({
                 <div
                     className='logo_holder'
                     onClick={() => {
-                        const newUrl = window.location.origin + '/bot';
+                        const newUrl = window.location.origin;
                         window.location.href = newUrl;
                     }}
                 >
                     <span className='logo_image'></span>
                     <Text size='m' line_height='xs' className='header__menu-link-text'>
-                        <Localize i18n_default_text='D-Apollo' />
+                        <Localize i18n_default_text='DollarHub' />
                     </Text>
                 </div>
                 <div className='social_acc' onClick={() => openUrlInNewTab(telegramUrl)}>

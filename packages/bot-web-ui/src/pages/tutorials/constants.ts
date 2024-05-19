@@ -11,7 +11,7 @@ export const user_guide_content: TUserGuideContent[] = [
         id: 1,
         type: 'Tour',
         subtype: 'OnBoard',
-        content: localize('Get started on D-Apollo Bot'),
+        content: localize('Get started on DollarHub Bot'),
         src: getImageLocation('dbot-onboard-tour.png'),
         search_id: `${USER_GUIDE}-0`,
     },

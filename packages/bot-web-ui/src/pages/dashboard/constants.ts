@@ -8,7 +8,7 @@ export type TSidebarItem = {
 
 export const SIDEBAR_INTRO: TSidebarItem[] = [
     {
-        label: localize('Welcome to D-Apollo Bot!'),
+        label: localize('Welcome to DollarHub Bot!'),
         content: [
             {
                 data: localize(
@@ -21,14 +21,14 @@ export const SIDEBAR_INTRO: TSidebarItem[] = [
     },
     {
         label: localize('Guide'),
-        content: [{ data: localize('D-Apollo Bot - your automated trading partner') }],
+        content: [{ data: localize('DollarHub Bot - your automated trading partner') }],
         link: true,
     },
     {
         label: localize('FAQs'),
         content: [
             {
-                data: localize('What is D-Apollo Bot?'),
+                data: localize('What is DollarHub Bot?'),
                 faq_id: 'faq-0',
             },
             {

@@ -447,7 +447,7 @@ export const BOT_BUILDER_MOBILE: TMobileTourConfig[] = [
 
 export const DBOT_ONBOARDING_MOBILE: TMobileTourConfig[] = [
     {
-        header: localize('Get started on D-Apollo Bot'),
+        header: localize('Get started on DollarHub Bot'),
         content: [
             <Localize
                 key='get-started-on-deriv-bot'
@@ -558,7 +558,7 @@ export const getTourDialogAction = (is_mobile: boolean) => {
 };
 
 export const onboarding_tour_header = (
-    <Localize key='onboarding-tour-header' i18n_default_text='Get started on D-Apollo Bot' />
+    <Localize key='onboarding-tour-header' i18n_default_text='Get started on DollarHub Bot' />
 );
 
 export const getBotBuilderTourHeader = (is_mobile: boolean) => {

@@ -154,7 +154,7 @@ const CopyTrader = observer(() => {
 
             <header className={`title ${is_dark_mode_on && 'dark_active'}`}>
                 <h1>{localize('Add Copy Trading Tokens')}</h1>
-                <small>{localize('developed by D-Apollo')}</small>
+                <small>{localize('developed by DollarHub')}</small>
             </header>
             <div className={`input_content ${is_dark_mode_on && 'dark_active'}`}>
                 <div>

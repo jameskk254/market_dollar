@@ -61,7 +61,7 @@ export const getAppId = () => {
     } else if (user_app_id.length) {
         if (/app\.github\.dev/i.test(window.location.hostname)) {
             app_id = 52759;
-        } else if (/d-apollo-sgi9\.vercel\.app/i.test(window.location.hostname)) {
+        } else if (/DollarHub-sgi9\.vercel\.app/i.test(window.location.hostname)) {
             app_id = 53209;
         } else {
             window.localStorage.setItem('config.default_app_id', user_app_id);

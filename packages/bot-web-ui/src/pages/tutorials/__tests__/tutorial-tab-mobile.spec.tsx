@@ -17,7 +17,7 @@ const userGuideContent = [
         id: 1,
         type: 'Tour',
         subtype: 'OnBoard',
-        content: 'Get started on D-Apollo Bot',
+        content: 'Get started on DollarHub Bot',
         src: 'dbot-onboard-tour.png',
     },
 ];

@@ -197,41 +197,6 @@ const AppWrapper = observer(() => {
                         />
 
                         <div
-                            icon='IcGear'
-                            label={<Localize i18n_default_text='Apollo Bots' />}
-                            id='id-dbot-apollo-bots'
-                        >
-                            <ApolloBots handleTabChange={handleTabChange} />
-                        </div>
-
-                        <div
-                            icon='IcChartsTabDbot'
-                            label={<Localize i18n_default_text='A-Trader' />}
-                            id={
-                                is_chart_modal_visible || is_trading_view_modal_visible
-                                    ? 'id-charts--disabled'
-                                    : 'id-charts'
-                            }
-                        >
-                            <Router>
-                                <Trader {...passthrough} />
-                            </Router>
-                            {/* <Chart show_digits_stats={true}/> */}
-                        </div>
-
-                        <div icon='IcClient' label={<Localize i18n_default_text='Copy Trader' />} id={'id-copy-trader'}>
-                            <CopyTrader />
-                        </div>
-
-                        <div
-                            icon='IcDbotViewDetail'
-                            label={<Localize i18n_default_text='Market Analysis' />}
-                            id={'id-analysis-page'}
-                        >
-                            <AnalysisPage />
-                        </div>
-
-                        <div
                             icon='IcTutorialsTabs'
                             label={<Localize i18n_default_text='Tutorials' />}
                             id='id-tutorials'
