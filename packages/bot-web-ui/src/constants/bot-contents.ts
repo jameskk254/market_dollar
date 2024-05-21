@@ -15,6 +15,7 @@ export const DBOT_TABS: TDashboardTabIndex = Object.freeze({
     DASHBOARD: 0,
     BOT_BUILDER: 1,
     CHART: 2,
+    DHUBBOTS: 3,
     TUTORIAL: 3,
 });
 

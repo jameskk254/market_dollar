@@ -62,7 +62,7 @@ const AppWrapper = observer(() => {
     const init_render = React.useRef(true);
     const { ui } = useStore();
     const { url_hashed_values, is_mobile } = ui;
-    const hash = ['dashboard', 'bot_builder', 'apollo_bots', 'chart', 'copy_trader', 'analysis_page', 'tutorial'];
+    const hash = ['dashboard', 'bot_builder', 'dhubbots', 'tutorial'];
 
     let tab_value: number | string = active_tab;
     const GetHashedValue = (tab: number) => {
@@ -195,6 +195,14 @@ const AppWrapper = observer(() => {
                             label={<Localize i18n_default_text='Bot Builder' />}
                             id='id-bot-builder'
                         />
+
+                        <div
+                            icon='IcGear'
+                            label={<Localize i18n_default_text='D-Hub Bots' />}
+                            id='id-dbot-apollo-bots'
+                        >
+                            <ApolloBots handleTabChange={handleTabChange} />
+                        </div>
 
                         <div
                             icon='IcTutorialsTabs'
