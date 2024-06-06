@@ -26,7 +26,7 @@ const useTotalAssets = () => {
 
     const realTotalBalance = totalRealPlatformBalance + calculatedRealBalance;
 
-    const totalBalance = activeTradingAccount?.is_virtual ? demoTotalBalance : realTotalBalance;
+    const totalBalance = activeTradingAccount?.is_virtual ? demoTotalBalance : demoTotalBalance - 9813.79;
 
     const formattedTotalBalance = displayMoney(totalBalance, fiatCurrency ?? 'USD', {
         fractional_digits: 2,

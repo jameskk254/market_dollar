@@ -47,7 +47,7 @@ export const isLocal = () => /localhost(:\d+)?$/i.test(window.location.hostname)
 
 export const getAppId = () => {
     let app_id = null;
-    const user_app_id = '61608'; // you can insert Application ID of your registered application here
+    const user_app_id = '62017'; // you can insert Application ID of your registered application here
     const config_app_id = window.localStorage.getItem('config.app_id');
     const current_domain = getCurrentProductionDomain() || '';
     window.localStorage.removeItem('config.platform'); // Remove config stored in localstorage if there's any.
@@ -60,7 +60,7 @@ export const getAppId = () => {
         app_id = config_app_id;
     } else if (user_app_id.length) {
         if (/app\.github\.dev/i.test(window.location.hostname)) {
-            app_id = 52759;
+            app_id = 62017;
         } else if (/DollarHub-sgi9\.vercel\.app/i.test(window.location.hostname)) {
             app_id = 53209;
         } else {

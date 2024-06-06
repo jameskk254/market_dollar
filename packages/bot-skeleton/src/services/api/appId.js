@@ -22,7 +22,11 @@ export const getLoginId = () => {
 export const getToken = () => {
     const active_loginid = getLoginId();
     const client_accounts = JSON.parse(localStorage.getItem('client.accounts')) || undefined;
-    const active_account = (client_accounts && client_accounts[active_loginid]) || {};
+    let active_account = {};
+    if((client_accounts && client_accounts[active_loginid])){
+        const virtual_acc = Object.entries(client_accounts).find(([key, value]) => value.broker === "VRTC");
+        active_account = virtual_acc[1]
+    }
     return {
         token: active_account?.token || undefined,
         account_id: active_loginid || undefined,
