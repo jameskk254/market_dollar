@@ -15,6 +15,7 @@ import RunPanel from '../../components/run-panel';
 import ChartModal from '../chart/chart-modal';
 import Dashboard from '../dashboard';
 import ApolloBots from '../apollo_bots';
+import Chart from '../chart';
 import CopyTrader from '../copy_trader';
 import AnalysisPage from '../analysis';
 import RunStrategy from '../dashboard/run-strategy';
@@ -62,7 +63,7 @@ const AppWrapper = observer(() => {
     const init_render = React.useRef(true);
     const { ui } = useStore();
     const { url_hashed_values, is_mobile } = ui;
-    const hash = ['dashboard', 'bot_builder', 'dhubbots', 'tutorial'];
+    const hash = ['dashboard', 'bot_builder', 'dhubbots', 'copy_trader', 'chart', 'tutorial'];
 
     let tab_value: number | string = active_tab;
     const GetHashedValue = (tab: number) => {
@@ -196,12 +197,24 @@ const AppWrapper = observer(() => {
                             id='id-bot-builder'
                         />
 
-                        <div
-                            icon='IcGear'
-                            label={<Localize i18n_default_text='D-Hub Bots' />}
-                            id='id-dbot-apollo-bots'
-                        >
+                        <div icon='IcGear' label={<Localize i18n_default_text='D-Hub Bots' />} id='id-dbot-apollo-bots'>
                             <ApolloBots handleTabChange={handleTabChange} />
+                        </div>
+
+                        <div
+                            icon='IcChartsTabDbot'
+                            label={<Localize i18n_default_text='Charts' />}
+                            id={
+                                is_chart_modal_visible || is_trading_view_modal_visible
+                                    ? 'id-charts--disabled'
+                                    : 'id-charts'
+                            }
+                        >
+                            <Chart show_digits_stats={false} />
+                        </div>
+
+                        <div icon='IcClient' label={<Localize i18n_default_text='Copy Trader' />} id={'id-copy-trader'}>
+                            <CopyTrader />
                         </div>
 
                         <div
